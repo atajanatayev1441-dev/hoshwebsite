@@ -60,8 +60,11 @@ const config: Config = {
         },
       },
       fontFamily: {
-        playfair: ['Playfair Display', 'Georgia', 'serif'],
-        inter: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Cormorant Garamond', 'Georgia', 'serif'],
+        body:    ['Jost', 'system-ui', 'sans-serif'],
+        // legacy aliases kept for admin panel
+        playfair: ['Cormorant Garamond', 'Georgia', 'serif'],
+        inter:    ['Jost', 'system-ui', 'sans-serif'],
       },
       animation: {
         'badge-pulse': 'badge-pulse 2s ease-in-out infinite',

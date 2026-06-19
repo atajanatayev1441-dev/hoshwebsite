@@ -12,118 +12,100 @@ import { motion, AnimatePresence } from 'framer-motion'
 export function Navbar() {
   const pathname = usePathname()
   const { lang, setLang } = useLang()
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [open, setOpen]   = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const tr = translations[lang]
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    const fn = () => setScrolled(window.scrollY > 50)
+    window.addEventListener('scroll', fn, { passive: true })
+    return () => window.removeEventListener('scroll', fn)
   }, [])
 
   const links = [
-    { href: '/', label: tr.home },
-    { href: '/menu', label: tr.menu },
-    { href: '/booking', label: tr.booking },
+    { href: '/',           label: tr.home },
+    { href: '/menu',       label: tr.menu },
+    { href: '/booking',    label: tr.booking },
     { href: '/promotions', label: tr.promotions },
   ]
 
-  const isActive = (href: string) =>
+  const active = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-carbon-950/95 backdrop-blur-md border-b border-carbon-800'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+      scrolled ? 'bg-[#080705]/95 backdrop-blur-md border-b border-[#1e1b16]' : 'bg-transparent'
+    }`}>
+      <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
 
-        {/* Logo */}
-        <Link href="/" className="flex items-center">
-          <div className="relative w-16 h-16 logo-blend">
-            <Image
-              src="/images/logo.png"
-              alt="HOS Lounge"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
+        {/* Logo — filter убирает любой фон, оставляет белый силуэт */}
+        <Link href="/" className="relative w-14 h-14 flex-shrink-0">
+          <Image
+            src="/images/logo.png"
+            alt="HOS Lounge"
+            fill
+            className="object-contain logo-white"
+            priority
+          />
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-8">
-          {links.map((link) => (
+        <nav className="hidden md:flex items-center gap-10">
+          {links.map(l => (
             <Link
-              key={link.href}
-              href={link.href}
-              className={`text-xs font-semibold tracking-[0.2em] uppercase transition-colors duration-200 ${
-                isActive(link.href)
-                  ? 'text-gold-400'
-                  : 'text-concrete-300 hover:text-concrete-100'
+              key={l.href} href={l.href}
+              className={`font-body text-[11px] font-medium tracking-[0.22em] uppercase transition-colors ${
+                active(l.href) ? 'text-gold-400' : 'text-[#9e9890] hover:text-[#f0ece3]'
               }`}
             >
-              {link.label}
+              {l.label}
             </Link>
           ))}
         </nav>
 
-        {/* Right controls */}
-        <div className="flex items-center gap-4">
+        {/* Controls */}
+        <div className="flex items-center gap-5">
           <button
             onClick={() => setLang(lang === 'ru' ? 'tk' : 'ru')}
-            className="text-xs font-semibold tracking-widest text-concrete-400 hover:text-gold-400 transition-colors uppercase"
+            className="font-body text-[11px] font-medium tracking-[0.2em] uppercase text-[#7a7570] hover:text-gold-400 transition-colors"
           >
             {lang === 'ru' ? 'TK' : 'RU'}
           </button>
 
-          <Link
-            href="/booking"
-            className="hidden md:block btn-gold text-[10px] py-2.5 px-5"
-          >
+          <Link href="/booking" className="hidden md:block btn-gold !py-2.5 !px-5 text-[10px]">
             {tr.bookTable}
           </Link>
 
           <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden text-concrete-300 hover:text-concrete-100 transition-colors"
+            onClick={() => setOpen(!open)}
+            className="md:hidden text-[#9e9890] hover:text-[#f0ece3] transition-colors"
           >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile drawer */}
       <AnimatePresence>
-        {mobileOpen && (
+        {open && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-carbon-950 border-t border-carbon-800"
+            className="md:hidden bg-[#080705] border-t border-[#1e1b16]"
           >
-            <nav className="px-6 py-6 flex flex-col gap-5">
-              {links.map((link) => (
+            <nav className="px-8 py-7 flex flex-col gap-6">
+              {links.map(l => (
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`text-sm font-semibold tracking-[0.2em] uppercase ${
-                    isActive(link.href) ? 'text-gold-400' : 'text-concrete-300'
+                  key={l.href} href={l.href}
+                  onClick={() => setOpen(false)}
+                  className={`font-body text-sm font-medium tracking-[0.2em] uppercase ${
+                    active(l.href) ? 'text-gold-400' : 'text-[#9e9890]'
                   }`}
                 >
-                  {link.label}
+                  {l.label}
                 </Link>
               ))}
-              <Link
-                href="/booking"
-                onClick={() => setMobileOpen(false)}
-                className="btn-gold text-center mt-2"
-              >
+              <Link href="/booking" onClick={() => setOpen(false)} className="btn-gold w-fit mt-2">
                 {tr.bookTable}
               </Link>
             </nav>

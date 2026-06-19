@@ -1,78 +1,121 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
 
   body {
-    @apply bg-carbon-950 text-concrete-100 font-inter;
+    background-color: #080705;
+    color: #f0ece3;
+    font-family: 'Jost', system-ui, sans-serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3, h4 {
-    @apply font-playfair;
+    font-family: 'Cormorant Garamond', Georgia, serif;
   }
+}
+
+@layer utilities {
+  .font-display { font-family: 'Cormorant Garamond', Georgia, serif; }
+  .font-body    { font-family: 'Jost', system-ui, sans-serif; }
 }
 
 @layer components {
   .btn-gold {
-    @apply bg-gold-500 hover:bg-gold-400 text-carbon-950 px-8 py-3.5 font-semibold tracking-widest text-xs uppercase transition-all duration-300 active:scale-95;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: #c8922a;
+    color: #080705;
+    padding: 0.875rem 2rem;
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    transition: background-color 0.25s;
   }
+  .btn-gold:hover { background-color: #d4a028; }
+  .btn-gold:active { transform: scale(0.97); }
 
   .btn-outline {
-    @apply border border-concrete-300 text-concrete-100 hover:bg-concrete-100 hover:text-carbon-950 px-8 py-3.5 font-semibold tracking-widest text-xs uppercase transition-all duration-300;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid rgba(240,236,227,0.35);
+    color: #f0ece3;
+    padding: 0.875rem 2rem;
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    transition: all 0.25s;
+  }
+  .btn-outline:hover {
+    background-color: rgba(240,236,227,0.08);
+    border-color: rgba(240,236,227,0.6);
   }
 
   .section-label {
-    @apply text-gold-500 text-xs font-semibold tracking-[0.3em] uppercase;
-  }
-
-  .card-dark {
-    @apply bg-carbon-900 border border-carbon-800;
+    display: block;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #c8922a;
   }
 
   .input {
-    @apply w-full px-4 py-3 bg-carbon-800 border border-carbon-700 text-concrete-100 focus:outline-none focus:border-gold-500 transition-colors placeholder:text-concrete-500 text-sm;
+    @apply w-full px-4 py-3.5 bg-carbon-900 border border-carbon-700 text-concrete-100 focus:outline-none focus:border-gold-500 transition-colors placeholder:text-concrete-600 text-sm;
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
   }
 
   /* Admin badges */
-  .badge-pending  { @apply bg-amber-900/40 text-amber-400 border border-amber-800/50; }
-  .badge-confirmed { @apply bg-blue-900/40 text-blue-400 border border-blue-800/50; }
+  .badge-pending   { @apply bg-amber-900/40 text-amber-400 border border-amber-800/50; }
+  .badge-confirmed { @apply bg-blue-900/40  text-blue-400  border border-blue-800/50;  }
   .badge-preparing { @apply bg-orange-900/40 text-orange-400 border border-orange-800/50; }
-  .badge-ready    { @apply bg-green-900/40 text-green-400 border border-green-800/50; }
-  .badge-cancelled { @apply bg-red-900/40 text-red-400 border border-red-800/50; }
+  .badge-ready     { @apply bg-green-900/40 text-green-400  border border-green-800/50; }
+  .badge-cancelled { @apply bg-red-900/40   text-red-400   border border-red-800/50;   }
 
-  /* Admin cards */
   .card {
     @apply bg-white dark:bg-carbon-900 rounded-xl border border-gray-200 dark:border-carbon-700;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar { width: 5px; }
+/* ─── Logo: убираем фон через CSS filter ─── */
+/* brightness(0) делает всё чёрным, invert(1) переворачивает в белый */
+.logo-white {
+  filter: brightness(0) invert(1);
+}
+/* Уменьшаем яркость для менее агрессивного белого */
+.logo-white-soft {
+  filter: brightness(10) saturate(0);
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #080705; }
-::-webkit-scrollbar-thumb { background: #3e3830; border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: #3e3830; }
 ::-webkit-scrollbar-thumb:hover { background: #c8922a; }
 
-/* Logo background removal via blend mode */
-.logo-blend {
-  mix-blend-mode: screen;
-}
-
-/* Parallax helper */
-.parallax-img {
-  transition: transform 0.1s linear;
-}
-
-/* Horizontal marquee */
+/* ─── Marquee ─── */
 @keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
-.animate-marquee {
-  animation: marquee 20s linear infinite;
+.animate-marquee { animation: marquee 22s linear infinite; }
+
+/* ─── Badge pulse ─── */
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.2); }
 }
+.animate-badge-pulse { animation: badge-pulse 2s ease-in-out infinite; }
