@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        Int        @id @default(autoincrement())
+  name_ru   String
+  name_tk   String
+  position  Int        @default(0)
+  visible   Boolean    @default(true)
+  items     MenuItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model MenuItem {
+  id             Int         @id @default(autoincrement())
+  categoryId     Int
+  category       Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name_ru        String
+  name_tk        String
+  description_ru String?
+  description_tk String?
+  price          Float
+  imageUrl       String?
+  available      Boolean     @default(true)
+  featured       Boolean     @default(false)
+  orderItems     OrderItem[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  tableNumber String
+  clientPhone String
+  clientLang  String      @default("ru")
+  status      String      @default("pending")
+  totalAmount Float
+  items       OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model OrderItem {
+  id         Int      @id @default(autoincrement())
+  orderId    Int
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId Int
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  quantity   Int
+  price      Float
+  createdAt  DateTime @default(now())
+}
+
+model Booking {
+  id         Int      @id @default(autoincrement())
+  zone       String
+  date       String
+  time       String
+  guestCount Int
+  name       String
+  phone      String
+  clientLang String   @default("ru")
+  note       String?
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Promotion {
+  id             Int      @id @default(autoincrement())
+  title_ru       String
+  title_tk       String
+  description_ru String
+  description_tk String
+  badge_ru       String?
+  badge_tk       String?
+  price          Float?
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
