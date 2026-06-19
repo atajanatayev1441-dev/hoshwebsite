@@ -45,7 +45,7 @@ function PromoModal({
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-white dark:bg-sage-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        className="bg-carbon-900 border border-carbon-700 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
       >
         <div className="flex items-center justify-between p-5 border-b border-cream-200 dark:border-sage-700">
           <h2 className="font-playfair font-semibold text-sage-800 dark:text-cream-100">

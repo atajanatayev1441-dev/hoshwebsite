@@ -131,11 +131,10 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          {/* Right — image with gold accent */}
+          {/* Right — image + stat strip below */}
           <motion.div
             initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="relative"
           >
             <div className="relative w-full aspect-[4/5] overflow-hidden">
               <Image
@@ -145,12 +144,45 @@ export default function HomePage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#080705]/50 to-transparent" />
             </div>
-            {/* Gold counter badge — absolute, bottom-left outside image */}
-            <div className="absolute -bottom-5 -left-5 w-28 h-28 bg-gold-500 flex flex-col items-center justify-center">
-              <span className="font-display text-5xl font-light text-[#080705] leading-none">3</span>
-              <span className="font-body text-[9px] font-medium tracking-[0.3em] uppercase text-[#080705]/70 mt-1">
-                {ru ? 'Зоны' : 'Zona'}
-              </span>
+
+            {/* Stat strip — sits BELOW the image, no overlap */}
+            <div className="grid grid-cols-3 mt-0">
+              {[
+                { num: '3',    label: ru ? 'Зоны'       : 'Zona' },
+                { num: '47',   label: ru ? 'Позиций'    : 'Menýu' },
+                { num: '9–23', label: ru ? 'Часы работы' : 'Iş wagty' },
+              ].map((s, i) => (
+                <div
+                  key={i}
+                  style={{
+                    background: '#C9A84C',
+                    padding: '24px',
+                    textAlign: 'center',
+                    borderRight: i < 2 ? '1px solid rgba(0,0,0,0.15)' : 'none',
+                  }}
+                >
+                  <div style={{
+                    fontFamily: "'Cormorant Garamond', Georgia, serif",
+                    fontSize: '40px',
+                    fontWeight: 400,
+                    color: '#1a1a1a',
+                    lineHeight: 1,
+                  }}>
+                    {s.num}
+                  </div>
+                  <div style={{
+                    fontFamily: "'Jost', system-ui, sans-serif",
+                    fontSize: '10px',
+                    fontWeight: 500,
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(26,26,26,0.65)',
+                    marginTop: '6px',
+                  }}>
+                    {s.label}
+                  </div>
+                </div>
+              ))}
             </div>
           </motion.div>
 

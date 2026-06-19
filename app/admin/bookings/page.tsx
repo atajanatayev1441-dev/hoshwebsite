@@ -116,7 +116,7 @@ export default function AdminBookingsPage() {
             onClick={() => setTab(t.key)}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
               tab === t.key
-                ? 'bg-white dark:bg-sage-700 text-sage-800 dark:text-cream-100 shadow-sm'
+                ? 'bg-carbon-700 text-cream-100 shadow-sm'
                 : 'text-sage-500 dark:text-sage-400 hover:text-sage-700'
             }`}
           >
