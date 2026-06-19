@@ -1,20 +1,26 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
-import { useTheme } from 'next-themes'
+import { useState, useEffect } from 'react'
 import { useLang } from '@/components/providers/LangProvider'
 import { translations } from '@/lib/i18n'
-import { Sun, Moon, Menu, X, Coffee } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export function Navbar() {
   const pathname = usePathname()
-  const { theme, setTheme } = useTheme()
   const { lang, setLang } = useLang()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const tr = translations[lang]
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const links = [
     { href: '/', label: tr.home },
@@ -27,28 +33,38 @@ export function Navbar() {
     href === '/' ? pathname === '/' : pathname.startsWith(href)
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-cream-100/90 dark:bg-sage-950/90 backdrop-blur-md border-b border-cream-200 dark:border-sage-800">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? 'bg-carbon-950/95 backdrop-blur-md border-b border-carbon-800'
+          : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-full bg-sage-600 flex items-center justify-center">
-            <Coffee className="w-4 h-4 text-white" />
+        <Link href="/" className="flex items-center">
+          <div className="relative w-16 h-16 logo-blend">
+            <Image
+              src="/images/logo.png"
+              alt="HOS Lounge"
+              fill
+              className="object-contain"
+              priority
+            />
           </div>
-          <span className="font-playfair font-semibold text-lg text-sage-800 dark:text-cream-100">
-            HOS
-          </span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-8">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`text-xs font-semibold tracking-[0.2em] uppercase transition-colors duration-200 ${
                 isActive(link.href)
-                  ? 'bg-sage-100 dark:bg-sage-800 text-sage-800 dark:text-cream-100'
-                  : 'text-sage-600 dark:text-sage-300 hover:text-sage-900 dark:hover:text-cream-100 hover:bg-sage-50 dark:hover:bg-sage-800/50'
+                  ? 'text-gold-400'
+                  : 'text-concrete-300 hover:text-concrete-100'
               }`}
             >
               {link.label}
@@ -56,31 +72,27 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Controls */}
-        <div className="flex items-center gap-2">
-          {/* Language switcher */}
+        {/* Right controls */}
+        <div className="flex items-center gap-4">
           <button
             onClick={() => setLang(lang === 'ru' ? 'tk' : 'ru')}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-sage-300 dark:border-sage-600 text-sage-700 dark:text-sage-200 hover:bg-sage-100 dark:hover:bg-sage-800 transition-colors"
+            className="text-xs font-semibold tracking-widest text-concrete-400 hover:text-gold-400 transition-colors uppercase"
           >
             {lang === 'ru' ? 'TK' : 'RU'}
           </button>
 
-          {/* Theme toggle */}
-          <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-sage-600 dark:text-sage-300 hover:bg-sage-100 dark:hover:bg-sage-800 transition-colors"
-            aria-label="Toggle theme"
+          <Link
+            href="/booking"
+            className="hidden md:block btn-gold text-[10px] py-2.5 px-5"
           >
-            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
+            {tr.bookTable}
+          </Link>
 
-          {/* Mobile menu button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg text-sage-600 dark:text-sage-300 hover:bg-sage-100 dark:hover:bg-sage-800 transition-colors"
+            className="md:hidden text-concrete-300 hover:text-concrete-100 transition-colors"
           >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
@@ -92,23 +104,28 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-cream-200 dark:border-sage-800 bg-cream-100 dark:bg-sage-950"
+            className="md:hidden bg-carbon-950 border-t border-carbon-800"
           >
-            <nav className="px-4 py-3 flex flex-col gap-1">
+            <nav className="px-6 py-6 flex flex-col gap-5">
               {links.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                    isActive(link.href)
-                      ? 'bg-sage-100 dark:bg-sage-800 text-sage-800 dark:text-cream-100'
-                      : 'text-sage-600 dark:text-sage-300'
+                  className={`text-sm font-semibold tracking-[0.2em] uppercase ${
+                    isActive(link.href) ? 'text-gold-400' : 'text-concrete-300'
                   }`}
                 >
                   {link.label}
                 </Link>
               ))}
+              <Link
+                href="/booking"
+                onClick={() => setMobileOpen(false)}
+                className="btn-gold text-center mt-2"
+              >
+                {tr.bookTable}
+              </Link>
             </nav>
           </motion.div>
         )}
