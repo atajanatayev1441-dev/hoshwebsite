@@ -100,6 +100,19 @@
   filter: brightness(10) saturate(0);
 }
 
+/* ─── Date / time / select inputs — force dark theme ─── */
+input[type="date"],
+input[type="time"],
+select {
+  color-scheme: dark;
+}
+/* Invert the calendar/clock icon so it's visible on dark bg */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #080705; }

@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { useLang } from '@/components/providers/LangProvider'
 import { translations } from '@/lib/i18n'
@@ -35,8 +34,17 @@ export function Footer() {
 
           {/* Brand */}
           <div>
-            <div className="relative w-16 h-16 mb-6">
-              <Image src="/images/logo.png" alt="HOS Lounge" fill className="object-contain logo-white" />
+            {/* Text logo — avoids the filter white-square bug */}
+            <div className="mb-6">
+              <span
+                className="text-[28px] font-light tracking-[0.15em] text-[#f0ece3] block leading-none"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+              >
+                HOS
+              </span>
+              <span className="text-[9px] font-body font-medium tracking-[0.45em] uppercase text-gold-500 block mt-1">
+                Lounge
+              </span>
             </div>
             <p className="font-body text-sm text-[#5c5852] leading-relaxed max-w-[220px]">
               {ru

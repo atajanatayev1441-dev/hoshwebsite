@@ -44,9 +44,11 @@ export default function HomePage() {
           />
         </motion.div>
 
-        {/* gradient: top dark → transparent → full dark at bottom */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#080705]/80 via-transparent to-[#080705]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#080705]/50 to-transparent" />
+        {/* Strong uniform overlay — suppresses the physical HOS sign on the building
+            so it doesn't compete with the page typography */}
+        <div className="absolute inset-0 bg-[#080705]/70" />
+        {/* Extra gradient: deeper at bottom for text legibility, lighter at top */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#080705]/30 via-transparent to-[#080705]" />
 
         {/* content */}
         <motion.div
