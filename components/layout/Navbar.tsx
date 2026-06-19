@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { useLang } from '@/components/providers/LangProvider'
@@ -45,42 +46,42 @@ export function Navbar() {
         className="max-w-7xl mx-auto px-8 flex items-center justify-between"
         style={{ height: '64px' }}
       >
-        {/* ── LEFT: text logo — no image, no background issues ── */}
-        <Link
-          href="/"
-          className="flex flex-col leading-none flex-shrink-0 group"
-          style={{ gap: '3px' }}
-        >
-          <span
+
+        {/* ── LOGO ──
+            Техника: grayscale→brightness→contrast превращает фон в чёрный,
+            а белые элементы лого остаются белыми.
+            mix-blend-mode:screen на чёрном родителе: чёрное = прозрачное,
+            белое — остаётся. Итог: только сам логотип, без фона.         */}
+        <Link href="/" className="flex-shrink-0">
+          <div
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: '22px',
-              fontWeight: 300,
-              letterSpacing: '0.18em',
-              color: '#f0ece3',
-              lineHeight: 1,
-              transition: 'color 0.2s',
-            }}
-            className="group-hover:text-gold-400"
-          >
-            HOS
-          </span>
-          <span
-            style={{
-              fontFamily: "'Jost', system-ui, sans-serif",
-              fontSize: '8px',
-              fontWeight: 500,
-              letterSpacing: '0.45em',
-              textTransform: 'uppercase',
-              color: '#c8922a',
-              lineHeight: 1,
+              width: '48px',
+              height: '48px',
+              position: 'relative',
+              background: '#000000',   /* обязательно чёрный */
+              isolation: 'isolate',
             }}
           >
-            LOUNGE
-          </span>
+            <Image
+              src="/images/logo.png"
+              alt="HOS Lounge"
+              fill
+              priority
+              style={{
+                objectFit: 'contain',
+                /* шаг 1: grayscale — убираем цвет, фон ~0.51, лого 1.0      */
+                /* шаг 2: brightness(0.6) — фон→0.31, лого→0.6               */
+                /* шаг 3: contrast(20) — 0.31 < 0.5 → 0 (чёрный);            */
+                /*         0.6 > 0.5 → 1.0 (белый)                           */
+                /* screen на чёрном фоне: чёрное исчезает, белое светится    */
+                filter: 'grayscale(1) brightness(0.6) contrast(20)',
+                mixBlendMode: 'screen',
+              }}
+            />
+          </div>
         </Link>
 
-        {/* ── CENTER: nav links ── */}
+        {/* ── Desktop nav ── */}
         <nav className="hidden md:flex items-center" style={{ gap: '40px' }}>
           {links.map(l => (
             <Link
@@ -104,7 +105,7 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* ── RIGHT: lang switcher + CTA ── */}
+        {/* ── Right controls ── */}
         <div className="flex items-center" style={{ gap: '20px' }}>
           <button
             onClick={() => setLang(lang === 'ru' ? 'tk' : 'ru')}
