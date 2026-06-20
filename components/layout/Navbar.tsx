@@ -14,6 +14,7 @@ export function Navbar() {
   const { lang, setLang } = useLang()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [logoError, setLogoError] = useState(false)
   const tr = translations[lang]
 
   useEffect(() => {
@@ -58,26 +59,37 @@ export function Navbar() {
               width: '48px',
               height: '48px',
               position: 'relative',
-              background: '#000000',   /* обязательно чёрный */
+              background: '#000000',
               isolation: 'isolate',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            <Image
-              src="/images/logo.png"
-              alt="HOS Lounge"
-              fill
-              priority
-              style={{
-                objectFit: 'contain',
-                /* шаг 1: grayscale — убираем цвет, фон ~0.51, лого 1.0      */
-                /* шаг 2: brightness(0.6) — фон→0.31, лого→0.6               */
-                /* шаг 3: contrast(20) — 0.31 < 0.5 → 0 (чёрный);            */
-                /*         0.6 > 0.5 → 1.0 (белый)                           */
-                /* screen на чёрном фоне: чёрное исчезает, белое светится    */
-                filter: 'grayscale(1) brightness(0.6) contrast(20)',
-                mixBlendMode: 'screen',
-              }}
-            />
+            {logoError ? (
+              <span style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: '22px',
+                fontWeight: 400,
+                color: '#c8922a',
+                letterSpacing: '0.05em',
+              }}>
+                HOS
+              </span>
+            ) : (
+              <Image
+                src="/images/logo.png"
+                alt="HOS Lounge"
+                fill
+                priority
+                onError={() => setLogoError(true)}
+                style={{
+                  objectFit: 'contain',
+                  filter: 'grayscale(1) brightness(0.6) contrast(20)',
+                  mixBlendMode: 'screen',
+                }}
+              />
+            )}
           </div>
         </Link>
 
