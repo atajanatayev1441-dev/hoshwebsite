@@ -5,7 +5,13 @@ import { SessionProvider } from '@/components/providers/SessionProvider'
 import { AdminShell } from '@/components/admin/AdminShell'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions)
+  let session
+  try {
+    session = await getServerSession(authOptions)
+  } catch (err) {
+    console.error('[AdminLayout] getServerSession failed:', err)
+    throw err
+  }
 
   if (!session) {
     redirect('/admin/login')

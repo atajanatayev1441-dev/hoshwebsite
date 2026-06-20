@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && prisma db push && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
@@ -30,6 +30,7 @@
     "pusher-js": "^8.4.0",
     "react": "^18",
     "react-dom": "^18",
+    "sharp": "^0.35.2",
     "twilio": "^5.0.4",
     "zod": "^3.22.4"
   },
