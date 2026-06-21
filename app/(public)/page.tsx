@@ -138,9 +138,9 @@ export default function HomePage() {
           >
             <div className="relative w-full aspect-[4/5] overflow-hidden">
               <Image
-                src="/images/photo_2026-06-19_18-49-30.jpg"
-                alt="HOS art wall"
-                fill className="object-cover"
+                src="/images/photo_2026-06-19_18-49-24.jpg"
+                alt="HOS main hall"
+                fill className="object-cover object-center"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#080705]/50 to-transparent" />
             </div>
@@ -230,47 +230,64 @@ export default function HomePage() {
             <div className="hidden md:block h-px w-32 bg-gold-500/60" />
           </div>
 
-          {/* Grid: верхний ряд 2 равные колонки, нижний ряд 2 равные колонки */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Asymmetric grid: sculpture wall tall on left, 2 stacked on right */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:h-[680px]">
 
-            {/* Верхние 2 */}
-            {[
-              { src: '/images/photo_2026-06-19_18-49-24.jpg', label: ru ? 'Основной зал' : 'Esasy zal' },
-              { src: '/images/photo_2026-06-19_18-49-32.jpg', label: ru ? 'Атмосфера'   : 'Atmosfera' },
-            ].map((img, i) => (
+            {/* Left — sculpture wall, spans full height */}
+            <motion.div
+              initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.8 }}
+              className="relative overflow-hidden group aspect-[3/4] md:aspect-auto md:h-full"
+            >
+              <Image
+                src="/images/photo_2026-06-19_18-49-30.jpg"
+                alt={ru ? 'Арт-стена' : 'Sungat diwary'}
+                fill className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-[#080705]/15 group-hover:bg-[#080705]/5 transition-colors duration-500" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400">
+                <span className="section-label">{ru ? 'Арт-стена' : 'Sungat diwary'}</span>
+              </div>
+            </motion.div>
+
+            {/* Right — two stacked cells */}
+            <div className="flex flex-col gap-4 md:h-full">
+
+              {/* Top: Brutalism & Beans wall */}
               <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.7 }}
-                className="relative overflow-hidden group aspect-[16/10]"
+                initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.1 }}
+                className="relative overflow-hidden group flex-1 aspect-[16/9] md:aspect-auto"
               >
-                <Image src={img.src} alt={img.label} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-[#080705]/20 group-hover:bg-[#080705]/10 transition-colors duration-500" />
+                <Image
+                  src="/images/photo_2026-06-19_18-49-32.jpg"
+                  alt={ru ? 'Атмосфера' : 'Atmosfera'}
+                  fill className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-[#080705]/25 group-hover:bg-[#080705]/10 transition-colors duration-500" />
                 <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400">
-                  <span className="section-label">{img.label}</span>
+                  <span className="section-label">{ru ? 'Атмосфера' : 'Atmosfera'}</span>
                 </div>
               </motion.div>
-            ))}
 
-            {/* Нижние 2 */}
-            {[
-              { src: '/images/photo_2026-06-19_18-49-30.jpg', label: ru ? 'Арт-стена' : 'Sungat diwary' },
-              { src: '/images/photo_2026-06-19_18-49-27.jpg', label: ru ? 'Вход'       : 'Girelge' },
-            ].map((img, i) => (
+              {/* Bottom: Entrance / brand sign */}
               <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.12 + 0.2, duration: 0.7 }}
-                className="relative overflow-hidden group aspect-[16/10]"
+                initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.22 }}
+                className="relative overflow-hidden group flex-1 aspect-[16/9] md:aspect-auto"
               >
-                <Image src={img.src} alt={img.label} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-[#080705]/20 group-hover:bg-[#080705]/10 transition-colors duration-500" />
+                <Image
+                  src="/images/photo_2026-06-19_18-49-27.jpg"
+                  alt={ru ? 'Вход' : 'Girelge'}
+                  fill className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-[#080705]/25 group-hover:bg-[#080705]/10 transition-colors duration-500" />
                 <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400">
-                  <span className="section-label">{img.label}</span>
+                  <span className="section-label">{ru ? 'Вход' : 'Girelge'}</span>
                 </div>
               </motion.div>
-            ))}
 
+            </div>
           </div>
         </div>
       </section>
