@@ -11,6 +11,7 @@ import {
   Tag,
   LogOut,
   Coffee,
+  ExternalLink,
 } from 'lucide-react'
 
 interface AdminSidebarProps {
@@ -79,8 +80,17 @@ export function AdminSidebar({ pendingOrders, pendingBookings }: AdminSidebarPro
         })}
       </nav>
 
-      {/* Sign out */}
-      <div className="p-3 border-t border-sage-800">
+      {/* Bottom: view site + sign out */}
+      <div className="p-3 border-t border-sage-800 space-y-1">
+        <a
+          href={process.env.NEXT_PUBLIC_MAIN_SITE_URL || 'https://hoshwebsite-production.up.railway.app'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-sage-400 hover:text-cream-100 hover:bg-sage-800 transition-colors w-full"
+        >
+          <ExternalLink className="w-4 h-4" />
+          На сайт
+        </a>
         <button
           onClick={() => signOut({ callbackUrl: '/admin/login' })}
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-sage-400 hover:text-red-400 hover:bg-sage-800 transition-colors w-full"

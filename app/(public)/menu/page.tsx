@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/prisma'
 import { MenuClient } from '@/components/menu/MenuClient'
 
+// Force fresh DB fetch on every request — never use build-time cached data
+export const dynamic = 'force-dynamic'
+
 export type CategoryWithItems = {
   id: number
   name_ru: string
