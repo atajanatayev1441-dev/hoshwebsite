@@ -4,6 +4,15 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --gold:        #C9A84C;
+  --gold-light:  #E8C96A;
+  --gold-muted:  rgba(201, 168, 76, 0.15);
+  --black:       #0a0a0a;
+  --black-card:  #161616;
+  --white-muted: #A8A89E;
+}
+
 @layer base {
   html { scroll-behavior: smooth; }
 
@@ -125,3 +134,25 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   50%       { transform: scale(1.2); }
 }
 .animate-badge-pulse { animation: badge-pulse 2s ease-in-out infinite; }
+
+/* ─── Micro-interactions ─── */
+button { transition: transform 0.1s ease; }
+button:active { transform: scale(0.97); }
+
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.2);
+}
+
+/* ─── Global transition for theme tokens ─── */
+a, button, input, select, textarea {
+  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* ─── scrollbar-hide utility ─── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
