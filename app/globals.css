@@ -1,158 +1,209 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Design tokens ─────────────────────────── */
 :root {
-  --gold:        #C9A84C;
-  --gold-light:  #E8C96A;
-  --gold-muted:  rgba(201, 168, 76, 0.15);
-  --black:       #0a0a0a;
-  --black-card:  #161616;
-  --white-muted: #A8A89E;
+  --bg:         #0a0a0a;
+  --surface:    #111111;
+  --gold:       #C9A84C;
+  --gold-dim:   rgba(201,168,76,0.6);
+  --white:      #FAFAF8;
+  --muted:      #6B6B6B;
+  --border:     rgba(255,255,255,0.08);
+
+  --font-heading: var(--font-cormorant, 'Cormorant Garamond', Georgia, serif);
+  --font-body:    var(--font-dm-sans, 'DM Sans', system-ui, sans-serif);
 }
 
+/* ── Base ───────────────────────────────────── */
 @layer base {
   html { scroll-behavior: smooth; }
 
   body {
-    background-color: #080705;
-    color: #f0ece3;
-    font-family: 'Jost', system-ui, sans-serif;
+    background-color: var(--bg);
+    color: var(--white);
+    font-family: var(--font-body);
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
   }
 
-  h1, h2, h3, h4 {
-    font-family: 'Cormorant Garamond', Georgia, serif;
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-heading);
+    font-weight: 300;
   }
 }
 
+/* ── Utilities ──────────────────────────────── */
 @layer utilities {
-  .font-display { font-family: 'Cormorant Garamond', Georgia, serif; }
-  .font-body    { font-family: 'Jost', system-ui, sans-serif; }
+  .font-heading { font-family: var(--font-heading); }
+  .font-body    { font-family: var(--font-body); }
+  /* keep legacy aliases */
+  .font-display { font-family: var(--font-heading); }
+  .font-playfair { font-family: var(--font-heading); }
 }
 
+/* ── Components ─────────────────────────────── */
 @layer components {
+
+  /* Gold CTA button */
   .btn-gold {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-    background-color: #c8922a;
-    color: #080705;
-    padding: 0.875rem 2rem;
-    font-family: 'Jost', sans-serif;
+    gap: 0.6rem;
+    background: var(--gold);
+    color: var(--bg);
+    padding: 14px 32px;
+    font-family: var(--font-body);
+    font-size: 11px;
     font-weight: 500;
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    transition: background-color 0.25s;
+    transition: background 0.25s;
+    cursor: pointer;
   }
-  .btn-gold:hover { background-color: #d4a028; }
+  .btn-gold:hover  { background: #d4a93a; }
   .btn-gold:active { transform: scale(0.97); }
 
+  /* Outline button */
   .btn-outline {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-    border: 1px solid rgba(240,236,227,0.35);
-    color: #f0ece3;
-    padding: 0.875rem 2rem;
-    font-family: 'Jost', sans-serif;
+    gap: 0.6rem;
+    border: 1px solid var(--gold);
+    color: var(--white);
+    padding: 14px 32px;
+    font-family: var(--font-body);
+    font-size: 11px;
     font-weight: 500;
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     transition: all 0.25s;
+    cursor: pointer;
   }
-  .btn-outline:hover {
-    background-color: rgba(240,236,227,0.08);
-    border-color: rgba(240,236,227,0.6);
-  }
+  .btn-outline:hover { background: rgba(201,168,76,0.08); }
 
+  /* Eyebrow / section label */
   .section-label {
     display: block;
-    font-family: 'Jost', sans-serif;
-    font-size: 0.65rem;
+    font-family: var(--font-body);
+    font-size: 10px;
     font-weight: 500;
-    letter-spacing: 0.35em;
+    letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: #c8922a;
+    color: var(--gold);
   }
 
+  /* Admin input */
   .input {
-    @apply w-full px-4 py-3.5 bg-carbon-900 border border-carbon-700 text-concrete-100 focus:outline-none focus:border-gold-500 transition-colors placeholder:text-concrete-600 text-sm;
-    font-family: 'Jost', sans-serif;
+    width: 100%;
+    padding: 10px 14px;
+    background: #1a1a1a;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 13px;
     font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s;
   }
+  .input:focus { border-color: var(--gold); }
+  .input::placeholder { color: var(--muted); }
 
-  /* Admin badges */
-  .badge-pending   { @apply bg-amber-900/40 text-amber-400 border border-amber-800/50; }
-  .badge-confirmed { @apply bg-blue-900/40  text-blue-400  border border-blue-800/50;  }
-  .badge-preparing { @apply bg-orange-900/40 text-orange-400 border border-orange-800/50; }
-  .badge-ready     { @apply bg-green-900/40 text-green-400  border border-green-800/50; }
-  .badge-cancelled { @apply bg-red-900/40   text-red-400   border border-red-800/50;   }
+  /* Admin buttons */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #2d5a3d; color: #fff;
+    padding: 8px 16px; border-radius: 8px;
+    font-family: var(--font-body); font-size: 13px; font-weight: 500;
+    transition: background 0.2s; cursor: pointer;
+  }
+  .btn-primary:hover { background: #3a7a52; }
 
-  /* Always dark — no bg-white anywhere on public or admin */
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #aaa;
+    padding: 8px 16px; border-radius: 8px;
+    font-family: var(--font-body); font-size: 13px; font-weight: 400;
+    transition: all 0.2s; cursor: pointer;
+  }
+  .btn-secondary:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+
+  /* Admin card */
   .card {
-    background-color: #111009;
-    border: 1px solid #1e1b16;
+    background: #161616;
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 12px;
   }
+
+  /* Status badges */
+  .badge-pending   { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); padding: 2px 8px; border-radius: 20px; font-size: 11px; }
+  .badge-confirmed { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); padding: 2px 8px; border-radius: 20px; font-size: 11px; }
+  .badge-preparing { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); padding: 2px 8px; border-radius: 20px; font-size: 11px; }
+  .badge-ready     { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3);  padding: 2px 8px; border-radius: 20px; font-size: 11px; }
+  .badge-cancelled { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3);  padding: 2px 8px; border-radius: 20px; font-size: 11px; }
 }
 
-/* ─── Date / time / select inputs — force dark theme ─── */
+/* ── Menu card image effect ─────────────────── */
+.menu-img {
+  filter: grayscale(20%);
+  transform: scale(1.02);
+  transition: filter 0.5s ease, transform 0.6s ease;
+}
+.menu-card:hover .menu-img {
+  filter: grayscale(0%) brightness(1.06);
+  transform: scale(1.06);
+}
+
+/* ── Date / time inputs ─────────────────────── */
 input[type="date"],
 input[type="time"],
-select {
-  color-scheme: dark;
-}
-/* Invert the calendar/clock icon so it's visible on dark bg */
+select { color-scheme: dark; }
+
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.7);
-  cursor: pointer;
+  filter: invert(0.6); cursor: pointer;
 }
 
-/* ─── Scrollbar ─── */
+/* ── Scrollbar ──────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #080705; }
-::-webkit-scrollbar-thumb { background: #3e3830; }
-::-webkit-scrollbar-thumb:hover { background: #c8922a; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #333; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
-/* ─── Marquee ─── */
+/* ── Marquee ────────────────────────────────── */
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
-.animate-marquee { animation: marquee 22s linear infinite; }
+.animate-marquee { animation: marquee 24s linear infinite; }
 
-/* ─── Badge pulse ─── */
+/* ── Micro-interactions ─────────────────────── */
+button:active { transform: scale(0.97); }
+input:focus, textarea:focus, select:focus {
+  box-shadow: 0 0 0 2px rgba(201,168,76,0.18);
+}
+a, button, input, select, textarea {
+  transition: color 0.2s, border-color 0.2s, background-color 0.2s, opacity 0.2s;
+}
+
+/* ── Scrollbar hide ─────────────────────────── */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ── Badge pulse ────────────────────────────── */
 @keyframes badge-pulse {
   0%, 100% { transform: scale(1); }
-  50%       { transform: scale(1.2); }
+  50%       { transform: scale(1.15); }
 }
 .animate-badge-pulse { animation: badge-pulse 2s ease-in-out infinite; }
 
-/* ─── Micro-interactions ─── */
-button { transition: transform 0.1s ease; }
-button:active { transform: scale(0.97); }
-
-input:focus,
-textarea:focus,
-select:focus {
-  box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.2);
+/* ── prefers-reduced-motion ─────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
-
-/* ─── Global transition for theme tokens ─── */
-a, button, input, select, textarea {
-  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
-}
-
-/* ─── scrollbar-hide utility ─── */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar { display: none; }

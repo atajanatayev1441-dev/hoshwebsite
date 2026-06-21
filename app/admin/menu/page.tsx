@@ -20,7 +20,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
-  Plus, Pencil, Trash2, GripVertical, Eye, EyeOff, Star, X, Save,
+  Plus, Pencil, Trash2, GripVertical, Eye, EyeOff, Star, X, Save, Upload, Loader2,
 } from 'lucide-react'
 
 interface Category {
@@ -142,9 +142,30 @@ function ItemModal({
     categoryId,
     ...(item ?? {}),
   })
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
 
   const set = (key: keyof typeof form, value: unknown) =>
     setForm((f) => ({ ...f, [key]: value }))
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    setUploadError('')
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Upload failed')
+      set('imageUrl', data.url)
+    } catch (err: any) {
+      setUploadError(err.message || 'Ошибка загрузки')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -188,8 +209,34 @@ function ItemModal({
               <input type="number" value={form.price} onChange={(e) => set('price', Number(e.target.value))} className="input text-sm" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-sage-600 dark:text-sage-300 mb-1">URL изображения</label>
-              <input value={form.imageUrl ?? ''} onChange={(e) => set('imageUrl', e.target.value)} className="input text-sm" placeholder="https://..." />
+              <label className="block text-xs font-medium text-sage-600 dark:text-sage-300 mb-1">Фото</label>
+              {/* Image preview */}
+              {form.imageUrl && (
+                <div className="relative w-full h-28 mb-2 overflow-hidden rounded-lg bg-black/20">
+                  <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => set('imageUrl', '')}
+                    className="absolute top-1 right-1 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center text-white hover:bg-red-500 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+              {/* Upload button */}
+              <label className="flex items-center gap-2 cursor-pointer w-full py-2 px-3 border border-dashed border-sage-600 hover:border-gold-400 rounded-lg transition-colors text-sage-400 hover:text-gold-400 text-xs">
+                {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                {uploading ? 'Загрузка...' : 'Загрузить фото'}
+                <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" disabled={uploading} />
+              </label>
+              {/* Or URL */}
+              <input
+                value={form.imageUrl ?? ''}
+                onChange={(e) => set('imageUrl', e.target.value)}
+                className="input text-xs mt-1.5"
+                placeholder="Или вставьте URL..."
+              />
+              {uploadError && <p className="text-red-400 text-xs mt-1">{uploadError}</p>}
             </div>
           </div>
           <div className="flex gap-4">

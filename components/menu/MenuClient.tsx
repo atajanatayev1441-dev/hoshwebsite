@@ -10,102 +10,93 @@ import { MenuCard } from '@/components/menu/MenuCard'
 import { translations } from '@/lib/i18n'
 import type { CategoryWithItems } from '@/app/(public)/menu/page'
 
-interface Props {
-  categories: CategoryWithItems[]
-}
-
-export function MenuClient({ categories }: Props) {
+export function MenuClient({ categories }: { categories: CategoryWithItems[] }) {
   const { lang } = useLang()
   const { count, setCartOpen } = useCart()
   const tr = translations[lang]
   const ru = lang === 'ru'
 
-  const allItems = categories.flatMap((c) => c.items)
   const [activeId, setActiveId] = useState<number | 'all'>('all')
 
+  const allItems = categories.flatMap(c => c.items)
   const visibleItems = activeId === 'all'
     ? allItems
-    : (categories.find((c) => c.id === activeId)?.items ?? [])
+    : (categories.find(c => c.id === activeId)?.items ?? [])
 
   return (
     <>
-      {/* Hero */}
-      <div className="relative h-64 md:h-80 overflow-hidden">
-        <Image
-          src="/images/photo_2026-06-19_18-49-22.jpg"
-          alt={ru ? 'Наше меню' : 'Biziň menýumyz'}
-          fill className="object-cover object-center"
-        />
-        <div className="absolute inset-0" style={{ background: 'rgba(8,7,5,0.65)' }} />
+      {/* Hero 35vh */}
+      <div className="relative overflow-hidden" style={{ height: '35vh', minHeight: '240px' }}>
+        <Image src="/images/photo_2026-06-19_18-49-22.jpg" alt="Menu" fill className="object-cover object-center" />
+        <div className="absolute inset-0" style={{ background: 'rgba(10,10,10,0.72)' }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="section-label mb-3">{ru ? 'Наше меню' : 'Biziň menýumyz'}</span>
-          <h1 className="font-display text-5xl md:text-6xl font-light text-[#f0ece3]">{tr.menu}</h1>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.42em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '12px', display: 'block' }}>
+            {ru ? 'HOS LOUNGE' : 'HOS LOUNGE'}
+          </span>
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(40px, 8vw, 80px)', fontWeight: 300, color: 'var(--white)', margin: 0 }}>
+            {ru ? 'Меню' : 'Menýu'}
+          </h1>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
 
         {/* Empty state */}
         {categories.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="flex flex-col items-center justify-center py-32 text-center"
-          >
-            <div className="w-20 h-px bg-gold-500/40 mb-10" />
-            <span className="section-label mb-6">{ru ? 'Скоро' : 'Ýakynda'}</span>
-            <h2 className="font-display text-[clamp(32px,4vw,52px)] font-light text-[#f0ece3] mb-4">
-              {ru ? 'Меню скоро появится' : 'Menýu ýakynda bolar'}
+          <div className="flex flex-col items-center justify-center py-32 text-center">
+            <div style={{ width: '40px', height: '1px', background: 'var(--gold)', margin: '0 auto 32px' }} />
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '42px', fontWeight: 300, color: 'var(--white)', marginBottom: '12px' }}>
+              {ru ? 'Меню обновляется' : 'Menýu täzelenýär'}
             </h2>
-            <p className="text-[#5c5852] text-sm font-body max-w-sm leading-relaxed">
-              {ru
-                ? 'Мы готовим для вас что-то особенное. Загляните позже или забронируйте столик уже сейчас.'
-                : 'Size aýratyn bir zat taýýarlaýarys. Soňrak giriň ýa-da häzir stol zakaz ediň.'}
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: 'var(--muted)' }}>
+              {ru ? 'Загляните позже' : 'Soňrak giriň'}
             </p>
-            <div className="w-20 h-px bg-gold-500/40 mt-10" />
-          </motion.div>
+            <div style={{ width: '40px', height: '1px', background: 'var(--gold)', margin: '32px auto 0' }} />
+          </div>
         ) : (
           <>
             {/* Category tabs */}
-            <div className="flex gap-2 overflow-x-auto pb-4 mb-12 scrollbar-hide">
-              <button
-                onClick={() => setActiveId('all')}
-                className="flex-shrink-0 px-5 py-2 font-body text-xs font-medium tracking-widest uppercase transition-all duration-200"
-                style={activeId === 'all'
-                  ? { borderBottom: '2px solid #C9A84C', color: '#C9A84C', background: 'transparent' }
-                  : { borderBottom: '2px solid transparent', color: '#7a7570', background: 'transparent' }
-                }
-              >
-                {ru ? 'Все' : 'Ählisi'}
-              </button>
-              {categories.map((cat, i) => (
-                <motion.button
-                  key={cat.id}
-                  initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  onClick={() => setActiveId(cat.id)}
-                  className="flex-shrink-0 px-5 py-2 font-body text-xs font-medium tracking-widest uppercase transition-all duration-200 whitespace-nowrap"
-                  style={activeId === cat.id
-                    ? { borderBottom: '2px solid #C9A84C', color: '#C9A84C', background: 'transparent' }
-                    : { borderBottom: '2px solid transparent', color: '#7a7570', background: 'transparent' }
-                  }
-                >
-                  {ru ? cat.name_ru : cat.name_tk}
-                </motion.button>
-              ))}
+            <div className="flex overflow-x-auto scrollbar-hide gap-0 mb-10" style={{ borderBottom: '1px solid var(--border)' }}>
+              {[{ id: 'all' as const, name_ru: ru ? 'Все' : 'Ählisi', name_tk: 'Ählisi' }, ...categories].map((cat) => {
+                const isActive = activeId === cat.id
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveId(cat.id)}
+                    className="flex-shrink-0 px-5 py-4 relative whitespace-nowrap"
+                    style={{
+                      fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 500,
+                      letterSpacing: '0.12em', textTransform: 'uppercase',
+                      color: isActive ? 'var(--gold)' : 'var(--muted)',
+                      background: 'transparent', border: 'none', cursor: 'pointer',
+                      transition: 'color 0.2s',
+                    }}
+                  >
+                    {ru ? cat.name_ru : (cat as any).name_tk || cat.name_ru}
+                    {isActive && (
+                      <motion.div
+                        layoutId="tab-underline"
+                        className="absolute bottom-0 left-0 right-0"
+                        style={{ height: '2px', background: 'var(--gold)' }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+                      />
+                    )}
+                  </button>
+                )
+              })}
             </div>
 
-            {/* No items in selected category */}
+            {/* Grid */}
             {visibleItems.length === 0 ? (
-              <div className="text-center py-20">
-                <p className="text-[#5c5852] font-body text-sm">
-                  {ru ? 'В этой категории пока нет позиций' : 'Bu kategoriýada heniz pozisiýa ýok'}
-                </p>
-              </div>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--muted)', textAlign: 'center', padding: '60px 0' }}>
+                {ru ? 'В этой категории нет позиций' : 'Bu kategoriýada pozisiýa ýok'}
+              </p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: 'var(--border)' }}>
                 {visibleItems.map((item, i) => (
-                  <MenuCard key={item.id} item={item} index={i} />
+                  <div key={item.id} style={{ background: 'var(--bg)' }}>
+                    <MenuCard item={item} index={i} />
+                  </div>
                 ))}
               </div>
             )}
@@ -116,18 +107,17 @@ export function MenuClient({ categories }: Props) {
       {/* Cart FAB */}
       <motion.button
         initial={{ scale: 0 }} animate={{ scale: 1 }}
-        transition={{ delay: 0.4, type: 'spring', damping: 14 }}
+        transition={{ delay: 0.5, type: 'spring', damping: 14 }}
         onClick={() => setCartOpen(true)}
-        className="fixed bottom-8 right-8 z-30 w-14 h-14 flex items-center justify-center shadow-2xl"
-        style={{ background: '#C9A84C', color: '#080705' }}
-        aria-label="Открыть корзину"
+        className="fixed bottom-8 right-8 z-30 flex items-center justify-center"
+        style={{ width: 56, height: 56, background: 'var(--gold)', color: 'var(--bg)' }}
       >
-        <ShoppingBag className="w-6 h-6" />
+        <ShoppingBag size={22} />
         {count > 0 && (
           <motion.span
             initial={{ scale: 0 }} animate={{ scale: 1 }}
-            className="absolute -top-1.5 -right-1.5 w-5 h-5 flex items-center justify-center text-[10px] font-bold rounded-full"
-            style={{ background: '#ff4444', color: '#fff', fontFamily: "'Jost', sans-serif" }}
+            className="absolute -top-1.5 -right-1.5 flex items-center justify-center"
+            style={{ width: 20, height: 20, background: '#ef4444', borderRadius: '50%', fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 700, color: '#fff' }}
           >
             {count > 9 ? '9+' : count}
           </motion.span>
