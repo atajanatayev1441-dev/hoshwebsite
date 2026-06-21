@@ -1,20 +1,15 @@
 import { getServerSession } from 'next-auth'
-import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { SessionProvider } from '@/components/providers/SessionProvider'
 import { AdminShell } from '@/components/admin/AdminShell'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  let session
+  // Auth redirect is handled by middleware.ts — layout just provides session to client components
+  let session = null
   try {
     session = await getServerSession(authOptions)
   } catch (err) {
-    console.error('[AdminLayout] getServerSession failed:', err)
-    throw err
-  }
-
-  if (!session) {
-    redirect('/admin/login')
+    console.error('[AdminLayout] getServerSession error:', err)
   }
 
   return (
