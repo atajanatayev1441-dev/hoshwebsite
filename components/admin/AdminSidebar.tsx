@@ -2,14 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { signOut } from 'next-auth/react'
 import {
   LayoutDashboard,
   ShoppingBag,
   CalendarDays,
   UtensilsCrossed,
   Tag,
-  LogOut,
   Coffee,
   ExternalLink,
 } from 'lucide-react'
@@ -80,8 +78,8 @@ export function AdminSidebar({ pendingOrders, pendingBookings }: AdminSidebarPro
         })}
       </nav>
 
-      {/* Bottom: view site + sign out */}
-      <div className="p-3 border-t border-sage-800 space-y-1">
+      {/* Bottom: view site */}
+      <div className="p-3 border-t border-sage-800">
         <a
           href={process.env.NEXT_PUBLIC_MAIN_SITE_URL || 'https://hoshwebsite-production.up.railway.app'}
           target="_blank"
@@ -91,13 +89,6 @@ export function AdminSidebar({ pendingOrders, pendingBookings }: AdminSidebarPro
           <ExternalLink className="w-4 h-4" />
           На сайт
         </a>
-        <button
-          onClick={() => signOut({ callbackUrl: '/admin/login' })}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-sage-400 hover:text-red-400 hover:bg-sage-800 transition-colors w-full"
-        >
-          <LogOut className="w-4 h-4" />
-          Выйти
-        </button>
       </div>
     </aside>
   )
