@@ -8,14 +8,14 @@ async function main() {
   console.log('[startup] Running prisma db push...')
   execSync('npx prisma db push --skip-generate', { stdio: 'inherit' })
 
-  // 2. Seed only if no admin user exists yet
-  const adminCount = await prisma.adminUser.count()
-  if (adminCount === 0) {
-    console.log('[startup] DB empty — running seed...')
+  // 2. Seed if no categories exist (proper check for full data)
+  const categoryCount = await prisma.category.count()
+  if (categoryCount === 0) {
+    console.log('[startup] No categories found — running seed...')
     execSync('npx tsx prisma/seed.ts', { stdio: 'inherit' })
     console.log('[startup] Seed complete.')
   } else {
-    console.log(`[startup] DB already has ${adminCount} admin user(s) — skipping seed.`)
+    console.log(`[startup] DB has ${categoryCount} categories — skipping seed.`)
   }
 
   await prisma.$disconnect()
