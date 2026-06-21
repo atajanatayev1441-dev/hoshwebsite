@@ -21,9 +21,14 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Admin-only mode: redirect non-admin routes to main site
+  // Admin-only mode
   if (mode === 'admin') {
-    const mainSiteUrl = process.env.MAIN_SITE_URL || 'https://hoshwebsite.up.railway.app'
+    // Root → go straight to admin panel
+    if (pathname === '/') {
+      return NextResponse.redirect(new URL('/admin', request.url))
+    }
+
+    const mainSiteUrl = process.env.MAIN_SITE_URL || 'https://hoshwebsite-production.up.railway.app'
     const isAllowed =
       pathname.startsWith('/admin') ||
       pathname.startsWith('/api/') ||
