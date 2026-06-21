@@ -184,7 +184,7 @@ function ItemModal({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-sage-600 dark:text-sage-300 mb-1">Цена (сум)</label>
+              <label className="block text-xs font-medium text-sage-600 dark:text-sage-300 mb-1">Цена (м.)</label>
               <input type="number" value={form.price} onChange={(e) => set('price', Number(e.target.value))} className="input text-sm" />
             </div>
             <div>
@@ -452,7 +452,7 @@ export default function AdminMenuPage() {
                       </div>
                       <p className="text-xs text-sage-400 truncate">{item.description_ru}</p>
                       <p className="text-xs font-semibold text-sage-600 dark:text-sage-300 mt-0.5">
-                        {new Intl.NumberFormat('ru-RU').format(item.price)} сум
+                        {new Intl.NumberFormat('ru-RU').format(item.price)} м.
                       </p>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">

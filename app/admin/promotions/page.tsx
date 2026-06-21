@@ -266,7 +266,7 @@ export default function AdminPromotionsPage() {
                   </p>
                   {promo.price && (
                     <p className="text-xs font-semibold text-sage-600 dark:text-sage-300 mt-0.5">
-                      {new Intl.NumberFormat('ru-RU').format(promo.price)} сум
+                      {new Intl.NumberFormat('ru-RU').format(promo.price)} м.
                     </p>
                   )}
                 </div>

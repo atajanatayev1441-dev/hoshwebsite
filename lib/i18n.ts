@@ -69,7 +69,7 @@ export const translations = {
     unavailable: 'Недоступно',
     featured: 'Рекомендуем',
     price: 'Цена',
-    currency: 'сум',
+    currency: 'м.',
     // Footer
     address: 'Ашхабад, Туркменистан',
     phone: '+993 62 XXXXXX',
@@ -144,7 +144,7 @@ export const translations = {
     unavailable: 'Ýok',
     featured: 'Maslahat berilýär',
     price: 'Baha',
-    currency: 'manat',
+    currency: 'м.',
     // Footer
     address: 'Aşgabat, Türkmenistan',
     phone: '+993 62 XXXXXX',

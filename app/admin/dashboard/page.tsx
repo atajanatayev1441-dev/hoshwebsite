@@ -104,7 +104,7 @@ export default function DashboardPage() {
         },
         {
           label: 'Выручка сегодня',
-          value: new Intl.NumberFormat('ru-RU').format(stats.revenueToday) + ' сум',
+          value: new Intl.NumberFormat('ru-RU').format(stats.revenueToday) + ' м.',
           icon: TrendingUp,
           color: 'bg-sage-50 dark:bg-sage-800/40 text-sage-600 dark:text-sage-300',
           border: 'border-sage-200 dark:border-sage-700',

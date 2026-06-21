@@ -191,7 +191,7 @@ export default function AdminOrdersPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="font-semibold text-sage-700 dark:text-sage-200 text-sm">
-                      {new Intl.NumberFormat('ru-RU').format(order.totalAmount)} сум
+                      {new Intl.NumberFormat('ru-RU').format(order.totalAmount)} м.
                     </span>
                     <ChevronDown
                       className={`w-4 h-4 text-sage-400 transition-transform ${expandedId === order.id ? 'rotate-180' : ''}`}
