@@ -8,7 +8,7 @@ async function main() {
   console.log('[startup] Running prisma db push...')
   execSync('npx prisma db push --skip-generate', { stdio: 'inherit' })
 
-  // 2. Seed if no categories exist (proper check for full data)
+  // 2. Seed if no categories exist
   const categoryCount = await prisma.category.count()
   if (categoryCount === 0) {
     console.log('[startup] No categories found — running seed...')
@@ -16,6 +16,15 @@ async function main() {
     console.log('[startup] Seed complete.')
   } else {
     console.log(`[startup] DB has ${categoryCount} categories — skipping seed.`)
+  }
+
+  // 3. Add photos to items that don't have one yet
+  const noPhoto = await prisma.menuItem.count({ where: { imageUrl: null } })
+  if (noPhoto > 0) {
+    console.log(`[startup] ${noPhoto} items without photos — updating...`)
+    execSync('node scripts/update-photos.mjs', { stdio: 'inherit' })
+  } else {
+    console.log('[startup] All items have photos.')
   }
 
   await prisma.$disconnect()

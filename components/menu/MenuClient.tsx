@@ -92,11 +92,9 @@ export function MenuClient({ categories }: { categories: CategoryWithItems[] }) 
                 {ru ? 'В этой категории нет позиций' : 'Bu kategoriýada pozisiýa ýok'}
               </p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: 'var(--border)' }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {visibleItems.map((item, i) => (
-                  <div key={item.id} style={{ background: 'var(--bg)' }}>
-                    <MenuCard item={item} index={i} />
-                  </div>
+                  <MenuCard key={item.id} item={item} index={i} />
                 ))}
               </div>
             )}

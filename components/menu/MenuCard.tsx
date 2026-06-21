@@ -35,7 +35,13 @@ export function MenuCard({ item }: Props) {
   return (
     <div
       className="menu-card group relative overflow-hidden flex flex-col"
-      style={{ background: 'var(--surface)', border: '1px solid rgba(255,255,255,0.06)' }}
+      style={{
+        background: 'var(--surface)',
+        border: '1px solid rgba(255,255,255,0.12)',
+        transition: 'border-color 0.3s',
+      }}
+      onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)')}
+      onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
     >
       {/* Featured: gold top bar */}
       {item.featured && (
