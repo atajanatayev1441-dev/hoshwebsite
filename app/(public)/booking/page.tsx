@@ -265,7 +265,7 @@ export default function BookingPage() {
 
         {/* RIGHT — Photo */}
         <div className="relative hidden lg:block" style={{ minHeight: '600px' }}>
-          <Image src="/images/hero.jpg" alt="HOS Lounge" fill className="object-cover" />
+          <Image src="/images/hero.jpg" alt="HOŞ Lounge" fill className="object-cover" />
           <div className="absolute inset-0" style={{ background: 'rgba(10,10,10,0.35)' }} />
         </div>
       </div>

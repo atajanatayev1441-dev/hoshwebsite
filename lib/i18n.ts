@@ -8,7 +8,7 @@ export const translations = {
     booking: 'Забронировать',
     promotions: 'Акции',
     // Hero
-    heroTitle: 'HOS Coffee Lounge',
+    heroTitle: 'HOŞ Coffee Lounge',
     heroTagline: 'Место, где каждая чашка — это история',
     heroSubtitle: 'Авторский кофе, домашняя выпечка и атмосфера уюта',
     viewMenu: 'Смотреть меню',
@@ -83,7 +83,7 @@ export const translations = {
     booking: 'Zakaz et',
     promotions: 'Aksiýalar',
     // Hero
-    heroTitle: 'HOS Coffee Lounge',
+    heroTitle: 'HOŞ Coffee Lounge',
     heroTagline: 'Her käse bir hekaýa',
     heroSubtitle: 'Awtor kofe, öý çörek we ajaýyp atmosfera',
     viewMenu: 'Menýuny gör',

@@ -4,9 +4,9 @@ import type { Booking, Order } from '@prisma/client'
 export const SMS_TEMPLATES = {
   orderConfirmed: {
     ru: (id: number) =>
-      `HOS Coffee Lounge: Ваш заказ №${id} принят! Будет готов в течение 20–30 минут. Спасибо, что выбрали нас!`,
+      `HOŞ Coffee Lounge: Ваш заказ №${id} принят! Будет готов в течение 20–30 минут. Спасибо, что выбрали нас!`,
     tk: (id: number) =>
-      `HOS Coffee Lounge: Siziň ${id}-nji siparişiňiz kabul edildi! 20–30 minutda taýýar bolar. Bizi saýlanyňyz üçin sag boluň!`,
+      `HOŞ Coffee Lounge: Siziň ${id}-nji siparişiňiz kabul edildi! 20–30 minutda taýýar bolar. Bizi saýlanyňyz üçin sag boluň!`,
   },
   bookingConfirmed: {
     ru: (b: Pick<Booking, 'zone' | 'date' | 'time' | 'guestCount'>) => {
@@ -15,7 +15,7 @@ export const SMS_TEMPLATES = {
         vip: 'VIP зона',
         terrace: 'Терраса',
       }
-      return `HOS Coffee Lounge: Ваш столик забронирован! ${zoneNames[b.zone] ?? b.zone}, ${b.date} в ${b.time}, на ${b.guestCount} гостей. Ждём вас!`
+      return `HOŞ Coffee Lounge: Ваш столик забронирован! ${zoneNames[b.zone] ?? b.zone}, ${b.date} в ${b.time}, на ${b.guestCount} гостей. Ждём вас!`
     },
     tk: (b: Pick<Booking, 'zone' | 'date' | 'time' | 'guestCount'>) => {
       const zoneNames: Record<string, string> = {
@@ -23,14 +23,14 @@ export const SMS_TEMPLATES = {
         vip: 'VIP zona',
         terrace: 'Taras',
       }
-      return `HOS Coffee Lounge: Siziň stolyňyz bronlandi! ${zoneNames[b.zone] ?? b.zone}, ${b.date} sagat ${b.time}-da, ${b.guestCount} myhmana. Sizi garaşýarys!`
+      return `HOŞ Coffee Lounge: Siziň stolyňyz bronlandi! ${zoneNames[b.zone] ?? b.zone}, ${b.date} sagat ${b.time}-da, ${b.guestCount} myhmana. Sizi garaşýarys!`
     },
   },
   bookingCancelled: {
     ru: () =>
-      `HOS Coffee Lounge: К сожалению, на выбранное время столик недоступен. Пожалуйста, позвоните нам: +99361XXXXXX`,
+      `HOŞ Coffee Lounge: К сожалению, на выбранное время столик недоступен. Пожалуйста, позвоните нам: +99361XXXXXX`,
     tk: () =>
-      `HOS Coffee Lounge: Gynansak-da, saýlanan wagt üçin stol ýok. Bize jaň ediň: +99361XXXXXX`,
+      `HOŞ Coffee Lounge: Gynansak-da, saýlanan wagt üçin stol ýok. Bize jaň ediň: +99361XXXXXX`,
   },
 }
 

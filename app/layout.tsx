@@ -22,7 +22,7 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'HOS Coffee Lounge',
+  title: 'HOŞ Coffee Lounge',
   description: 'Кофе-лаундж в Ашхабаде — авторский кофе, уютная атмосфера',
   icons: { icon: '/favicon.ico' },
 }

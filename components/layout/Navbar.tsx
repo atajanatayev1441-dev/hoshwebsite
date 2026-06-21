@@ -57,7 +57,7 @@ export function Navbar() {
             lineHeight: 1,
             transition: 'color 0.25s',
           }}>
-            HOS
+            HOŞ
           </span>
           <span style={{
             fontFamily: 'var(--font-dm-sans, system-ui, sans-serif)',

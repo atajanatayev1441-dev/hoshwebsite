@@ -98,7 +98,7 @@ export function Footer() {
         {/* Bottom line */}
         <div className="mt-16 pt-8 border-t border-[#1e1b16] flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="font-body text-[11px] text-[#3e3830] tracking-widest">
-            © {new Date().getFullYear()} HOS Coffee Lounge
+            © {new Date().getFullYear()} HOŞ Coffee Lounge
           </p>
           <p className="font-body text-[11px] text-[#3e3830] tracking-widest uppercase">
             Brutalism &amp; Beans · The Industrial Way

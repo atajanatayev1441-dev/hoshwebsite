@@ -31,7 +31,7 @@ export function MenuClient({ categories }: { categories: CategoryWithItems[] }) 
         <div className="absolute inset-0" style={{ background: 'rgba(10,10,10,0.72)' }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.42em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '12px', display: 'block' }}>
-            {ru ? 'HOS LOUNGE' : 'HOS LOUNGE'}
+            {ru ? 'HOŞ LOUNGE' : 'HOŞ LOUNGE'}
           </span>
           <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(40px, 8vw, 80px)', fontWeight: 300, color: 'var(--white)', margin: 0 }}>
             {ru ? 'Меню' : 'Menýu'}
