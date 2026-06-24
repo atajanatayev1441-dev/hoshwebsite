@@ -18,14 +18,9 @@ async function main() {
     console.log(`[startup] DB has ${categoryCount} categories — skipping seed.`)
   }
 
-  // 3. Add photos to items that don't have one yet
-  const noPhoto = await prisma.menuItem.count({ where: { imageUrl: null } })
-  if (noPhoto > 0) {
-    console.log(`[startup] ${noPhoto} items without photos — updating...`)
-    execSync('node scripts/update-photos.mjs', { stdio: 'inherit' })
-  } else {
-    console.log('[startup] All items have photos.')
-  }
+  // 3. Always refresh photos (fixes broken/404 URLs)
+  console.log('[startup] Refreshing menu photos...')
+  execSync('node scripts/update-photos.mjs', { stdio: 'inherit' })
 
   await prisma.$disconnect()
 
