@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
 import { triggerPusher, PUSHER_CHANNELS, PUSHER_EVENTS } from '@/lib/pusher'
 import { sendSMS, getBookingConfirmedSMS, getBookingCancelledSMS } from '@/lib/sms'
 
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions)
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const booking = await prisma.booking.findUnique({ where: { id: Number(params.id) } })
   if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 })
@@ -15,8 +11,6 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
 }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions)
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { status } = await req.json()
   const validStatuses = ['pending', 'confirmed', 'cancelled']
@@ -46,8 +40,6 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions)
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   await prisma.booking.delete({ where: { id: Number(params.id) } })
   return NextResponse.json({ ok: true })
