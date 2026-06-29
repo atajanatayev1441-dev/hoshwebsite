@@ -8,6 +8,7 @@ import { useCart } from '@/components/providers/CartProvider'
 import { translations } from '@/lib/i18n'
 import { ShoppingBag, X, Menu } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { VenueSwitcher } from '@/components/shared/VenueSwitcher'
 
 export function Navbar() {
   const pathname = usePathname()
@@ -47,30 +48,8 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-8 flex items-center justify-between h-full">
 
-        {/* ── Logo ── */}
-        <Link href="/" className="flex flex-col items-start leading-none flex-shrink-0 group">
-          <span style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: '28px',
-            color: '#C9A84C',
-            letterSpacing: '0.04em',
-            lineHeight: 1,
-            transition: 'color 0.25s',
-          }}>
-            HOŞ
-          </span>
-          <span style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '9px',
-            color: 'rgba(201,168,76,0.65)',
-            letterSpacing: '0.45em',
-            textTransform: 'uppercase',
-            marginTop: '3px',
-            transition: 'color 0.25s',
-          }}>
-            LOUNGE
-          </span>
-        </Link>
+        {/* ── Venue switcher ── */}
+        <VenueSwitcher />
 
         {/* ── Desktop nav ── */}
         <nav className="hidden md:flex items-center gap-10">

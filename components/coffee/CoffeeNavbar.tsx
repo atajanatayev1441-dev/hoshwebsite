@@ -3,10 +3,11 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useLang } from '@/components/providers/LangProvider'
-import { X, Menu, ArrowUpRight } from 'lucide-react'
+import { X, Menu } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { VenueSwitcher } from '@/components/shared/VenueSwitcher'
 
-const SAGE = '#7a8c75'
+const SAGE    = '#7a8c75'
 const SAGE_DIM = 'rgba(122,140,117,0.6)'
 const BG_LIGHT = '#f5f4f0'
 const TEXT_DARK = '#1a1a1a'
@@ -38,11 +39,8 @@ export function CoffeeNavbar() {
     }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-full">
 
-        {/* Logo */}
-        <Link href="/coffee" className="flex flex-col items-start leading-none flex-shrink-0">
-          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', color: SAGE, letterSpacing: '0.04em', lineHeight: 1 }}>HOŞ</span>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', color: SAGE_DIM, letterSpacing: '0.45em', textTransform: 'uppercase', marginTop: '3px' }}>COFFEE</span>
-        </Link>
+        {/* Venue switcher */}
+        <VenueSwitcher />
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-10">
@@ -74,17 +72,6 @@ export function CoffeeNavbar() {
             {ru ? 'TK' : 'RU'}
           </button>
 
-          <Link href="/" className="hidden md:flex items-center gap-2" style={{
-            fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500,
-            letterSpacing: '0.15em', textTransform: 'uppercase',
-            color: 'rgba(26,26,26,0.5)', textDecoration: 'none', transition: 'color 0.25s',
-          }}
-            onMouseEnter={e => (e.currentTarget.style.color = SAGE)}
-            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(26,26,26,0.5)')}
-          >
-            HOŞ Lounge <ArrowUpRight size={12} />
-          </Link>
-
           <button onClick={() => setOpen(!open)} className="md:hidden" style={{ background: 'none', border: 'none', cursor: 'pointer', color: TEXT_DARK }}>
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -107,9 +94,9 @@ export function CoffeeNavbar() {
               </motion.div>
             ))}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-              <Link href="/" onClick={() => setOpen(false)} style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: SAGE, textDecoration: 'none', border: `1px solid ${SAGE}`, padding: '12px 28px', display: 'inline-block' }}>
-                HOŞ LOUNGE ↗
-              </Link>
+              <div style={{ marginTop: '8px' }}>
+                <VenueSwitcher />
+              </div>
             </motion.div>
           </motion.div>
         )}
