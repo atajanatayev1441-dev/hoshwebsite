@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Users, Star, Leaf, CheckCircle, Clock, X } from 'lucide-react'
@@ -58,14 +58,23 @@ export default function BookingPage() {
   const [loading,    setLoading]    = useState(false)
   const [bookingId,  setBookingId]  = useState<number | null>(null)
   const [status,     setStatus]     = useState('pending')
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    return () => { if (pollRef.current) clearInterval(pollRef.current) }
+  }, [])
 
   const pollStatus = (id: number) => {
-    const iv = setInterval(async () => {
+    if (pollRef.current) clearInterval(pollRef.current)
+    pollRef.current = setInterval(async () => {
       const res = await fetch(`/api/bookings/${id}/status`)
       if (res.ok) {
         const d = await res.json()
         setStatus(d.status)
-        if (d.status !== 'pending') clearInterval(iv)
+        if (d.status !== 'pending') {
+          clearInterval(pollRef.current!)
+          pollRef.current = null
+        }
       }
     }, 5000)
   }
@@ -137,7 +146,7 @@ export default function BookingPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
 
         {/* LEFT — Form */}
-        <div className="flex flex-col justify-center px-8 md:px-16 py-24 lg:py-32">
+        <div className="flex flex-col justify-center px-5 sm:px-8 md:px-16 py-14 md:py-24 lg:py-32">
           <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.4em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '16px' }}>
             {ru ? 'ОНЛАЙН БРОНИРОВАНИЕ' : 'ONLAÝN ZAKAZ'}
           </span>
@@ -150,7 +159,7 @@ export default function BookingPage() {
             {/* Zone */}
             <div>
               <label style={labelStyle}>{ru ? 'ВЫБЕРИТЕ ЗОНУ' : 'ZONA SAÝLAŇ'}</label>
-              <div className="grid grid-cols-3 gap-3 mt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
                 {zones.map(z => {
                   const Icon = z.icon
                   const sel = zone === z.id

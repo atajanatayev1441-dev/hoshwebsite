@@ -31,7 +31,7 @@ export default function PromotionsPage() {
         <div className="absolute inset-0 bg-carbon-950/70" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <p className="section-label mb-3">{lang === 'ru' ? 'Специальные предложения' : 'Ýörite teklipler'}</p>
-          <h1 className="font-playfair text-5xl md:text-6xl font-bold text-concrete-100">{tr.promotionsTitle}</h1>
+          <h1 className="font-display text-5xl md:text-6xl font-bold text-concrete-100">{tr.promotionsTitle}</h1>
         </div>
       </div>
 
@@ -68,7 +68,7 @@ export default function PromotionsPage() {
                         </span>
                       )}
                     </div>
-                    <h3 className="font-playfair text-xl font-semibold text-concrete-100 mb-3">{title}</h3>
+                    <h3 className="font-display text-xl font-semibold text-concrete-100 mb-3">{title}</h3>
                     <p className="text-concrete-500 text-sm leading-relaxed font-light">{description}</p>
                     {promo.price && (
                       <div className="mt-5 pt-5 border-t border-carbon-800">

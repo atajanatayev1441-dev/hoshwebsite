@@ -13,7 +13,7 @@
   --border:     rgba(255,255,255,0.08);
 
   --font-heading: var(--font-cormorant, 'Cormorant Garamond', Georgia, serif);
-  --font-body:    var(--font-dm-sans, 'DM Sans', system-ui, sans-serif);
+  --font-body:    var(--font-cormorant, 'Cormorant Garamond', Georgia, serif);
 }
 
 /* ── Base ───────────────────────────────────── */
@@ -53,7 +53,7 @@
     gap: 0.6rem;
     background: var(--gold);
     color: var(--bg);
-    padding: 14px 32px;
+    padding: 12px 24px;
     font-family: var(--font-body);
     font-size: 11px;
     font-weight: 500;
@@ -61,6 +61,9 @@
     text-transform: uppercase;
     transition: background 0.25s;
     cursor: pointer;
+  }
+  @media (min-width: 640px) {
+    .btn-gold { padding: 14px 32px; }
   }
   .btn-gold:hover  { background: #d4a93a; }
   .btn-gold:active { transform: scale(0.97); }
@@ -199,6 +202,11 @@ a, button, input, select, textarea {
   50%       { transform: scale(1.15); }
 }
 .animate-badge-pulse { animation: badge-pulse 2s ease-in-out infinite; }
+
+/* ── Mobile safe area ───────────────────────── */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+}
 
 /* ── prefers-reduced-motion ─────────────────── */
 @media (prefers-reduced-motion: reduce) {

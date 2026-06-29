@@ -47,10 +47,10 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-8 flex items-center justify-between h-full">
 
-        {/* ── Logo: HOS в Italiana + LOUNGE в DM Sans ── */}
+        {/* ── Logo ── */}
         <Link href="/" className="flex flex-col items-start leading-none flex-shrink-0 group">
           <span style={{
-            fontFamily: 'var(--font-italiana, "Georgia", serif)',
+            fontFamily: 'var(--font-heading)',
             fontSize: '28px',
             color: '#C9A84C',
             letterSpacing: '0.04em',
@@ -60,8 +60,8 @@ export function Navbar() {
             HOŞ
           </span>
           <span style={{
-            fontFamily: 'var(--font-dm-sans, system-ui, sans-serif)',
-            fontSize: '7.5px',
+            fontFamily: 'var(--font-body)',
+            fontSize: '9px',
             color: 'rgba(201,168,76,0.65)',
             letterSpacing: '0.45em',
             textTransform: 'uppercase',
@@ -79,7 +79,7 @@ export function Navbar() {
               key={l.href} href={l.href}
               className="relative group/link"
               style={{
-                fontFamily: 'var(--font-dm-sans, system-ui, sans-serif)',
+                fontFamily: 'var(--font-body)',
                 fontSize: '12px',
                 fontWeight: 500,
                 letterSpacing: '0.1em',
@@ -112,7 +112,7 @@ export function Navbar() {
           <button
             onClick={() => setLang(lang === 'ru' ? 'tk' : 'ru')}
             style={{
-              fontFamily: 'var(--font-dm-sans, system-ui, sans-serif)',
+              fontFamily: 'var(--font-body)',
               fontSize: '10px', fontWeight: 600, letterSpacing: '0.25em',
               textTransform: 'uppercase', color: '#5c5852',
               background: 'transparent', border: '1px solid #2a2720',
@@ -199,8 +199,8 @@ export function Navbar() {
                   href={l.href}
                   onClick={() => setOpen(false)}
                   style={{
-                    fontFamily: 'var(--font-italiana, "Georgia", serif)',
-                    fontSize: '42px',
+                    fontFamily: 'var(--font-heading)',
+                    fontSize: 'clamp(32px, 9vw, 48px)',
                     color: isActive(l.href) ? '#C9A84C' : '#f0ece3',
                     textDecoration: 'none', letterSpacing: '0.03em',
                   }}

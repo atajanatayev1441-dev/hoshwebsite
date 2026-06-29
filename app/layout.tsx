@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, DM_Sans } from 'next/font/google'
+import { Cormorant_Garamond } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
@@ -8,16 +8,9 @@ import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvide
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin', 'cyrillic'],
-  weight: ['300', '400', '500'],
+  weight: ['300', '400', '600'],
   style: ['normal', 'italic'],
   variable: '--font-cormorant',
-  display: 'swap',
-})
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-dm-sans',
   display: 'swap',
 })
 
@@ -29,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" suppressHydrationWarning className={`${cormorant.variable} ${dmSans.variable}`}>
+    <html lang="ru" suppressHydrationWarning className={cormorant.variable}>
       <body>
         <ThemeProvider>
           <LangProvider>
@@ -40,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Toaster
           position="bottom-center"
           richColors
-          toastOptions={{ style: { fontFamily: 'var(--font-dm-sans, system-ui)', fontSize: '13px' } }}
+          toastOptions={{ style: { fontFamily: 'var(--font-cormorant, Georgia, serif)', fontSize: '15px' } }}
         />
       </body>
     </html>
