@@ -147,11 +147,11 @@ export default function HomePage() {
               {/* Logo */}
               <div className="relative mb-8" style={{ width: 'clamp(120px, 20vw, 180px)', aspectRatio: '1/1' }}>
                 <Image
-                  src="/images/lounge-logo.png"
+                  src="/images/hoslounge.jpg"
                   alt="HOŞ Lounge"
                   fill
                   className="object-contain transition-transform duration-500 group-hover:scale-105"
-                  style={{ mixBlendMode: 'screen', filter: 'brightness(1.1) sepia(0.5) hue-rotate(5deg) contrast(1.2)' }}
+                  style={{ mixBlendMode: 'screen', filter: 'brightness(1.05) contrast(1.1)' }}
                 />
               </div>
 
@@ -187,11 +187,11 @@ export default function HomePage() {
               {/* Logo */}
               <div className="relative mb-8" style={{ width: 'clamp(120px, 20vw, 180px)', aspectRatio: '1/1' }}>
                 <Image
-                  src="/images/coffee-logo.webp"
+                  src="/images/hoscoffee.webp"
                   alt="HOŞ Coffee"
                   fill
                   className="object-contain transition-transform duration-500 group-hover:scale-105"
-                  style={{ mixBlendMode: 'screen', filter: 'brightness(1.05) saturate(1.3) contrast(1.1)' }}
+                  style={{ mixBlendMode: 'screen', filter: 'brightness(1.1) contrast(1.15)' }}
                 />
               </div>
 
