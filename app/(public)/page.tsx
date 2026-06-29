@@ -118,6 +118,112 @@ export default function HomePage() {
       <Divider />
 
       {/* ══════════════════════════════════════
+          TWO VENUES — выбор заведения
+      ══════════════════════════════════════ */}
+      <section style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: '#080808' }}>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20">
+
+          {/* Label */}
+          <div className="text-center mb-12" data-animate>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '16px' }}>
+              {ru ? 'НАШИ ЗАВЕДЕНИЯ' : 'BIZIŇ KÄRHANALARYMYZ'}
+            </span>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 300, color: 'var(--white)', letterSpacing: '-0.01em' }}>
+              {ru ? 'Два места — одна семья' : 'Iki ýer — bir maşgala'}
+            </h2>
+          </div>
+
+          {/* Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ background: 'rgba(255,255,255,0.06)' }} data-animate data-delay="0.1">
+
+            {/* HOŞ LOUNGE — current site */}
+            <div className="relative group flex flex-col items-center justify-center text-center p-10 md:p-16 overflow-hidden"
+              style={{ background: '#0a0a0a', minHeight: '420px' }}>
+              {/* Gold glow */}
+              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.04) 0%, transparent 70%)', pointerEvents: 'none', transition: 'opacity 0.5s' }} className="group-hover:opacity-200" />
+              {/* Top accent */}
+              <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '40px', background: 'linear-gradient(to bottom, var(--gold), transparent)' }} />
+
+              {/* Logo */}
+              <div className="relative mb-8" style={{ width: 'clamp(120px, 20vw, 180px)', aspectRatio: '1/1' }}>
+                <Image
+                  src="/images/lounge-logo.png"
+                  alt="HOŞ Lounge"
+                  fill
+                  className="object-contain transition-transform duration-500 group-hover:scale-105"
+                  style={{ mixBlendMode: 'screen', filter: 'brightness(1.15) saturate(0.3) contrast(1.2)' }}
+                />
+              </div>
+
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '12px' }}>
+                {ru ? 'ЛАУНДЖ' : 'LOUNGE'}
+              </span>
+              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 300, color: 'var(--white)', lineHeight: 0.95, marginBottom: '16px' }}>
+                HOŞ<br /><em style={{ color: 'var(--gold)', fontSize: '0.65em' }}>Lounge</em>
+              </h3>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.7, maxWidth: '280px', marginBottom: '32px' }}>
+                {ru ? 'Индустриальная эстетика, авторский кофе, три зоны отдыха.' : 'Industrial estetika, awtor kofe, üç dynç alyş zonamyz.'}
+              </p>
+
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500,
+                letterSpacing: '0.2em', textTransform: 'uppercase',
+                color: 'var(--gold)', border: '1px solid rgba(201,168,76,0.35)',
+                padding: '10px 24px',
+              }}>
+                {ru ? 'ВЫ ЗДЕСЬ' : 'SIZ BU ÝERDE'}
+              </span>
+            </div>
+
+            {/* HOŞ COFFEE — link to second venue */}
+            <Link href="/coffee" className="relative group flex flex-col items-center justify-center text-center p-10 md:p-16 overflow-hidden"
+              style={{ background: '#0a0a0a', minHeight: '420px', textDecoration: 'none', display: 'flex' }}>
+              {/* Sage glow */}
+              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(107,131,107,0.06) 0%, transparent 70%)', pointerEvents: 'none', opacity: 0.5, transition: 'opacity 0.5s' }} className="group-hover:!opacity-100" />
+              {/* Top accent */}
+              <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '0px', background: 'linear-gradient(to bottom, rgba(107,131,107,0.8), transparent)', transition: 'height 0.4s ease' }} className="group-hover:!h-[40px]" />
+
+              {/* Logo */}
+              <div className="relative mb-8" style={{ width: 'clamp(120px, 20vw, 180px)', aspectRatio: '1/1' }}>
+                <Image
+                  src="/images/coffee-logo.webp"
+                  alt="HOŞ Coffee"
+                  fill
+                  className="object-contain transition-transform duration-500 group-hover:scale-105"
+                  style={{ mixBlendMode: 'screen', filter: 'brightness(1.15) saturate(0.3) contrast(1.2)' }}
+                />
+              </div>
+
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: '#5a6b5a', display: 'block', marginBottom: '12px' }}>
+                {ru ? 'КОФЕЙНЯ' : 'KOFEHANA'}
+              </span>
+              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 300, color: 'var(--white)', lineHeight: 0.95, marginBottom: '16px' }}>
+                HOŞ<br /><em style={{ color: 'rgba(107,131,107,0.9)', fontSize: '0.65em' }}>Coffee</em>
+              </h3>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.7, maxWidth: '280px', marginBottom: '32px' }}>
+                {ru ? 'Третья волна кофе, уютная атмосфера, свежие зёрна.' : 'Üçünji tolkun kofe, amatly atmosfera, täze däneler.'}
+              </p>
+
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500,
+                letterSpacing: '0.2em', textTransform: 'uppercase',
+                color: 'rgba(107,131,107,0.8)', border: '1px solid rgba(107,131,107,0.3)',
+                padding: '10px 24px', transition: 'all 0.3s',
+              }}
+              className="group-hover:border-[rgba(107,131,107,0.7)] group-hover:text-[rgba(107,131,107,1)]"
+              >
+                {ru ? 'ПЕРЕЙТИ →' : 'GIT →'}
+              </span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <Divider />
+
+      {/* ══════════════════════════════════════
           MARQUEE
       ══════════════════════════════════════ */}
       <div style={{ background: 'var(--gold)', overflow: 'hidden', padding: '13px 0' }}>
