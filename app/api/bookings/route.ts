@@ -4,8 +4,9 @@ import { prisma } from '@/lib/prisma'
 import { triggerPusher, PUSHER_CHANNELS, PUSHER_EVENTS } from '@/lib/pusher'
 
 export async function GET(req: NextRequest) {
-
+  const venue = req.nextUrl.searchParams.get('venue')
   const bookings = await prisma.booking.findMany({
+    where: venue ? { venue } : undefined,
     orderBy: [{ date: 'asc' }, { time: 'asc' }],
   })
   return NextResponse.json(bookings)

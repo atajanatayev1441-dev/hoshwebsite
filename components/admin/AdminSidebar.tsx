@@ -27,8 +27,9 @@ const navItems = [
 ]
 
 const coffeeNavItems = [
-  { href: '/admin/coffee-orders', label: 'Заказы Coffee', icon: ShoppingBag },
-  { href: '/admin/coffee-menu', label: 'Меню Coffee', icon: UtensilsCrossed },
+  { href: '/admin/coffee-orders',   label: 'Заказы Coffee',       icon: ShoppingBag },
+  { href: '/admin/coffee-bookings', label: 'Бронирования Coffee',  icon: CalendarDays },
+  { href: '/admin/coffee-menu',     label: 'Меню Coffee',          icon: UtensilsCrossed },
 ]
 
 export function AdminSidebar({ pendingOrders, pendingBookings }: AdminSidebarProps) {
