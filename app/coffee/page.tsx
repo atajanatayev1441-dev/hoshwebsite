@@ -8,7 +8,6 @@ import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
 import { ArrowRight, MapPin, Clock, Phone, Plus, Users, Star, Leaf, CheckCircle, X, Search } from 'lucide-react'
 import { toast } from 'sonner'
-import { CoffeeCartDrawer } from '@/components/coffee/CoffeeCartDrawer'
 
 // ── Color tokens ──────────────────────────────────────
 const BG      = '#f0ede6'
@@ -1061,8 +1060,6 @@ export default function CoffeePage() {
         </div>
       </footer>
 
-      {/* Cart Drawer */}
-      <CoffeeCartDrawer />
     </div>
   )
 }

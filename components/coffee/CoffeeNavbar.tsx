@@ -37,9 +37,10 @@ export function CoffeeNavbar() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 transition-all duration-500" style={{
       height: '64px',
-      background: scrolled ? 'rgba(245,244,240,0.95)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(20px)' : 'none',
-      borderBottom: scrolled ? '1px solid rgba(122,140,117,0.15)' : 'none',
+      background: scrolled ? 'rgba(240,237,230,0.97)' : 'rgba(240,237,230,0.82)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      borderBottom: `1px solid ${scrolled ? 'rgba(107,125,104,0.2)' : 'rgba(107,125,104,0.1)'}`,
     }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-full">
 
