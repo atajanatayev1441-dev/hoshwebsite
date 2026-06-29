@@ -209,14 +209,17 @@ export default function CoffeePage() {
               <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 60% 50% at 50% 50%, rgba(122,140,117,0.08) 0%, transparent 70%)`, pointerEvents: 'none' }} />
               <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '40px', background: `linear-gradient(to bottom, ${SAGE}, transparent)` }} />
 
-              <div className="relative mb-8" style={{ width: 'clamp(120px,20vw,180px)', aspectRatio: '1/1' }}>
-                <Image
-                  src="/images/hoscoffee.webp"
-                  alt="HOŞ Coffee"
-                  fill
-                  className="object-contain transition-transform duration-500 group-hover:scale-105"
-                  style={{ mixBlendMode: 'multiply', filter: 'brightness(0.9) contrast(1.1)' }}
-                />
+              {/* Dark sage circle so white logo is visible on cream card */}
+              <div className="relative mb-8 transition-transform duration-500 group-hover:scale-105" style={{
+                width: 'clamp(120px,20vw,180px)', aspectRatio: '1/1',
+                borderRadius: '50%',
+                background: 'rgba(62,78,58,0.82)',
+                padding: '12%',
+                boxSizing: 'border-box',
+              }}>
+                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                  <Image src="/images/hoscoffee.png" alt="HOŞ Coffee" fill className="object-contain" />
+                </div>
               </div>
 
               <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: MUTED, display: 'block', marginBottom: '12px' }}>
@@ -247,11 +250,10 @@ export default function CoffeePage() {
 
               <div className="relative mb-8" style={{ width: 'clamp(120px,20vw,180px)', aspectRatio: '1/1' }}>
                 <Image
-                  src="/images/hoslounge.jpg"
+                  src="/images/hoslounge.png"
                   alt="HOŞ Lounge"
                   fill
                   className="object-contain transition-transform duration-500 group-hover:scale-105"
-                  style={{ mixBlendMode: 'screen', filter: 'brightness(1.05) contrast(1.1)' }}
                 />
               </div>
 

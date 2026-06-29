@@ -51,16 +51,13 @@ export function VenueSwitcher() {
         )}
         <div style={{ position: 'relative', width: 34, height: 34, flexShrink: 0 }}>
           <Image
-            src="/images/hoslounge.jpg"
+            src="/images/hoslounge.png"
             alt="HOŞ Lounge"
             fill
             sizes="34px"
             style={{
               objectFit: 'contain',
-              mixBlendMode: 'screen',
-              filter: !isCoffee
-                ? 'brightness(1.15) contrast(1.05)'
-                : 'brightness(0.4)',
+              filter: !isCoffee ? 'brightness(1.1)' : 'brightness(0.35)',
               transition: 'filter 0.3s',
             }}
           />
@@ -110,16 +107,13 @@ export function VenueSwitcher() {
         )}
         <div style={{ position: 'relative', width: 34, height: 34, flexShrink: 0 }}>
           <Image
-            src="/images/hoscoffee.webp"
+            src="/images/hoscoffee.png"
             alt="HOŞ Coffee"
             fill
             sizes="34px"
             style={{
               objectFit: 'contain',
-              mixBlendMode: 'screen',
-              filter: isCoffee
-                ? 'brightness(1.15) contrast(1.05)'
-                : 'brightness(0.4)',
+              filter: isCoffee ? 'brightness(1.1)' : 'brightness(0.35)',
               transition: 'filter 0.3s',
             }}
           />
