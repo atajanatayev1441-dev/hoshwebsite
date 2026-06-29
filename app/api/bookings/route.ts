@@ -42,6 +42,8 @@ export async function POST(req: NextRequest) {
     time: booking.time,
     guestCount: booking.guestCount,
     name: booking.name,
+    phone: booking.phone,
+    venue: venue ?? 'lounge',
     createdAt: booking.createdAt,
   })
 

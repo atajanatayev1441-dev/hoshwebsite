@@ -198,14 +198,14 @@ export default function AdminBookingsPage() {
                         onClick={() => updateStatus(booking.id, 'confirmed')}
                         className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded-lg font-medium transition-colors disabled:opacity-50 whitespace-nowrap"
                       >
-                        Подтвердить + SMS
+                        Подтвердить
                       </button>
                       <button
                         disabled={updating === booking.id}
                         onClick={() => updateStatus(booking.id, 'cancelled')}
                         className="px-3 py-1.5 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 text-red-600 dark:text-red-400 text-xs rounded-lg font-medium transition-colors disabled:opacity-50"
                       >
-                        Отменить + SMS
+                        Отменить
                       </button>
                     </div>
                   )}

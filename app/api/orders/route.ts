@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
     tableNumber: order.tableNumber,
     totalAmount: order.totalAmount,
     itemCount: order.items.length,
+    venue: 'lounge',
     createdAt: order.createdAt,
   })
 

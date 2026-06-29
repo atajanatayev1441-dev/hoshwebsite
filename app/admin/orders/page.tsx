@@ -235,7 +235,7 @@ export default function AdminOrdersPage() {
                                   onClick={() => updateStatus(order.id, 'confirmed')}
                                   className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg font-medium transition-colors disabled:opacity-50"
                                 >
-                                  Подтвердить + SMS
+                                  Подтвердить
                                 </button>
                                 <button
                                   disabled={updating === order.id}

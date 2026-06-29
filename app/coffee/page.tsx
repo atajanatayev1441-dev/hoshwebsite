@@ -6,7 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
-import { ArrowRight, MapPin, Clock, Phone, Plus, Users, Star, Leaf, CheckCircle, X } from 'lucide-react'
+import { ArrowRight, MapPin, Clock, Phone, Plus, Users, Star, Leaf, CheckCircle, X, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { CoffeeCartDrawer } from '@/components/coffee/CoffeeCartDrawer'
 
@@ -48,6 +48,10 @@ export default function CoffeePage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [activeTab, setActiveTab] = useState<number | null>(null)
   const [menuLoading, setMenuLoading] = useState(true)
+  const [menuSearch, setMenuSearch] = useState('')
+
+  interface Promo { id: number; title_ru: string; title_tk: string; description_ru: string; description_tk: string; badge_ru: string | null; badge_tk: string | null; price: number | null }
+  const [promos, setPromos] = useState<Promo[]>([])
 
   // Booking form state
   const [bZone,       setBZone]       = useState('main')
@@ -66,7 +70,7 @@ export default function CoffeePage() {
   const imgY    = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
   const fadeOut = useTransform(scrollYProgress, [0, 0.7], [1, 0])
 
-  // Fetch dynamic menu
+  // Fetch dynamic menu + promos
   useEffect(() => {
     fetch('/api/coffee/categories')
       .then((r) => r.json())
@@ -76,6 +80,10 @@ export default function CoffeePage() {
         setMenuLoading(false)
       })
       .catch(() => setMenuLoading(false))
+    fetch('/api/promotions')
+      .then((r) => r.json())
+      .then(setPromos)
+      .catch(() => {})
   }, [])
 
   // GSAP scroll animations
@@ -146,6 +154,18 @@ export default function CoffeePage() {
 
   const activeItems = categories.find((c) => c.id === activeTab)?.items ?? []
   const fmt = (p: number) => new Intl.NumberFormat('ru-RU').format(p) + ' TMT'
+
+  const q = menuSearch.trim().toLowerCase()
+  const searchItems = q
+    ? categories.flatMap((c) =>
+        c.items.filter((item) =>
+          item.name_ru.toLowerCase().includes(q) ||
+          item.name_tk.toLowerCase().includes(q) ||
+          (item.description_ru ?? '').toLowerCase().includes(q) ||
+          (item.description_tk ?? '').toLowerCase().includes(q)
+        )
+      )
+    : []
 
   const coffeeZones = [
     { id: 'main',    icon: Users, ru: 'Основной зал', tk: 'Esasy zal'  },
@@ -392,6 +412,52 @@ export default function CoffeePage() {
       <Divider />
 
       {/* ══════════════════════════════════════
+          PROMOTIONS — only if active promos exist
+      ══════════════════════════════════════ */}
+      {promos.length > 0 && (
+        <>
+          <section style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: SURFACE }}>
+            <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20">
+              <div className="text-center mb-10" data-animate-c>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.42em', textTransform: 'uppercase', color: SAGE, display: 'block', marginBottom: '16px' }}>
+                  {ru ? 'СПЕЦИАЛЬНЫЕ ПРЕДЛОЖЕНИЯ' : 'AÝRATYN TEKLIPLER'}
+                </span>
+                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(28px,4vw,48px)', fontWeight: 300, color: TEXT }}>
+                  {ru ? 'Только сейчас' : 'Diňe häzir'}
+                </h2>
+              </div>
+              <div className={`grid gap-5 ${promos.length === 1 ? '' : promos.length === 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-3'}`}>
+                {promos.map((p, i) => (
+                  <motion.div key={p.id}
+                    initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                    style={{ background: BG, border: `1px solid ${BORDER}`, padding: '28px 28px 24px', display: 'flex', flexDirection: 'column', gap: '10px' }}
+                  >
+                    {(ru ? p.badge_ru : p.badge_tk) && (
+                      <span style={{ display: 'inline-block', alignSelf: 'flex-start', fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.25em', textTransform: 'uppercase', padding: '4px 10px', background: SAGE, color: '#fff' }}>
+                        {ru ? p.badge_ru : p.badge_tk}
+                      </span>
+                    )}
+                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 300, color: TEXT, lineHeight: 1.2, margin: 0 }}>
+                      {ru ? p.title_ru : p.title_tk}
+                    </h3>
+                    <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: MUTED, lineHeight: 1.7, margin: 0 }}>
+                      {ru ? p.description_ru : p.description_tk}
+                    </p>
+                    {p.price && (
+                      <span style={{ fontFamily: 'var(--font-body)', fontSize: '18px', fontWeight: 500, color: SAGE, marginTop: '4px' }}>
+                        {fmt(p.price)}
+                      </span>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+          <Divider />
+        </>
+      )}
+
+      {/* ══════════════════════════════════════
           MENU — dynamic from API
       ══════════════════════════════════════ */}
       <section id="menu" style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: BG }}>
@@ -409,6 +475,25 @@ export default function CoffeePage() {
             </h2>
           </div>
 
+          {/* Search box */}
+          {!menuLoading && categories.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', maxWidth: '400px', margin: '0 auto 32px', border: `1px solid ${BORDER}`, background: SURFACE, padding: '10px 16px' }}>
+              <Search size={14} style={{ color: MUTED, flexShrink: 0 }} />
+              <input
+                type="text"
+                value={menuSearch}
+                onChange={(e) => setMenuSearch(e.target.value)}
+                placeholder={ru ? 'Поиск по меню...' : 'Menýudan gözleg...'}
+                style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontFamily: 'var(--font-body)', fontSize: '14px', color: TEXT }}
+              />
+              {menuSearch && (
+                <button onClick={() => setMenuSearch('')} style={{ border: 'none', background: 'none', cursor: 'pointer', color: MUTED, padding: 0, display: 'flex' }}>
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+          )}
+
           {menuLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -416,11 +501,55 @@ export default function CoffeePage() {
               ))}
             </div>
           ) : categories.length === 0 ? (
-            /* Fallback: no categories in DB yet — show coming soon */
             <div className="text-center py-16" style={{ color: MUTED }}>
               <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300 }}>
                 {ru ? 'Меню скоро появится' : 'Menýu ýakynda peýda bolar'}
               </p>
+            </div>
+          ) : q ? (
+            /* Search results — across all categories */
+            <div>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: MUTED, marginBottom: '20px', textAlign: 'center' }}>
+                {ru ? `Результаты: ${searchItems.length}` : `Netije: ${searchItems.length}`}
+              </p>
+              {searchItems.length === 0 ? (
+                <div className="text-center py-12" style={{ color: MUTED }}>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300 }}>
+                    {ru ? 'Ничего не найдено' : 'Hiç zat tapylmady'}
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {searchItems.map((item) => (
+                    <motion.div key={item.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
+                      style={{ background: SURFACE, border: `1px solid ${BORDER}`, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
+                    >
+                      {item.imageUrl && (
+                        <div style={{ position: 'relative', height: '160px', flexShrink: 0 }}>
+                          <Image src={item.imageUrl} alt={item.name_ru} fill className="object-cover" />
+                        </div>
+                      )}
+                      <div style={{ padding: '18px 20px 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+                          <h3 style={{ fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 400, color: TEXT, lineHeight: 1.35, flex: 1 }}>
+                            {ru ? item.name_ru : item.name_tk}
+                          </h3>
+                          <span style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 500, color: SAGE, flexShrink: 0 }}>{fmt(item.price)}</span>
+                        </div>
+                        <div style={{ marginTop: 'auto', paddingTop: '12px' }}>
+                          <button onClick={() => { addItem({ id: item.id, name_ru: item.name_ru, name_tk: item.name_tk, price: item.price }); setCartOpen(true) }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'transparent', border: `1px solid ${SAGE}`, color: SAGE, padding: '8px 18px', fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.2s' }}
+                            onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.background = SAGE; el.style.color = '#fff' }}
+                            onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = SAGE }}
+                          >
+                            <Plus size={12} />{ru ? 'Добавить' : 'Goş'}
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <>
