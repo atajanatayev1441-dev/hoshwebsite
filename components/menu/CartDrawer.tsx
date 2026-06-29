@@ -1,16 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Minus, Plus, ShoppingBag, Phone, Hash, CheckCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { useCart } from '@/components/providers/CartProvider'
 import { useLang } from '@/components/providers/LangProvider'
+import { useClientAuth } from '@/components/providers/ClientAuthProvider'
 import { translations } from '@/lib/i18n'
 
 export function CartDrawer() {
   const { items, updateQty, clearCart, total, cartOpen, setCartOpen } = useCart()
   const { lang } = useLang()
+  const { client } = useClientAuth()
   const tr = translations[lang]
   const ru = lang === 'ru'
 
@@ -18,6 +20,12 @@ export function CartDrawer() {
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [orderId, setOrderId] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (client?.phone) {
+      setPhone(client.phone)
+    }
+  }, [client?.phone])
 
   const fmt = (p: number) => new Intl.NumberFormat('ru-RU').format(p) + ' ' + tr.currency
 
@@ -155,10 +163,11 @@ export function CartDrawer() {
                       <Phone className="absolute left-3 top-3.5 w-4 h-4 text-[#3e3830]" />
                       <input
                         type="tel" value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={(e) => { if (!client) setPhone(e.target.value) }}
+                        readOnly={!!client}
                         placeholder={tr.phonePlaceholder}
                         className="w-full pl-9 pr-4 py-3 bg-transparent border-b border-[#2a2720] focus:border-gold-500 focus:outline-none text-[#f0ece3] text-sm font-body placeholder:text-[#3e3830] transition-colors"
-                        style={{ colorScheme: 'dark', fontSize: '16px' }}
+                        style={{ colorScheme: 'dark', fontSize: '16px', background: client ? 'rgba(255,255,255,0.04)' : 'transparent', cursor: client ? 'default' : 'text' }}
                       />
                     </div>
                     <button

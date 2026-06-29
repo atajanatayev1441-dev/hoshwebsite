@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
-import { X, Menu, ShoppingBag } from 'lucide-react'
+import { useClientAuth } from '@/components/providers/ClientAuthProvider'
+import { X, Menu, ShoppingBag, User } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { VenueSwitcher } from '@/components/shared/VenueSwitcher'
 
@@ -16,6 +17,7 @@ const TEXT_DARK = '#1c1c1c'
 export function CoffeeNavbar() {
   const { lang, setLang } = useLang()
   const { count, setCartOpen } = useCart()
+  const { client, loading: authLoading } = useClientAuth()
   const ru = lang === 'ru'
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -94,6 +96,39 @@ export function CoffeeNavbar() {
               </span>
             )}
           </button>
+
+          {/* Auth button */}
+          {!authLoading && (
+            client ? (
+              <Link
+                href="/profile"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600,
+                  letterSpacing: '0.15em', textTransform: 'uppercase',
+                  color: SAGE, textDecoration: 'none', transition: 'color 0.2s',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = TEXT_DARK)}
+                onMouseLeave={e => (e.currentTarget.style.color = SAGE)}
+              >
+                <User size={14} />
+                {client.name.split(' ')[0]}
+              </Link>
+            ) : (
+              <Link
+                href="/auth/login"
+                style={{
+                  fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600,
+                  letterSpacing: '0.2em', textTransform: 'uppercase',
+                  color: 'rgba(28,28,28,0.5)', textDecoration: 'none', transition: 'color 0.2s',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = SAGE)}
+                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(28,28,28,0.5)')}
+              >
+                ВОЙТИ
+              </Link>
+            )
+          )}
 
           <button onClick={() => setOpen(!open)} className="md:hidden" style={{ background: 'none', border: 'none', cursor: 'pointer', color: TEXT_DARK }}>
             {open ? <X size={20} /> : <Menu size={20} />}

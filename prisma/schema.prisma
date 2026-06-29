@@ -96,3 +96,12 @@ model AdminUser {
   passwordHash String
   createdAt    DateTime @default(now())
 }
+
+model Client {
+  id           Int      @id @default(autoincrement())
+  phone        String   @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

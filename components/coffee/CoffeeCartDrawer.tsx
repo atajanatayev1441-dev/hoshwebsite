@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Minus, Plus, ShoppingBag, Phone, Hash, CheckCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { useCart } from '@/components/providers/CartProvider'
 import { useLang } from '@/components/providers/LangProvider'
+import { useClientAuth } from '@/components/providers/ClientAuthProvider'
 
 const SAGE = '#6b7d68'
 const BORDER_COLOR = 'rgba(107,125,104,0.2)'
@@ -13,12 +14,19 @@ const BORDER_COLOR = 'rgba(107,125,104,0.2)'
 export function CoffeeCartDrawer() {
   const { items, updateQty, clearCart, total, cartOpen, setCartOpen } = useCart()
   const { lang } = useLang()
+  const { client } = useClientAuth()
   const ru = lang === 'ru'
 
   const [tableNumber, setTableNumber] = useState('')
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [orderId, setOrderId] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (client?.phone) {
+      setPhone(client.phone)
+    }
+  }, [client?.phone])
 
   const fmt = (p: number) => new Intl.NumberFormat('ru-RU').format(p) + ' TMT'
 
@@ -331,19 +339,21 @@ export function CoffeeCartDrawer() {
                       <input
                         type="tel"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={(e) => { if (!client) setPhone(e.target.value) }}
+                        readOnly={!!client}
                         placeholder={ru ? 'Номер телефона' : 'Telefon belgisi'}
                         className="w-full pl-9 pr-4 py-3 focus:outline-none text-sm transition-colors"
                         style={{
-                          background: 'transparent',
+                          background: client ? 'rgba(107,125,104,0.06)' : 'transparent',
                           borderBottom: `1px solid ${BORDER_COLOR}`,
                           fontFamily: 'var(--font-body)',
                           color: '#1c1c1c',
                           fontSize: '16px',
+                          cursor: client ? 'default' : 'text',
                         }}
-                        onFocus={(e) =>
-                          ((e.currentTarget as HTMLElement).style.borderColor = SAGE)
-                        }
+                        onFocus={(e) => {
+                          if (!client) (e.currentTarget as HTMLElement).style.borderColor = SAGE
+                        }}
                         onBlur={(e) =>
                           ((e.currentTarget as HTMLElement).style.borderColor = BORDER_COLOR)
                         }

@@ -5,8 +5,9 @@ import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
+import { useClientAuth } from '@/components/providers/ClientAuthProvider'
 import { translations } from '@/lib/i18n'
-import { ShoppingBag, X, Menu } from 'lucide-react'
+import { ShoppingBag, X, Menu, User } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { VenueSwitcher } from '@/components/shared/VenueSwitcher'
 
@@ -14,6 +15,7 @@ export function Navbar() {
   const pathname = usePathname()
   const { lang, setLang } = useLang()
   const { count, setCartOpen } = useCart()
+  const { client, loading: authLoading } = useClientAuth()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const tr = translations[lang]
@@ -128,6 +130,39 @@ export function Navbar() {
               </motion.span>
             )}
           </button>
+
+          {/* Auth button */}
+          {!authLoading && (
+            client ? (
+              <Link
+                href="/profile"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600,
+                  letterSpacing: '0.15em', textTransform: 'uppercase',
+                  color: '#C9A84C', textDecoration: 'none', transition: 'color 0.2s',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#f0ece3')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#C9A84C')}
+              >
+                <User size={14} />
+                {client.name.split(' ')[0]}
+              </Link>
+            ) : (
+              <Link
+                href="/auth/login"
+                style={{
+                  fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600,
+                  letterSpacing: '0.2em', textTransform: 'uppercase',
+                  color: '#9e9890', textDecoration: 'none', transition: 'color 0.2s',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#f0ece3')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#9e9890')}
+              >
+                ВОЙТИ
+              </Link>
+            )
+          )}
 
           {/* Book — desktop */}
           <Link href="/booking" className="hidden md:flex btn-gold" style={{ padding: '9px 22px', fontSize: '10px', letterSpacing: '0.2em' }}>
