@@ -103,8 +103,8 @@ export default function CoffeePage() {
       <section ref={heroRef} className="relative h-screen overflow-hidden">
         <motion.div className="absolute inset-0 scale-110" style={{ y: imgY }}>
           <Image
-            src="/images/hero.jpg"
-            alt="HOŞ Coffee"
+            src="/images/coffee/photo_5_2026-06-29_19-37-02.jpg"
+            alt="HOŞ Coffee интерьер"
             fill priority quality={90}
             className="object-cover object-center"
           />
@@ -303,7 +303,7 @@ export default function CoffeePage() {
           ABOUT
       ══════════════════════════════════════ */}
       <section id="about" style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: BG }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
           <div data-animate-c>
             <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.42em', textTransform: 'uppercase', color: SAGE, display: 'block', marginBottom: '20px' }}>
@@ -319,39 +319,67 @@ export default function CoffeePage() {
                 ? 'HOŞ Coffee — это не просто кофейня. Это пространство, где каждая чашка создаётся с любовью и вниманием к деталям. Мы работаем только со свежеобжаренными зёрнами от лучших хозяйств мира.'
                 : 'HOŞ Coffee — diňe bir kofehana däl. Bu ýerde her käse söýgi we jikme-jikliklere üns bilen taýýarlanýar. Biz dünýäniň iň gowy fermalaryndan täze gowrulan däneler bilen işleýäris.'}
             </p>
-            <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, lineHeight: 1.9, color: 'rgba(138,133,126,0.6)', fontSize: '14px', maxWidth: '420px' }}>
+            <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, lineHeight: 1.9, color: 'rgba(138,133,126,0.6)', fontSize: '14px', maxWidth: '420px', marginBottom: '40px' }}>
               {ru
                 ? 'Авторский кофе, свежая выпечка, уютные зоны для работы и отдыха.'
                 : 'Awtor kofe, täze çörek önümleri, iş we dynç alyş üçin amatly zonaları.'}
             </p>
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-0" style={{ borderTop: `1px solid ${BORDER}`, paddingTop: '32px' }}>
+              {[
+                { count: 2,  label: ru ? 'Зоны'       : 'Zona' },
+                { count: 38, label: ru ? 'Позиций'    : 'Menýu' },
+                { count: 5,  label: ru ? 'Лет опыта'  : 'Ýyl tejribe' },
+              ].map((s, i) => (
+                <div key={i} style={{ padding: '0 24px 0 0', borderRight: i < 2 ? `1px solid ${BORDER}` : 'none', marginLeft: i > 0 ? '24px' : 0 }}>
+                  <div data-count-c={s.count} style={{ fontFamily: 'var(--font-heading)', fontSize: '48px', fontWeight: 300, color: SAGE, lineHeight: 1 }}>0</div>
+                  <div style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: MUTED, marginTop: '8px' }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div data-animate-c data-delay="0.12" className="grid grid-cols-3 gap-0 self-center" style={{ borderTop: `1px solid ${BORDER}`, paddingTop: '40px' }}>
-            {[
-              { count: 2,  label: ru ? 'Зоны'       : 'Zona' },
-              { count: 38, label: ru ? 'Позиций'    : 'Menýu' },
-              { count: 5,  label: ru ? 'Лет опыта'  : 'Ýyl tejribe' },
-            ].map((s, i) => (
-              <div key={i} style={{ padding: '0 24px 0 0', borderRight: i < 2 ? `1px solid ${BORDER}` : 'none', marginLeft: i > 0 ? '24px' : 0 }}>
-                <div data-count-c={s.count} style={{ fontFamily: 'var(--font-heading)', fontSize: '56px', fontWeight: 300, color: SAGE, lineHeight: 1 }}>0</div>
-                <div style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: MUTED, marginTop: '8px' }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
+          {/* photo_1 — branded cup with beans */}
+          <motion.div
+            data-animate-c data-delay="0.15"
+            className="relative overflow-hidden"
+            style={{ aspectRatio: '4/5', minHeight: '400px' }}
+            whileHover={{ scale: 1.01 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Image
+              src="/images/coffee/photo_1_2026-06-29_19-37-02.jpg"
+              alt="HOŞ Coffee"
+              fill
+              className="object-cover"
+              style={{ objectPosition: 'center' }}
+            />
+            {/* Subtle sage overlay at bottom */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: `linear-gradient(to top, rgba(62,78,58,0.35), transparent)` }} />
+          </motion.div>
         </div>
       </section>
 
       <Divider />
 
       {/* ══════════════════════════════════════
-          PHILOSOPHY — light sage bg (inverse of dark #0d0d0d)
+          PHILOSOPHY — photo_6 as full bg
       ══════════════════════════════════════ */}
-      <section style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: SURFACE }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20 text-center" data-animate-c>
+      <section className="relative overflow-hidden" style={{ padding: 'clamp(80px, 12vw, 140px) 0' }}>
+        <Image
+          src="/images/coffee/photo_6_2026-06-29_19-37-02.jpg"
+          alt="HOŞ Coffee атмосфера"
+          fill
+          className="object-cover object-center"
+          style={{ filter: 'brightness(0.4)' }}
+        />
+        {/* Dark overlay for text readability */}
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,12,10,0.55)' }} />
+        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 md:px-20 text-center" data-animate-c>
           <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: SAGE, display: 'block', marginBottom: '24px' }}>
             {ru ? 'ФИЛОСОФИЯ' : 'FILOSOFIÝA'}
           </span>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(52px, 10vw, 120px)', fontWeight: 300, lineHeight: 0.9, color: TEXT, letterSpacing: '-0.02em', marginBottom: '24px' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(52px, 10vw, 120px)', fontWeight: 300, lineHeight: 0.9, color: '#fff', letterSpacing: '-0.02em', marginBottom: '24px' }}>
             #SPECIALTY
           </h2>
           <p style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(18px,2.5vw,28px)', fontStyle: 'italic', color: SAGE }}>
@@ -425,10 +453,10 @@ export default function CoffeePage() {
       <Divider />
 
       {/* ══════════════════════════════════════
-          FEATURES — 3 cards (inverse style)
+          FEATURES — photo cards
       ══════════════════════════════════════ */}
       <section style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: SURFACE }}>
-        <div className="max-w-5xl mx-auto px-5 sm:px-8">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20">
           <div className="text-center mb-12" data-animate-c>
             <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: SAGE, display: 'block', marginBottom: '16px' }}>
               {ru ? 'ПОЧЕМУ МЫ' : 'NÄME ÜÇIN BIZ'}
@@ -437,29 +465,53 @@ export default function CoffeePage() {
               {ru ? 'В деталях — разница' : 'Jikme-jikliklerde tapawut'}
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{ background: BORDER }}>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { icon: Coffee, titleRu: 'Авторский кофе', titleTk: 'Awtor kofe', descRu: 'Моносорта и купажи от ведущих обжарщиков мира — свежие каждую неделю.', descTk: 'Dünýäniň öňdebaryjy gowurujylaryndan monosortlar — her hepde täze.' },
-              { icon: Leaf,   titleRu: 'Натуральный состав', titleTk: 'Tebigy düzüm', descRu: 'Только свежие ингредиенты, никаких консервантов, никаких компромиссов.', descTk: 'Diňe täze ingredientler, hiç hili konserwant, hiç hili kompromiss.' },
-              { icon: Wind,   titleRu: 'Уютная атмосфера', titleTk: 'Amatly atmosfera', descRu: 'Два зала для работы, встреч и неспешного кофе в любое время дня.', descTk: 'Günüň islendik wagtynda iş, duşuşyk we kofe üçin iki zal.' },
-            ].map(({ icon: Icon, titleRu, titleTk, descRu, descTk }, i) => (
-              <motion.div key={i}
+              {
+                photo: '/images/coffee/photo_3_2026-06-29_19-37-02.jpg',
+                titleRu: 'Авторский кофе', titleTk: 'Awtor kofe',
+                descRu: 'Моносорта и купажи от ведущих обжарщиков — свежие каждую неделю.',
+                descTk: 'Dünýäniň öňdebaryjy gowurujylaryndan monosortlar — her hepde täze.',
+              },
+              {
+                photo: '/images/coffee/photo_4_2026-06-29_19-37-02.jpg',
+                titleRu: 'На любой вкус', titleTk: 'Islendik tagam',
+                descRu: 'Горячий эспрессо, холодные напитки, авторские коктейли — на ваш выбор.',
+                descTk: 'Ýyly espresso, sowuk içgiler, awtor kokteýller — siziň saýlawyňyz üçin.',
+              },
+              {
+                photo: '/images/coffee/photo_2_2026-06-29_19-37-02.jpg',
+                titleRu: 'Уютная атмосфера', titleTk: 'Amatly atmosfera',
+                descRu: 'Тёплое пространство для встреч, работы и неспешного кофе.',
+                descTk: 'Duşuşyk, iş we kofe üçin ýyly giňişlik.',
+              },
+            ].map((card, i) => (
+              <motion.div
+                key={i}
+                className="relative overflow-hidden group"
+                style={{ aspectRatio: '3/4', minHeight: '360px' }}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.7 }}
-                className="flex flex-col items-start gap-5 p-8"
-                style={{ background: BG }}
+                transition={{ delay: i * 0.12, duration: 0.7 }}
               >
-                <div style={{ width: 44, height: 44, border: `1px solid rgba(122,140,117,0.3)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon size={18} style={{ color: SAGE_DIM }} />
-                </div>
-                <div>
-                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 300, color: TEXT, marginBottom: '10px' }}>
-                    {ru ? titleRu : titleTk}
+                <Image
+                  src={card.photo}
+                  alt={card.titleRu}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                {/* Gradient overlay */}
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(8,12,8,0.82) 0%, rgba(8,12,8,0.2) 55%, transparent 100%)' }} />
+                {/* Text */}
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '28px 24px' }}>
+                  <div style={{ width: 24, height: 1, background: SAGE, marginBottom: '12px' }} />
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(20px,2.5vw,26px)', fontWeight: 300, color: '#fff', marginBottom: '8px', lineHeight: 1.2 }}>
+                    {ru ? card.titleRu : card.titleTk}
                   </h3>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: MUTED, lineHeight: 1.7 }}>
-                    {ru ? descRu : descTk}
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 300, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65 }}>
+                    {ru ? card.descRu : card.descTk}
                   </p>
                 </div>
               </motion.div>
