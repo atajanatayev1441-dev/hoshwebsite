@@ -151,7 +151,7 @@ export default function HomePage() {
                   alt="HOŞ Lounge"
                   fill
                   className="object-contain transition-transform duration-500 group-hover:scale-105"
-                  style={{ mixBlendMode: 'screen', filter: 'brightness(1.15) saturate(0.3) contrast(1.2)' }}
+                  style={{ mixBlendMode: 'screen', filter: 'brightness(1.1) sepia(0.5) hue-rotate(5deg) contrast(1.2)' }}
                 />
               </div>
 
@@ -191,7 +191,7 @@ export default function HomePage() {
                   alt="HOŞ Coffee"
                   fill
                   className="object-contain transition-transform duration-500 group-hover:scale-105"
-                  style={{ mixBlendMode: 'screen', filter: 'brightness(1.15) saturate(0.3) contrast(1.2)' }}
+                  style={{ mixBlendMode: 'screen', filter: 'brightness(1.05) saturate(1.3) contrast(1.1)' }}
                 />
               </div>
 
