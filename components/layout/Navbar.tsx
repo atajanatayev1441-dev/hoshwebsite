@@ -9,7 +9,6 @@ import { useClientAuth } from '@/components/providers/ClientAuthProvider'
 import { translations } from '@/lib/i18n'
 import { ShoppingBag, X, Menu, User } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { VenueSwitcher } from '@/components/shared/VenueSwitcher'
 
 export function Navbar() {
   const pathname = usePathname()
@@ -50,8 +49,15 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-8 flex items-center justify-between h-full">
 
-        {/* ── Venue switcher ── */}
-        <VenueSwitcher />
+        {/* Logo */}
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1, gap: '1px' }}>
+          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 300, color: '#f0ece3', letterSpacing: '0.04em', lineHeight: 1 }}>
+            HOŞ
+          </span>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: '7.5px', fontWeight: 600, letterSpacing: '0.35em', textTransform: 'uppercase', color: '#C9A84C', lineHeight: 1 }}>
+            LOUNGE
+          </span>
+        </Link>
 
         {/* ── Desktop nav ── */}
         <nav className="hidden md:flex items-center gap-10">
@@ -73,18 +79,27 @@ export function Navbar() {
               onMouseLeave={e => { if (!isActive(l.href)) (e.currentTarget as HTMLElement).style.color = '#9e9890' }}
             >
               {l.label}
-              {/* Gold underline slides from left */}
               <span style={{
-                position: 'absolute',
-                bottom: '-3px',
-                left: 0,
-                height: '1px',
-                background: '#C9A84C',
-                width: isActive(l.href) ? '100%' : '0%',
+                position: 'absolute', bottom: '-3px', left: 0, height: '1px',
+                background: '#C9A84C', width: isActive(l.href) ? '100%' : '0%',
                 transition: 'width 0.3s ease',
               }} className="group-hover/link:!w-full" />
             </Link>
           ))}
+          <Link
+            href="/coffee"
+            style={{
+              fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500,
+              letterSpacing: '0.1em', textTransform: 'uppercase',
+              color: 'rgba(158,152,144,0.45)',
+              borderLeft: '1px solid rgba(255,255,255,0.07)', paddingLeft: '20px',
+              textDecoration: 'none', transition: 'color 0.25s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#9e9890')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(158,152,144,0.45)')}
+          >
+            Coffee ↗
+          </Link>
         </nav>
 
         {/* ── Right controls ── */}
