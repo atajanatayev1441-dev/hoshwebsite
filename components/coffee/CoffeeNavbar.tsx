@@ -3,17 +3,19 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useLang } from '@/components/providers/LangProvider'
-import { X, Menu } from 'lucide-react'
+import { useCart } from '@/components/providers/CartProvider'
+import { X, Menu, ShoppingBag } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { VenueSwitcher } from '@/components/shared/VenueSwitcher'
 
-const SAGE    = '#7a8c75'
-const SAGE_DIM = 'rgba(122,140,117,0.6)'
-const BG_LIGHT = '#f5f4f0'
-const TEXT_DARK = '#1a1a1a'
+const SAGE    = '#6b7d68'
+const SAGE_DIM = 'rgba(107,125,104,0.6)'
+const BG_LIGHT = '#f0ede6'
+const TEXT_DARK = '#1c1c1c'
 
 export function CoffeeNavbar() {
   const { lang, setLang } = useLang()
+  const { count, setCartOpen } = useCart()
   const ru = lang === 'ru'
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -63,13 +65,34 @@ export function CoffeeNavbar() {
           <button onClick={() => setLang(lang === 'ru' ? 'tk' : 'ru')} style={{
             fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600,
             letterSpacing: '0.25em', textTransform: 'uppercase',
-            color: 'rgba(26,26,26,0.4)', background: 'transparent',
-            border: '1px solid rgba(26,26,26,0.15)', padding: '5px 10px', cursor: 'pointer', transition: 'all 0.25s',
+            color: 'rgba(28,28,28,0.4)', background: 'transparent',
+            border: '1px solid rgba(28,28,28,0.15)', padding: '5px 10px', cursor: 'pointer', transition: 'all 0.25s',
           }}
             onMouseEnter={e => { const el = e.currentTarget; el.style.color = SAGE; el.style.borderColor = SAGE }}
-            onMouseLeave={e => { const el = e.currentTarget; el.style.color = 'rgba(26,26,26,0.4)'; el.style.borderColor = 'rgba(26,26,26,0.15)' }}
+            onMouseLeave={e => { const el = e.currentTarget; el.style.color = 'rgba(28,28,28,0.4)'; el.style.borderColor = 'rgba(28,28,28,0.15)' }}
           >
             {ru ? 'TK' : 'RU'}
+          </button>
+
+          {/* Cart button */}
+          <button
+            onClick={() => setCartOpen(true)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: TEXT_DARK, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px' }}
+          >
+            <ShoppingBag size={18} style={{ color: count > 0 ? SAGE : 'rgba(28,28,28,0.5)' }} />
+            {count > 0 && (
+              <span style={{
+                position: 'absolute', top: '-4px', right: '-4px',
+                minWidth: '16px', height: '16px',
+                background: SAGE, color: '#fff',
+                borderRadius: '999px',
+                fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 700,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: '0 3px',
+              }}>
+                {count}
+              </span>
+            )}
           </button>
 
           <button onClick={() => setOpen(!open)} className="md:hidden" style={{ background: 'none', border: 'none', cursor: 'pointer', color: TEXT_DARK }}>

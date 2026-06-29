@@ -1,4 +1,5 @@
 import { LangProvider } from '@/components/providers/LangProvider'
+import { CartProvider } from '@/components/providers/CartProvider'
 import { CoffeeNavbar } from '@/components/coffee/CoffeeNavbar'
 
 export const metadata = {
@@ -9,8 +10,10 @@ export const metadata = {
 export default function CoffeeLayout({ children }: { children: React.ReactNode }) {
   return (
     <LangProvider>
-      <CoffeeNavbar />
-      {children}
+      <CartProvider>
+        <CoffeeNavbar />
+        {children}
+      </CartProvider>
     </LangProvider>
   )
 }

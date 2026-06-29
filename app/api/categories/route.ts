@@ -3,9 +3,11 @@ import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
+  const venue = searchParams.get('venue') ?? 'lounge'
   const categories = await prisma.category.findMany({
-    where: { visible: true },
+    where: { visible: true, venue },
     orderBy: { position: 'asc' },
   })
   return NextResponse.json(categories)

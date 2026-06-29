@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
@@ -23,6 +24,11 @@ const navItems = [
   { href: '/admin/bookings', label: 'Бронирования', icon: CalendarDays, badgeKey: 'bookings' },
   { href: '/admin/menu', label: 'Меню', icon: UtensilsCrossed },
   { href: '/admin/promotions', label: 'Акции', icon: Tag },
+]
+
+const coffeeNavItems = [
+  { href: '/admin/coffee-orders', label: 'Заказы Coffee', icon: ShoppingBag },
+  { href: '/admin/coffee-menu', label: 'Меню Coffee', icon: UtensilsCrossed },
 ]
 
 export function AdminSidebar({ pendingOrders, pendingBookings }: AdminSidebarProps) {
@@ -50,7 +56,8 @@ export function AdminSidebar({ pendingOrders, pendingBookings }: AdminSidebarPro
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 space-y-1">
+      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+        {/* HOŞ LOUNGE section */}
         {navItems.map((item) => {
           const Icon = item.icon
           const badgeCount = getBadgeCount(item.badgeKey)
@@ -76,6 +83,45 @@ export function AdminSidebar({ pendingOrders, pendingBookings }: AdminSidebarPro
             </Link>
           )
         })}
+
+        {/* Separator + HOŞ COFFEE section */}
+        <div className="pt-4 pb-1">
+          <div className="border-t border-sage-800 mb-3" />
+          {/* Coffee sub-header */}
+          <div className="flex items-center gap-2 px-3 mb-2">
+            <div className="relative w-6 h-6 rounded-full overflow-hidden bg-[#3e4e3a] flex-shrink-0 flex items-center justify-center" style={{ padding: '2px' }}>
+              <Image
+                src="/images/hoscoffee.png"
+                alt="HOŞ Coffee"
+                width={24}
+                height={24}
+                className="object-contain"
+              />
+            </div>
+            <span className="text-xs font-semibold text-sage-400 tracking-wider uppercase">
+              HOŞ COFFEE
+            </span>
+          </div>
+
+          {coffeeNavItems.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname === item.href
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-sage-700 text-cream-100'
+                    : 'text-sage-300 hover:text-cream-100 hover:bg-sage-800'
+                }`}
+              >
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                {item.label}
+              </Link>
+            )
+          })}
+        </div>
       </nav>
 
       {/* Bottom: view site */}

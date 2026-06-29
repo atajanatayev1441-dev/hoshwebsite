@@ -13,6 +13,7 @@ model Category {
   name_tk   String
   position  Int        @default(0)
   visible   Boolean    @default(true)
+  venue     String     @default("lounge")
   items     MenuItem[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -42,6 +43,7 @@ model Order {
   clientLang  String      @default("ru")
   status      String      @default("pending")
   totalAmount Float
+  venue       String      @default("lounge")
   items       OrderItem[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt

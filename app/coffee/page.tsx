@@ -1,65 +1,70 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useLang } from '@/components/providers/LangProvider'
-import { ArrowRight, MapPin, Clock, Phone, Coffee, Leaf, Wind } from 'lucide-react'
+import { useCart } from '@/components/providers/CartProvider'
+import { ArrowRight, MapPin, Clock, Phone, Plus } from 'lucide-react'
+import { CoffeeCartDrawer } from '@/components/coffee/CoffeeCartDrawer'
 
-// ── Color tokens (inverted from Lounge) ──────────────────
-const BG      = '#f5f4f0'
+// ── Color tokens ──────────────────────────────────────
+const BG      = '#f0ede6'
 const SURFACE = '#edeae2'
-const TEXT    = '#1a1a1a'
+const TEXT    = '#1c1c1c'
 const MUTED   = '#8a857e'
-const SAGE    = '#7a8c75'
-const SAGE_DIM = 'rgba(122,140,117,0.6)'
+const SAGE    = '#6b7d68'
+const SAGE_DIM = 'rgba(107,125,104,0.6)'
 const BORDER  = 'rgba(0,0,0,0.08)'
 
-// ── Menu data ────────────────────────────────────────────
-const MENU_CATS = [
-  {
-    categoryRu: 'КОФЕ',
-    categoryTk:  'KOFE',
-    items: [
-      { nameRu: 'Эспрессо',    nameTk: 'Espresso',   price: '15' },
-      { nameRu: 'Американо',   nameTk: 'Americano',  price: '18' },
-      { nameRu: 'Капучино',    nameTk: 'Cappuccino', price: '25' },
-      { nameRu: 'Флэт уайт',  nameTk: 'Flat White', price: '28' },
-      { nameRu: 'Латте',       nameTk: 'Latte',      price: '30' },
-      { nameRu: 'Раф',         nameTk: 'Raf',        price: '32' },
-    ],
-  },
-  {
-    categoryRu: 'ЗАВТРАКИ',
-    categoryTk:  'ERTIRLIK',
-    items: [
-      { nameRu: 'Круассан',         nameTk: 'Kruassan',          price: '22' },
-      { nameRu: 'Авокадо тост',     nameTk: 'Awokado tost',      price: '45' },
-      { nameRu: 'Яйца бенедикт',   nameTk: 'Ýumurtga Benedict', price: '55' },
-      { nameRu: 'Каша',             nameTk: 'Ýüpek botuny',      price: '30' },
-    ],
-  },
-  {
-    categoryRu: 'ДЕСЕРТЫ',
-    categoryTk:  'SÜÝJÜLIK',
-    items: [
-      { nameRu: 'Тирамису',  nameTk: 'Tiramisu', price: '35' },
-      { nameRu: 'Чизкейк',  nameTk: 'Çizkek',   price: '32' },
-      { nameRu: 'Брауни',   nameTk: 'Brauni',    price: '28' },
-    ],
-  },
-]
+// ── Types ─────────────────────────────────────────────
+interface CategoryItem {
+  id: number
+  name_ru: string
+  name_tk: string
+  description_ru: string | null
+  description_tk: string | null
+  price: number
+  imageUrl: string | null
+  available: boolean
+  featured: boolean
+}
+
+interface Category {
+  id: number
+  name_ru: string
+  name_tk: string
+  items: CategoryItem[]
+}
 
 export default function CoffeePage() {
   const { lang } = useLang()
+  const { addItem, setCartOpen } = useCart()
   const ru = lang === 'ru'
   const heroRef = useRef<HTMLDivElement>(null)
+
+  const [categories, setCategories] = useState<Category[]>([])
+  const [activeTab, setActiveTab] = useState<number | null>(null)
+  const [menuLoading, setMenuLoading] = useState(true)
 
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const imgY    = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
   const fadeOut = useTransform(scrollYProgress, [0, 0.7], [1, 0])
 
+  // Fetch dynamic menu
+  useEffect(() => {
+    fetch('/api/coffee/categories')
+      .then((r) => r.json())
+      .then((data: Category[]) => {
+        setCategories(data)
+        if (data.length > 0) setActiveTab(data[0].id)
+        setMenuLoading(false)
+      })
+      .catch(() => setMenuLoading(false))
+  }, [])
+
+  // GSAP scroll animations
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     let cleanup: (() => void) | undefined
@@ -67,14 +72,14 @@ export default function CoffeePage() {
       const { default: gsap } = await import('gsap')
       const { ScrollTrigger } = await import('gsap/ScrollTrigger')
       gsap.registerPlugin(ScrollTrigger)
-      gsap.utils.toArray<HTMLElement>('[data-animate-c]').forEach(el => {
+      gsap.utils.toArray<HTMLElement>('[data-animate-c]').forEach((el) => {
         gsap.from(el, {
           opacity: 0, y: 40, duration: 1, ease: 'power2.out',
           delay: el.dataset.delay ? parseFloat(el.dataset.delay) : 0,
           scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' },
         })
       })
-      document.querySelectorAll<HTMLElement>('[data-count-c]').forEach(el => {
+      document.querySelectorAll<HTMLElement>('[data-count-c]').forEach((el) => {
         const target = parseInt(el.dataset.countC || '0')
         const obj = { n: 0 }
         ScrollTrigger.create({
@@ -85,10 +90,13 @@ export default function CoffeePage() {
           }),
         })
       })
-      cleanup = () => ScrollTrigger.getAll().forEach(t => t.kill())
+      cleanup = () => ScrollTrigger.getAll().forEach((t) => t.kill())
     })()
     return () => cleanup?.()
   }, [])
+
+  const activeItems = categories.find((c) => c.id === activeTab)?.items ?? []
+  const fmt = (p: number) => new Intl.NumberFormat('ru-RU').format(p) + ' TMT'
 
   const Divider = () => (
     <div style={{ height: '1px', background: BORDER, margin: 0 }} />
@@ -98,7 +106,7 @@ export default function CoffeePage() {
     <div style={{ background: BG, color: TEXT }}>
 
       {/* ══════════════════════════════════════
-          HERO
+          HERO — dark overlay, white text
       ══════════════════════════════════════ */}
       <section ref={heroRef} className="relative h-screen overflow-hidden">
         <motion.div className="absolute inset-0 scale-110" style={{ y: imgY }}>
@@ -109,25 +117,40 @@ export default function CoffeePage() {
             className="object-cover object-center"
           />
         </motion.div>
-        {/* Light cream overlay — inverse of dark lounge overlay */}
+        {/* Dark gradient overlay — text will be white */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to right, rgba(245,244,240,0.94) 45%, rgba(245,244,240,0.55) 100%)',
+          background: 'linear-gradient(to right, rgba(15,18,12,0.75) 40%, rgba(15,18,12,0.3) 100%)',
         }} />
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to top, rgba(245,244,240,0.7) 0%, transparent 50%)',
+          background: 'linear-gradient(to top, rgba(15,18,12,0.6) 0%, transparent 50%)',
         }} />
 
-        <motion.div style={{ opacity: fadeOut }}
+        <motion.div
+          style={{ opacity: fadeOut }}
           className="absolute inset-0 flex flex-col justify-center px-5 sm:px-8 md:px-20 max-w-4xl"
         >
           <motion.div initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 1 }}>
-            <span style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: SAGE, display: 'block', marginBottom: '28px' }}>
+            <span style={{
+              fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500,
+              letterSpacing: '0.45em', textTransform: 'uppercase',
+              color: SAGE, display: 'block', marginBottom: '28px',
+            }}>
               {ru ? 'КОФЕЙНЯ · АШХАБАД' : 'KOFEHANA · AŞGABAT'}
             </span>
-            <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(90px, 14vw, 180px)', fontWeight: 300, lineHeight: 0.85, color: TEXT, letterSpacing: '-0.02em', margin: 0 }}>
+            <h1 style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: 'clamp(90px, 14vw, 180px)',
+              fontWeight: 300, lineHeight: 0.85,
+              color: '#f0ede6', letterSpacing: '-0.02em', margin: 0,
+            }}>
               HOŞ
             </h1>
-            <p style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(44px, 7vw, 90px)', fontWeight: 300, fontStyle: 'italic', color: SAGE, lineHeight: 1, marginBottom: '44px' }}>
+            <p style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: 'clamp(44px, 7vw, 90px)',
+              fontWeight: 300, fontStyle: 'italic',
+              color: SAGE, lineHeight: 1, marginBottom: '44px',
+            }}>
               Coffee
             </p>
             <div className="flex flex-wrap gap-4">
@@ -135,24 +158,34 @@ export default function CoffeePage() {
                 display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
                 background: SAGE, color: '#fff',
                 padding: '14px 32px',
-                fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase',
+                fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500,
+                letterSpacing: '0.2em', textTransform: 'uppercase',
                 transition: 'background 0.25s', cursor: 'pointer', textDecoration: 'none',
               }}
-                onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#6b7f67')}
-                onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = SAGE)}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = '#5a6b57')}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = SAGE)}
               >
                 {ru ? 'СМОТРЕТЬ МЕНЮ' : 'MENÝUNY GÖR'}
                 <ArrowRight size={14} />
               </a>
               <a href="#booking" style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
-                border: `1px solid ${SAGE}`, color: TEXT,
+                border: `1px solid rgba(240,237,230,0.4)`, color: '#f0ede6',
                 padding: '14px 32px',
-                fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase',
+                fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500,
+                letterSpacing: '0.2em', textTransform: 'uppercase',
                 transition: 'all 0.25s', cursor: 'pointer', textDecoration: 'none',
               }}
-                onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = `rgba(122,140,117,0.08)`)}
-                onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = 'transparent')}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget as HTMLElement
+                  el.style.background = 'rgba(240,237,230,0.1)'
+                  el.style.borderColor = 'rgba(240,237,230,0.7)'
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget as HTMLElement
+                  el.style.background = 'transparent'
+                  el.style.borderColor = 'rgba(240,237,230,0.4)'
+                }}
               >
                 {ru ? 'ЗАБРОНИРОВАТЬ' : 'ZAKAZ ETMEK'}
               </a>
@@ -160,12 +193,13 @@ export default function CoffeePage() {
           </motion.div>
         </motion.div>
 
-        {/* Stats row — cream bg instead of dark */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.9 }}
+        {/* Stats row */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.9 }}
           className="absolute bottom-0 left-0 right-0"
-          style={{ borderTop: `1px solid ${BORDER}`, background: 'rgba(245,244,240,0.85)', backdropFilter: 'blur(12px)' }}
+          style={{ borderTop: '1px solid rgba(240,237,230,0.12)', background: 'rgba(15,18,12,0.55)', backdropFilter: 'blur(12px)' }}
         >
-          <div className="max-w-7xl mx-auto grid grid-cols-3 divide-x" style={{ '--tw-divide-color': BORDER } as any}>
+          <div className="max-w-7xl mx-auto grid grid-cols-3 divide-x" style={{ '--tw-divide-color': 'rgba(240,237,230,0.1)' } as React.CSSProperties}>
             {[
               { count: 2,  label: ru ? 'ЗОНЫ'    : 'ZONALAR' },
               { count: 38, label: ru ? 'ПОЗИЦИЙ' : 'POZISIÝA' },
@@ -176,7 +210,7 @@ export default function CoffeePage() {
                   ? <span data-count-c={s.count} style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(22px,5vw,48px)', fontWeight: 300, color: SAGE, lineHeight: 1 }}>0</span>
                   : <span style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(22px,5vw,48px)', fontWeight: 300, color: SAGE, lineHeight: 1 }}>{s.display}</span>
                 }
-                <span style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(7px,2vw,9px)', fontWeight: 500, letterSpacing: '0.2em', color: MUTED }}>{s.label}</span>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(7px,2vw,9px)', fontWeight: 500, letterSpacing: '0.2em', color: 'rgba(240,237,230,0.45)' }}>{s.label}</span>
               </div>
             ))}
           </div>
@@ -186,111 +220,15 @@ export default function CoffeePage() {
       <Divider />
 
       {/* ══════════════════════════════════════
-          TWO VENUES
-      ══════════════════════════════════════ */}
-      <section style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: SURFACE }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20">
-
-          <div className="text-center mb-12" data-animate-c>
-            <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: MUTED, display: 'block', marginBottom: '16px' }}>
-              {ru ? 'НАШИ ЗАВЕДЕНИЯ' : 'BIZIŇ KÄRHANALARYMYZ'}
-            </span>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(28px,4vw,48px)', fontWeight: 300, color: TEXT, letterSpacing: '-0.01em' }}>
-              {ru ? 'Два места — одна семья' : 'Iki ýer — bir maşgala'}
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ background: BORDER }} data-animate-c data-delay="0.1">
-
-            {/* HOŞ COFFEE — current page */}
-            <div className="relative group flex flex-col items-center justify-center text-center p-10 md:p-16 overflow-hidden"
-              style={{ background: BG, minHeight: '420px' }}>
-              {/* Sage glow */}
-              <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 60% 50% at 50% 50%, rgba(122,140,117,0.08) 0%, transparent 70%)`, pointerEvents: 'none' }} />
-              <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '40px', background: `linear-gradient(to bottom, ${SAGE}, transparent)` }} />
-
-              {/* Dark sage circle so white logo is visible on cream card */}
-              <div className="relative mb-8 transition-transform duration-500 group-hover:scale-105" style={{
-                width: 'clamp(120px,20vw,180px)', aspectRatio: '1/1',
-                borderRadius: '50%',
-                background: 'rgba(62,78,58,0.82)',
-                padding: '12%',
-                boxSizing: 'border-box',
-              }}>
-                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                  <Image src="/images/hoscoffee.png" alt="HOŞ Coffee" fill className="object-contain" />
-                </div>
-              </div>
-
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: MUTED, display: 'block', marginBottom: '12px' }}>
-                {ru ? 'КОФЕЙНЯ' : 'KOFEHANA'}
-              </span>
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px,5vw,56px)', fontWeight: 300, color: TEXT, lineHeight: 0.95, marginBottom: '16px' }}>
-                HOŞ<br /><em style={{ color: SAGE, fontSize: '0.65em' }}>Coffee</em>
-              </h3>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: MUTED, lineHeight: 1.7, maxWidth: '280px', marginBottom: '32px' }}>
-                {ru ? 'Третья волна кофе, уютная атмосфера, свежие зёрна.' : 'Üçünji tolkun kofe, amatly atmosfera, täze däneler.'}
-              </p>
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500,
-                letterSpacing: '0.2em', textTransform: 'uppercase',
-                color: SAGE, border: `1px solid rgba(122,140,117,0.4)`,
-                padding: '10px 24px',
-              }}>
-                {ru ? 'ВЫ ЗДЕСЬ' : 'SIZ BU ÝERDE'}
-              </span>
-            </div>
-
-            {/* HOŞ LOUNGE — link */}
-            <Link href="/" className="relative group flex flex-col items-center justify-center text-center p-10 md:p-16 overflow-hidden"
-              style={{ background: '#0a0a0a', minHeight: '420px', textDecoration: 'none', display: 'flex' }}>
-              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%)', pointerEvents: 'none', opacity: 0.5, transition: 'opacity 0.5s' }} className="group-hover:!opacity-100" />
-              <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '0px', background: 'linear-gradient(to bottom, rgba(201,168,76,0.8), transparent)', transition: 'height 0.4s' }} className="group-hover:!h-[40px]" />
-
-              <div className="relative mb-8" style={{ width: 'clamp(120px,20vw,180px)', aspectRatio: '1/1' }}>
-                <Image
-                  src="/images/hoslounge.png"
-                  alt="HOŞ Lounge"
-                  fill
-                  className="object-contain transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: '#5a5042', display: 'block', marginBottom: '12px' }}>
-                {ru ? 'ЛАУНДЖ' : 'LOUNGE'}
-              </span>
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px,5vw,56px)', fontWeight: 300, color: '#FAFAF8', lineHeight: 0.95, marginBottom: '16px' }}>
-                HOŞ<br /><em style={{ color: '#C9A84C', fontSize: '0.65em' }}>Lounge</em>
-              </h3>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: '#6B6B6B', lineHeight: 1.7, maxWidth: '280px', marginBottom: '32px' }}>
-                {ru ? 'Индустриальная эстетика, авторский кофе, три зоны отдыха.' : 'Industrial estetika, awtor kofe, üç dynç alyş zonamyz.'}
-              </p>
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500,
-                letterSpacing: '0.2em', textTransform: 'uppercase',
-                color: 'rgba(201,168,76,0.8)', border: '1px solid rgba(201,168,76,0.3)',
-                padding: '10px 24px', transition: 'all 0.3s',
-              }}
-                className="group-hover:border-[rgba(201,168,76,0.7)] group-hover:text-[rgba(201,168,76,1)]"
-              >
-                {ru ? 'ПЕРЕЙТИ →' : 'GIT →'}
-              </span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <Divider />
-
-      {/* ══════════════════════════════════════
-          MARQUEE — sage green (inverse of gold)
+          MARQUEE — sage green
       ══════════════════════════════════════ */}
       <div style={{ background: SAGE, overflow: 'hidden', padding: '13px 0' }}>
         <div className="flex animate-marquee whitespace-nowrap select-none">
           {Array.from({ length: 12 }).map((_, i) => (
-            <span key={i} className="mx-8" style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.42em', textTransform: 'uppercase', color: '#fff' }}>
+            <span key={i} className="mx-8" style={{
+              fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600,
+              letterSpacing: '0.42em', textTransform: 'uppercase', color: '#fff',
+            }}>
               Good Morning &nbsp;·&nbsp; Freshly Roasted &nbsp;·&nbsp; Third Wave &nbsp;·&nbsp; Specialty Coffee &nbsp;·&nbsp; #HOŞCoffee
             </span>
           ))}
@@ -311,8 +249,8 @@ export default function CoffeePage() {
             </span>
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px,5vw,64px)', fontWeight: 300, lineHeight: 1.1, color: TEXT, marginBottom: '28px' }}>
               {ru
-                ? <>Место, где каждая чашка —<br /><em style={{ color: SAGE }}>искусство</em></>
-                : <>Her käse —<br /><em style={{ color: SAGE }}>sungat eseri</em></>}
+                ? <>{`Место, где каждая чашка —`}<br /><em style={{ color: SAGE }}>искусство</em></>
+                : <>{`Her käse —`}<br /><em style={{ color: SAGE }}>sungat eseri</em></>}
             </h2>
             <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, lineHeight: 1.9, color: MUTED, fontSize: '15px', marginBottom: '16px', maxWidth: '440px' }}>
               {ru
@@ -339,7 +277,6 @@ export default function CoffeePage() {
             </div>
           </div>
 
-          {/* photo_1 — branded cup with beans */}
           <motion.div
             data-animate-c data-delay="0.15"
             className="relative overflow-hidden"
@@ -354,7 +291,6 @@ export default function CoffeePage() {
               className="object-cover"
               style={{ objectPosition: 'center' }}
             />
-            {/* Subtle sage overlay at bottom */}
             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: `linear-gradient(to top, rgba(62,78,58,0.35), transparent)` }} />
           </motion.div>
         </div>
@@ -373,7 +309,6 @@ export default function CoffeePage() {
           className="object-cover object-center"
           style={{ filter: 'brightness(0.4)' }}
         />
-        {/* Dark overlay for text readability */}
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,12,10,0.55)' }} />
         <div className="relative max-w-7xl mx-auto px-5 sm:px-8 md:px-20 text-center" data-animate-c>
           <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: SAGE, display: 'block', marginBottom: '24px' }}>
@@ -391,12 +326,12 @@ export default function CoffeePage() {
       <Divider />
 
       {/* ══════════════════════════════════════
-          MENU
+          MENU — dynamic from API
       ══════════════════════════════════════ */}
       <section id="menu" style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: BG }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20">
 
-          <div className="text-center mb-16" data-animate-c>
+          <div className="text-center mb-12" data-animate-c>
             <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.42em', textTransform: 'uppercase', color: SAGE, display: 'block', marginBottom: '20px' }}>
               {ru ? 'МЕНЮ' : 'MENÝU'}
             </span>
@@ -408,45 +343,158 @@ export default function CoffeePage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{ background: BORDER }}>
-            {MENU_CATS.map((cat, ci) => (
-              <motion.div key={ci}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: ci * 0.1, duration: 0.7 }}
-                style={{ background: BG, padding: '36px 32px' }}
-              >
-                {/* Category header */}
-                <div style={{ borderBottom: `1px solid ${BORDER}`, paddingBottom: '16px', marginBottom: '24px' }}>
-                  <div style={{ width: '32px', height: '1px', background: SAGE, marginBottom: '12px' }} />
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.4em', textTransform: 'uppercase', color: SAGE }}>
-                    {ru ? cat.categoryRu : cat.categoryTk}
-                  </span>
-                </div>
+          {menuLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} style={{ height: '120px', background: SURFACE, animation: 'pulse 1.5s ease-in-out infinite' }} />
+              ))}
+            </div>
+          ) : categories.length === 0 ? (
+            /* Fallback: no categories in DB yet — show coming soon */
+            <div className="text-center py-16" style={{ color: MUTED }}>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300 }}>
+                {ru ? 'Меню скоро появится' : 'Menýu ýakynda peýda bolar'}
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Category tabs */}
+              <div className="flex flex-wrap gap-2 mb-8 justify-center">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveTab(cat.id)}
+                    style={{
+                      fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500,
+                      letterSpacing: '0.22em', textTransform: 'uppercase',
+                      padding: '9px 20px',
+                      background: activeTab === cat.id ? SAGE : 'transparent',
+                      color: activeTab === cat.id ? '#fff' : MUTED,
+                      border: `1px solid ${activeTab === cat.id ? SAGE : BORDER}`,
+                      cursor: 'pointer', transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (activeTab !== cat.id) {
+                        const el = e.currentTarget as HTMLElement
+                        el.style.borderColor = SAGE
+                        el.style.color = SAGE
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeTab !== cat.id) {
+                        const el = e.currentTarget as HTMLElement
+                        el.style.borderColor = BORDER
+                        el.style.color = MUTED
+                      }
+                    }}
+                  >
+                    {ru ? cat.name_ru : cat.name_tk}
+                  </button>
+                ))}
+              </div>
 
-                {/* Items */}
-                <div className="flex flex-col gap-4">
-                  {cat.items.map((item, ii) => (
-                    <div key={ii} className="flex justify-between items-baseline gap-4">
-                      <span style={{ fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 300, color: TEXT, lineHeight: 1.4 }}>
-                        {ru ? item.nameRu : item.nameTk}
-                      </span>
-                      <span style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 400, color: SAGE, flexShrink: 0 }}>
-                        {item.price} <span style={{ fontSize: '10px', opacity: 0.7 }}>TMT</span>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
-          </div>
+              {/* Items grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {activeItems.length === 0 ? (
+                  <div className="col-span-full text-center py-12" style={{ color: MUTED }}>
+                    <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300 }}>
+                      {ru ? 'Позиций пока нет' : 'Pozisiýa ýok'}
+                    </p>
+                  </div>
+                ) : (
+                  activeItems.map((item) => (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35 }}
+                      style={{
+                        background: SURFACE,
+                        border: `1px solid ${BORDER}`,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {/* Image */}
+                      {item.imageUrl && (
+                        <div style={{ position: 'relative', height: '160px', flexShrink: 0 }}>
+                          <Image
+                            src={item.imageUrl}
+                            alt={item.name_ru}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      )}
 
-          <div className="text-center mt-12" data-animate-c data-delay="0.2">
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 300, color: MUTED, marginBottom: '24px' }}>
-              {ru ? 'Полное меню доступно в заведении' : 'Doly menýu kärhanada elýeterlidir'}
-            </p>
-          </div>
+                      {/* Content */}
+                      <div style={{ padding: '18px 20px 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+                          <h3 style={{
+                            fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 400,
+                            color: TEXT, lineHeight: 1.35, flex: 1,
+                          }}>
+                            {ru ? item.name_ru : item.name_tk}
+                          </h3>
+                          <span style={{
+                            fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 500,
+                            color: SAGE, flexShrink: 0,
+                          }}>
+                            {fmt(item.price)}
+                          </span>
+                        </div>
+                        {(ru ? item.description_ru : item.description_tk) && (
+                          <p style={{
+                            fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 300,
+                            color: MUTED, lineHeight: 1.6,
+                          }}>
+                            {ru ? item.description_ru : item.description_tk}
+                          </p>
+                        )}
+                        <div style={{ marginTop: 'auto', paddingTop: '12px' }}>
+                          <button
+                            onClick={() => {
+                              addItem({
+                                id: item.id,
+                                name_ru: item.name_ru,
+                                name_tk: item.name_tk,
+                                price: item.price,
+                              })
+                              setCartOpen(true)
+                            }}
+                            style={{
+                              display: 'inline-flex', alignItems: 'center', gap: '6px',
+                              background: 'transparent',
+                              border: `1px solid ${SAGE}`,
+                              color: SAGE,
+                              padding: '8px 18px',
+                              fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500,
+                              letterSpacing: '0.18em', textTransform: 'uppercase',
+                              cursor: 'pointer', transition: 'all 0.2s',
+                            }}
+                            onMouseEnter={(e) => {
+                              const el = e.currentTarget as HTMLElement
+                              el.style.background = SAGE
+                              el.style.color = '#fff'
+                            }}
+                            onMouseLeave={(e) => {
+                              const el = e.currentTarget as HTMLElement
+                              el.style.background = 'transparent'
+                              el.style.color = SAGE
+                            }}
+                          >
+                            <Plus size={12} />
+                            {ru ? 'Добавить' : 'Goş'}
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))
+                )}
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -502,9 +550,7 @@ export default function CoffeePage() {
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                {/* Gradient overlay */}
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(8,12,8,0.82) 0%, rgba(8,12,8,0.2) 55%, transparent 100%)' }} />
-                {/* Text */}
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '28px 24px' }}>
                   <div style={{ width: 24, height: 1, background: SAGE, marginBottom: '12px' }} />
                   <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(20px,2.5vw,26px)', fontWeight: 300, color: '#fff', marginBottom: '8px', lineHeight: 1.2 }}>
@@ -550,8 +596,8 @@ export default function CoffeePage() {
               fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase',
               transition: 'background 0.25s', cursor: 'pointer', textDecoration: 'none',
             }}
-              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#6b7f67')}
-              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = SAGE)}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = '#5a6b57')}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = SAGE)}
             >
               <Phone size={14} />
               {ru ? 'ПОЗВОНИТЬ' : 'JAŇ ET'}
@@ -565,7 +611,7 @@ export default function CoffeePage() {
               { icon: Phone,  labelRu: 'ТЕЛЕФОН',     labelTk: 'TELEFON',  valRu: '+993 62 XXXXXX',           valTk: '+993 62 XXXXXX' },
             ].map(({ icon: Icon, labelRu, labelTk, valRu, valTk }, i) => (
               <div key={i} className="flex items-center gap-5 px-6 py-5" style={{ background: SURFACE, border: `1px solid ${BORDER}` }}>
-                <div style={{ width: 40, height: 40, border: `1px solid rgba(122,140,117,0.3)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 40, height: 40, border: `1px solid rgba(107,125,104,0.3)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Icon size={15} style={{ color: SAGE }} />
                 </div>
                 <div>
@@ -613,10 +659,10 @@ export default function CoffeePage() {
                   { href: '#menu',    labelRu: 'Меню',          labelTk: 'Menýu' },
                   { href: '#booking', labelRu: 'Бронирование',  labelTk: 'Zakaz' },
                   { href: '/',        labelRu: 'HOŞ Lounge ↗',  labelTk: 'HOŞ Lounge ↗' },
-                ].map(l => (
+                ].map((l) => (
                   <a key={l.href} href={l.href} style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 300, color: MUTED, textDecoration: 'none', transition: 'color 0.2s' }}
-                    onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = SAGE)}
-                    onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = MUTED)}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = SAGE)}
+                    onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = MUTED)}
                   >
                     {ru ? l.labelRu : l.labelTk}
                   </a>
@@ -646,14 +692,17 @@ export default function CoffeePage() {
               © {new Date().getFullYear()} HOŞ Coffee
             </p>
             <Link href="/" style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: MUTED, textDecoration: 'none', transition: 'color 0.2s', display: 'flex', alignItems: 'center', gap: '4px' }}
-              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = SAGE)}
-              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = MUTED)}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = SAGE)}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = MUTED)}
             >
               HOŞ Lounge ↗
             </Link>
           </div>
         </div>
       </footer>
+
+      {/* Cart Drawer */}
+      <CoffeeCartDrawer />
     </div>
   )
 }
