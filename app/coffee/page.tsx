@@ -6,7 +6,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
-import { ArrowRight, MapPin, Clock, Phone, Plus } from 'lucide-react'
+import { ArrowRight, MapPin, Clock, Phone, Plus, Users, Star, Leaf, CheckCircle, X } from 'lucide-react'
+import { toast } from 'sonner'
 import { CoffeeCartDrawer } from '@/components/coffee/CoffeeCartDrawer'
 
 // ── Color tokens ──────────────────────────────────────
@@ -47,6 +48,19 @@ export default function CoffeePage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [activeTab, setActiveTab] = useState<number | null>(null)
   const [menuLoading, setMenuLoading] = useState(true)
+
+  // Booking form state
+  const [bZone,       setBZone]       = useState('main')
+  const [bDate,       setBDate]       = useState('')
+  const [bTime,       setBTime]       = useState('')
+  const [bGuests,     setBGuests]     = useState(2)
+  const [bName,       setBName]       = useState('')
+  const [bPhone,      setBPhone]      = useState('')
+  const [bNote,       setBNote]       = useState('')
+  const [bLoading,    setBLoading]    = useState(false)
+  const [bId,         setBId]         = useState<number | null>(null)
+  const [bStatus,     setBStatus]     = useState('pending')
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const imgY    = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
@@ -95,8 +109,60 @@ export default function CoffeePage() {
     return () => cleanup?.()
   }, [])
 
+  // Cleanup poll on unmount
+  useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current) }, [])
+
+  const pollBooking = (id: number) => {
+    if (pollRef.current) clearInterval(pollRef.current)
+    pollRef.current = setInterval(async () => {
+      const res = await fetch(`/api/bookings/${id}/status`)
+      if (res.ok) {
+        const d = await res.json()
+        setBStatus(d.status)
+        if (d.status !== 'pending') { clearInterval(pollRef.current!); pollRef.current = null }
+      }
+    }, 5000)
+  }
+
+  const handleBooking = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!bPhone.trim()) { toast.error(ru ? 'Введите номер телефона' : 'Telefon belgisin giriziň'); return }
+    setBLoading(true)
+    try {
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ zone: bZone, date: bDate, time: bTime, guestCount: bGuests, name: bName, phone: bPhone, note: bNote, clientLang: lang, venue: 'coffee' }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setBId(data.id)
+      pollBooking(data.id)
+      toast.success(ru ? 'Заявка отправлена!' : 'Arza iberildi!')
+    } catch {
+      toast.error(ru ? 'Ошибка. Попробуйте снова.' : 'Ýalňyşlyk. Gaýtadan synanşyň.')
+    } finally { setBLoading(false) }
+  }
+
   const activeItems = categories.find((c) => c.id === activeTab)?.items ?? []
   const fmt = (p: number) => new Intl.NumberFormat('ru-RU').format(p) + ' TMT'
+
+  const coffeeZones = [
+    { id: 'main',    icon: Users, ru: 'Основной зал', tk: 'Esasy zal'  },
+    { id: 'window',  icon: Star,  ru: 'У окна',       tk: 'Penjiräniň ýanynda' },
+    { id: 'terrace', icon: Leaf,  ru: 'Терраса',      tk: 'Taras'      },
+  ]
+  const timeSlots = Array.from({ length: 27 }, (_, i) => {
+    const m = 8 * 60 + i * 30
+    return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+  })
+
+  const inputLight = {
+    width: '100%', background: 'transparent', border: 'none',
+    borderBottom: `1px solid ${BORDER}`, color: TEXT,
+    fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 300,
+    padding: '10px 0', outline: 'none', transition: 'border-color 0.2s',
+  } as React.CSSProperties
 
   const Divider = () => (
     <div style={{ height: '1px', background: BORDER, margin: 0 }} />
@@ -569,61 +635,226 @@ export default function CoffeePage() {
       <Divider />
 
       {/* ══════════════════════════════════════
-          BOOKING / CONTACT CTA
+          BOOKING — inline form
       ══════════════════════════════════════ */}
       <section id="booking" style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: BG }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20">
 
-          <div data-animate-c>
-            <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.42em', textTransform: 'uppercase', color: SAGE, display: 'block', marginBottom: '20px' }}>
-              {ru ? 'БРОНИРОВАНИЕ' : 'ZAKAZ'}
-            </span>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px,5vw,64px)', fontWeight: 300, color: TEXT, lineHeight: 1.05, marginBottom: '4px' }}>
-              {ru ? 'Зарезервируйте' : 'Stolyňyzy'}
-            </h2>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px,5vw,64px)', fontWeight: 300, fontStyle: 'italic', color: SAGE, lineHeight: 1.05, marginBottom: '28px' }}>
-              {ru ? 'ваш столик' : 'zakaz ediň'}
-            </h2>
-            <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, lineHeight: 1.9, color: MUTED, fontSize: '15px', maxWidth: '380px', marginBottom: '36px' }}>
-              {ru
-                ? 'Свяжитесь с нами по телефону или напишите в Telegram — мы подберём удобное время и лучший столик.'
-                : 'Telefon ýa-da Telegram arkaly biziň bilen habarlaşyň — size amatly wagt we iň gowy stoljagy saýlarys.'}
-            </p>
-            <a href="tel:+99362000000" style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
-              background: SAGE, color: '#fff',
-              padding: '14px 32px',
-              fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase',
-              transition: 'background 0.25s', cursor: 'pointer', textDecoration: 'none',
-            }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = '#5a6b57')}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = SAGE)}
-            >
-              <Phone size={14} />
-              {ru ? 'ПОЗВОНИТЬ' : 'JAŇ ET'}
-            </a>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
 
-          <div className="space-y-3" data-animate-c data-delay="0.1">
-            {[
-              { icon: MapPin, labelRu: 'АДРЕС',       labelTk: 'SALGY',    valRu: 'Ашхабад, Туркменистан',    valTk: 'Aşgabat, Türkmenistan' },
-              { icon: Clock,  labelRu: 'ЧАСЫ РАБОТЫ', labelTk: 'IŞ WAGTY', valRu: 'Ежедневно 08:00 – 22:00', valTk: 'Her gün 08:00 – 22:00' },
-              { icon: Phone,  labelRu: 'ТЕЛЕФОН',     labelTk: 'TELEFON',  valRu: '+993 62 XXXXXX',           valTk: '+993 62 XXXXXX' },
-            ].map(({ icon: Icon, labelRu, labelTk, valRu, valTk }, i) => (
-              <div key={i} className="flex items-center gap-5 px-6 py-5" style={{ background: SURFACE, border: `1px solid ${BORDER}` }}>
-                <div style={{ width: 40, height: 40, border: `1px solid rgba(107,125,104,0.3)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon size={15} style={{ color: SAGE }} />
-                </div>
-                <div>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: MUTED, marginBottom: '3px' }}>
-                    {ru ? labelRu : labelTk}
-                  </p>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 300, color: TEXT }}>
-                    {ru ? valRu : valTk}
-                  </p>
-                </div>
+            {/* Left — header + contact */}
+            <div data-animate-c>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.42em', textTransform: 'uppercase', color: SAGE, display: 'block', marginBottom: '20px' }}>
+                {ru ? 'ОНЛАЙН БРОНИРОВАНИЕ' : 'ONLAÝN ZAKAZ'}
+              </span>
+              <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px,5vw,64px)', fontWeight: 300, color: TEXT, lineHeight: 1.05, marginBottom: '4px' }}>
+                {ru ? 'Зарезервируйте' : 'Stolyňyzy'}
+              </h2>
+              <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px,5vw,64px)', fontWeight: 300, fontStyle: 'italic', color: SAGE, lineHeight: 1.05, marginBottom: '32px' }}>
+                {ru ? 'ваш столик' : 'zakaz ediň'}
+              </h2>
+
+              <div className="space-y-3">
+                {[
+                  { icon: MapPin, labelRu: 'АДРЕС',       labelTk: 'SALGY',    valRu: 'Ашхабад, Туркменистан',    valTk: 'Aşgabat, Türkmenistan' },
+                  { icon: Clock,  labelRu: 'ЧАСЫ РАБОТЫ', labelTk: 'IŞ WAGTY', valRu: 'Ежедневно 08:00 – 22:00', valTk: 'Her gün 08:00 – 22:00' },
+                  { icon: Phone,  labelRu: 'ТЕЛЕФОН',     labelTk: 'TELEFON',  valRu: '+993 62 XXXXXX',           valTk: '+993 62 XXXXXX' },
+                ].map(({ icon: Icon, labelRu, labelTk, valRu, valTk }, i) => (
+                  <div key={i} className="flex items-center gap-5 px-5 py-4" style={{ background: SURFACE, border: `1px solid ${BORDER}` }}>
+                    <div style={{ width: 36, height: 36, border: `1px solid rgba(107,125,104,0.25)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Icon size={14} style={{ color: SAGE }} />
+                    </div>
+                    <div>
+                      <p style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: MUTED, marginBottom: '2px' }}>
+                        {ru ? labelRu : labelTk}
+                      </p>
+                      <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: TEXT }}>
+                        {ru ? valRu : valTk}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Right — booking form */}
+            <div data-animate-c data-delay="0.1">
+              {bId ? (
+                <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+                  className="flex flex-col items-center justify-center text-center py-16 px-8"
+                  style={{ background: SURFACE, border: `1px solid ${BORDER}`, minHeight: '380px' }}
+                >
+                  {bStatus === 'confirmed' ? (
+                    <>
+                      <CheckCircle size={48} style={{ color: SAGE, marginBottom: '20px' }} />
+                      <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 300, color: TEXT, marginBottom: '10px' }}>
+                        {ru ? 'Бронирование подтверждено!' : 'Zakaz tassyklandy!'}
+                      </h3>
+                      <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: MUTED }}>
+                        {ru ? 'Детали отправлены по SMS' : 'Maglumatlar SMS arkaly iberildi'}
+                      </p>
+                    </>
+                  ) : bStatus === 'cancelled' ? (
+                    <>
+                      <X size={48} style={{ color: '#ef4444', marginBottom: '20px' }} />
+                      <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 300, color: TEXT, marginBottom: '10px' }}>
+                        {ru ? 'Заявка отклонена' : 'Arza ret edildi'}
+                      </h3>
+                      <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: MUTED }}>
+                        {ru ? 'Выберите другое время' : 'Başga wagt saýlaň'}
+                      </p>
+                      <button onClick={() => { setBId(null); setBStatus('pending') }}
+                        style={{ marginTop: '24px', fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.18em', textTransform: 'uppercase', color: SAGE, background: 'transparent', border: `1px solid ${SAGE}`, padding: '10px 24px', cursor: 'pointer' }}>
+                        {ru ? 'ПОПРОБОВАТЬ СНОВА' : 'GAÝTADAN SYNANYŞ'}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Clock size={48} style={{ color: SAGE, marginBottom: '20px' }} className="animate-pulse" />
+                      <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 300, color: TEXT, marginBottom: '10px' }}>
+                        {ru ? 'Заявка отправлена' : 'Arza iberildi'}
+                      </h3>
+                      <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: MUTED }}>
+                        {ru ? 'Ожидайте подтверждения...' : 'Tassyklamagy garaşyň...'}
+                      </p>
+                    </>
+                  )}
+                </motion.div>
+              ) : (
+                <form onSubmit={handleBooking} className="space-y-8">
+
+                  {/* Zone */}
+                  <div>
+                    <p style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: MUTED, marginBottom: '10px' }}>
+                      {ru ? 'ЗОНА' : 'ZONA'}
+                    </p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {coffeeZones.map(z => {
+                        const Icon = z.icon
+                        const sel = bZone === z.id
+                        return (
+                          <button key={z.id} type="button" onClick={() => setBZone(z.id)}
+                            style={{
+                              padding: '12px 8px', textAlign: 'center',
+                              border: sel ? `1px solid ${SAGE}` : `1px solid ${BORDER}`,
+                              background: sel ? `rgba(107,125,104,0.07)` : 'transparent',
+                              cursor: 'pointer', transition: 'all 0.2s',
+                            }}>
+                            <Icon size={16} style={{ color: sel ? SAGE : MUTED, margin: '0 auto 6px' }} />
+                            <p style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, color: sel ? SAGE : MUTED }}>
+                              {ru ? z.ru : z.tk}
+                            </p>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Date & Time */}
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <label style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: MUTED, display: 'block', marginBottom: '8px' }}>
+                        {ru ? 'ДАТА' : 'SENESI'}
+                      </label>
+                      <input type="date" value={bDate} required min={new Date().toISOString().split('T')[0]}
+                        onChange={e => setBDate(e.target.value)}
+                        style={{ ...inputLight, colorScheme: 'light' }}
+                        onFocus={e => (e.target.style.borderBottomColor = SAGE)}
+                        onBlur={e => (e.target.style.borderBottomColor = BORDER)}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: MUTED, display: 'block', marginBottom: '8px' }}>
+                        {ru ? 'ВРЕМЯ' : 'WAGTY'}
+                      </label>
+                      <select value={bTime} required onChange={e => setBTime(e.target.value)}
+                        style={{ ...inputLight, colorScheme: 'light' }}
+                        onFocus={e => (e.target.style.borderBottomColor = SAGE)}
+                        onBlur={e => (e.target.style.borderBottomColor = BORDER)}
+                      >
+                        <option value="">{ru ? 'Выберите' : 'Saýlaň'}</option>
+                        {timeSlots.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Guests */}
+                  <div>
+                    <label style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: MUTED, display: 'block', marginBottom: '10px' }}>
+                      {ru ? 'КОЛИЧЕСТВО ГОСТЕЙ' : 'MYHMANLARYŇ SANY'}
+                    </label>
+                    <div className="flex items-center gap-5">
+                      <button type="button" onClick={() => setBGuests(Math.max(1, bGuests - 1))}
+                        style={{ width: 36, height: 36, border: `1px solid ${BORDER}`, color: MUTED, background: 'transparent', fontSize: '18px', cursor: 'pointer', transition: 'all 0.2s' }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = SAGE; (e.currentTarget as HTMLElement).style.color = SAGE }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = BORDER; (e.currentTarget as HTMLElement).style.color = MUTED }}
+                      >−</button>
+                      <span style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 300, color: TEXT, minWidth: '28px', textAlign: 'center' }}>{bGuests}</span>
+                      <button type="button" onClick={() => setBGuests(Math.min(20, bGuests + 1))}
+                        style={{ width: 36, height: 36, border: `1px solid ${BORDER}`, color: MUTED, background: 'transparent', fontSize: '18px', cursor: 'pointer', transition: 'all 0.2s' }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = SAGE; (e.currentTarget as HTMLElement).style.color = SAGE }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = BORDER; (e.currentTarget as HTMLElement).style.color = MUTED }}
+                      >+</button>
+                      <span style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 300, color: MUTED }}>{ru ? 'гостей' : 'myhmanlary'}</span>
+                    </div>
+                  </div>
+
+                  {/* Name & Phone */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: MUTED, display: 'block', marginBottom: '8px' }}>
+                        {ru ? 'ИМЯ' : 'ADY'}
+                      </label>
+                      <input type="text" value={bName} onChange={e => setBName(e.target.value)}
+                        placeholder={ru ? 'Ваше имя' : 'Adyňyz'}
+                        style={inputLight}
+                        onFocus={e => (e.target.style.borderBottomColor = SAGE)}
+                        onBlur={e => (e.target.style.borderBottomColor = BORDER)}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: MUTED, display: 'block', marginBottom: '8px' }}>
+                        {ru ? 'ТЕЛЕФОН' : 'TELEFON'} *
+                      </label>
+                      <input type="tel" value={bPhone} required onChange={e => setBPhone(e.target.value)}
+                        placeholder="+993 __ ______"
+                        style={{ ...inputLight, fontSize: '16px' }}
+                        onFocus={e => (e.target.style.borderBottomColor = SAGE)}
+                        onBlur={e => (e.target.style.borderBottomColor = BORDER)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Note */}
+                  <div>
+                    <label style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: MUTED, display: 'block', marginBottom: '8px' }}>
+                      {ru ? 'ПОЖЕЛАНИЯ' : 'ISLEG'}
+                    </label>
+                    <textarea value={bNote} rows={2} onChange={e => setBNote(e.target.value)}
+                      placeholder={ru ? 'Особые пожелания...' : 'Aýratyn islegler...'}
+                      style={{ ...inputLight, resize: 'none' }}
+                      onFocus={e => (e.target.style.borderBottomColor = SAGE)}
+                      onBlur={e => (e.target.style.borderBottomColor = BORDER)}
+                    />
+                  </div>
+
+                  <button type="submit" disabled={bLoading}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                      background: SAGE, color: '#fff',
+                      padding: '15px 32px',
+                      fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase',
+                      border: 'none', cursor: bLoading ? 'not-allowed' : 'pointer', transition: 'background 0.25s',
+                      opacity: bLoading ? 0.65 : 1,
+                    }}
+                    onMouseEnter={e => { if (!bLoading) (e.currentTarget as HTMLElement).style.background = '#5a6b57' }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = SAGE }}
+                  >
+                    {bLoading ? (ru ? 'Отправка...' : 'Iberilýär...') : (ru ? 'ЗАБРОНИРОВАТЬ СТОЛИК' : 'STOL ZAKAZ ET')}
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </section>

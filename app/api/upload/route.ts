@@ -14,10 +14,6 @@ export async function POST(req: NextRequest) {
   if (!allowed.includes(file.type)) {
     return NextResponse.json({ error: 'Only JPG/PNG/WebP allowed' }, { status: 400 })
   }
-  if (file.size > 5 * 1024 * 1024) {
-    return NextResponse.json({ error: 'Max file size 5MB' }, { status: 400 })
-  }
-
   // Cloudinary (recommended for Railway — persistent storage)
   if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_UPLOAD_PRESET) {
     const cf = new FormData()

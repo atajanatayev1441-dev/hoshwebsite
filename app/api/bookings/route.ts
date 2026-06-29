@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const { zone, date, time, guestCount, name, phone, note, clientLang } = body
+  const { zone, date, time, guestCount, name, phone, note, clientLang, venue } = body
 
   if (!zone || !date || !time || !phone) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
       note: note || '',
       clientLang: clientLang ?? 'ru',
       status: 'pending',
+      venue: venue ?? 'lounge',
     },
   })
 
