@@ -18,8 +18,8 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-8 py-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-2 text-center">
           {[
             ru ? 'Ежедневно 09:00 – 23:00' : 'Her gün 09:00 – 23:00',
-            ru ? 'Ашхабад, Туркменистан'   : 'Aşgabat, Türkmenistan',
-            '+993 62 XXXXXX',
+            ru ? 'ул. Держинского 143, напротив Цирка' : 'Jerjinskiý köç. 143, Sirkiň garşysynda',
+            '+993 71 66 7777',
           ].map((text, i) => (
             <span key={i} className="font-body text-[11px] font-medium tracking-[0.2em] uppercase text-[#5c5852]">
               {text}
@@ -77,8 +77,8 @@ export function Footer() {
             <p className="section-label mb-7">{ru ? 'Контакты' : 'Habarlaşmak'}</p>
             <ul className="space-y-4">
               {[
-                { Icon: MapPin, text: ru ? 'Ашхабад, Туркменистан' : 'Aşgabat, Türkmenistan' },
-                { Icon: Phone,  text: '+993 62 XXXXXX' },
+                { Icon: MapPin, text: ru ? 'ул. Держинского 143, напротив Цирка' : 'Jerjinskiý köç. 143, Sirkiň garşysynda' },
+                { Icon: Phone,  text: '+993 71 66 7777' },
                 { Icon: Clock,  text: ru ? 'Ежедневно 09:00 – 23:00' : 'Her gün 09:00 – 23:00' },
               ].map(({ Icon, text }, i) => (
                 <li key={i} className="flex items-center gap-3">
@@ -87,7 +87,7 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-            <a href="#" aria-label="Instagram"
+            <a href="https://www.instagram.com/hos_lounge_ashgabat" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
               className="inline-flex mt-6 w-9 h-9 border border-[#3e3830] hover:border-gold-500 items-center justify-center text-[#5c5852] hover:text-gold-400 transition-all">
               <Instagram className="w-4 h-4" />
             </a>

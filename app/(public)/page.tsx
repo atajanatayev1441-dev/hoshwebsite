@@ -501,9 +501,9 @@ export default function HomePage() {
 
           <div className="space-y-3" data-animate data-delay="0.1">
             {[
-              { icon: MapPin, labelRu: 'АДРЕС',       labelTk: 'SALGY',    valRu: 'Ашхабад, Туркменистан',    valTk: 'Aşgabat, Türkmenistan' },
+              { icon: MapPin, labelRu: 'АДРЕС',       labelTk: 'SALGY',    valRu: 'ул. Держинского 143, напротив Цирка',    valTk: 'Jerjinskiý köç. 143, Sirkiň garşysynda' },
               { icon: Clock,  labelRu: 'ЧАСЫ РАБОТЫ', labelTk: 'IŞ WAGTY', valRu: 'Ежедневно 09:00 – 23:00', valTk: 'Her gün 09:00 – 23:00' },
-              { icon: Phone,  labelRu: 'ТЕЛЕФОН',     labelTk: 'TELEFON',  valRu: '+993 62 XXXXXX',           valTk: '+993 62 XXXXXX' },
+              { icon: Phone,  labelRu: 'ТЕЛЕФОН',     labelTk: 'TELEFON',  valRu: '+993 71 66 7777',           valTk: '+993 71 66 7777' },
             ].map(({ icon: Icon, labelRu, labelTk, valRu, valTk }, i) => (
               <div key={i} className="flex items-center gap-5 px-6 py-5" style={{ background: '#161616', border: '1px solid var(--border)' }}>
                 <div style={{ width: 40, height: 40, border: '1px solid rgba(201,168,76,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

@@ -783,9 +783,9 @@ export default function CoffeePage() {
 
               <div className="space-y-3">
                 {[
-                  { icon: MapPin, labelRu: 'АДРЕС',       labelTk: 'SALGY',    valRu: 'Ашхабад, Туркменистан',    valTk: 'Aşgabat, Türkmenistan' },
-                  { icon: Clock,  labelRu: 'ЧАСЫ РАБОТЫ', labelTk: 'IŞ WAGTY', valRu: 'Ежедневно 08:00 – 22:00', valTk: 'Her gün 08:00 – 22:00' },
-                  { icon: Phone,  labelRu: 'ТЕЛЕФОН',     labelTk: 'TELEFON',  valRu: '+993 62 XXXXXX',           valTk: '+993 62 XXXXXX' },
+                  { icon: MapPin, labelRu: 'АДРЕС',       labelTk: 'SALGY',    valRu: 'ул. Свободы 50, напротив ТЦ Аркач',    valTk: 'Azatlyk köç. 50, Arkaç söwda merkeziniň garşysynda' },
+                  { icon: Clock,  labelRu: 'ЧАСЫ РАБОТЫ', labelTk: 'IŞ WAGTY', valRu: 'Ежедневно 08:00 – 23:00', valTk: 'Her gün 08:00 – 23:00' },
+                  { icon: Phone,  labelRu: 'ТЕЛЕФОН',     labelTk: 'TELEFON',  valRu: '+993 61 27 6666',           valTk: '+993 61 27 6666' },
                 ].map(({ icon: Icon, labelRu, labelTk, valRu, valTk }, i) => (
                   <div key={i} className="flex items-center gap-5 px-5 py-4" style={{ background: SURFACE, border: `1px solid ${BORDER}` }}>
                     <div style={{ width: 36, height: 36, border: `1px solid rgba(107,125,104,0.25)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -1035,9 +1035,9 @@ export default function CoffeePage() {
               </p>
               <div className="flex flex-col gap-3">
                 {[
-                  { label: 'Ашхабад, Туркменистан' },
-                  { label: '+993 62 XXXXXX' },
-                  { label: ru ? 'Ежедневно 08:00 – 22:00' : 'Her gün 08:00 – 22:00' },
+                  { label: ru ? 'ул. Свободы 50, напротив ТЦ Аркач' : 'Azatlyk köç. 50, Arkaç söwda merkeziniň garşysynda' },
+                  { label: '+993 61 27 6666' },
+                  { label: ru ? 'Ежедневно 08:00 – 23:00' : 'Her gün 08:00 – 23:00' },
                 ].map((c, i) => (
                   <p key={i} style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 300, color: MUTED }}>{c.label}</p>
                 ))}
@@ -1049,12 +1049,21 @@ export default function CoffeePage() {
             <p style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 300, color: MUTED, letterSpacing: '0.2em' }}>
               © {new Date().getFullYear()} HOŞ Coffee
             </p>
-            <Link href="/" style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: MUTED, textDecoration: 'none', transition: 'color 0.2s', display: 'flex', alignItems: 'center', gap: '4px' }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = SAGE)}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = MUTED)}
-            >
-              HOŞ Lounge ↗
-            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <a href="https://www.instagram.com/hoscoffee_tm" target="_blank" rel="noopener noreferrer"
+                style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.18em', textTransform: 'uppercase', color: MUTED, textDecoration: 'none', transition: 'color 0.2s' }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = SAGE)}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = MUTED)}
+              >
+                Instagram
+              </a>
+              <Link href="/" style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: MUTED, textDecoration: 'none', transition: 'color 0.2s', display: 'flex', alignItems: 'center', gap: '4px' }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = SAGE)}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = MUTED)}
+              >
+                HOŞ Lounge ↗
+              </Link>
+            </div>
           </div>
         </div>
       </footer>

@@ -71,8 +71,8 @@ export const translations = {
     price: 'Цена',
     currency: 'м.',
     // Footer
-    address: 'Ашхабад, Туркменистан',
-    phone: '+993 62 XXXXXX',
+    address: 'ул. Держинского 143, напротив Цирка',
+    phone: '+993 71 66 7777',
     hours: 'Ежедневно 09:00 – 23:00',
     followUs: 'Мы в социальных сетях',
   },
@@ -146,8 +146,8 @@ export const translations = {
     price: 'Baha',
     currency: 'м.',
     // Footer
-    address: 'Aşgabat, Türkmenistan',
-    phone: '+993 62 XXXXXX',
+    address: 'Jerjinskiý köç. 143, Sirkiň garşysynda',
+    phone: '+993 71 66 7777',
     hours: 'Her gün 09:00 – 23:00',
     followUs: 'Sosial ulgamlarda biz',
   },
