@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { triggerPusher, PUSHER_CHANNELS, PUSHER_EVENTS } from '@/lib/pusher'
+import { sendTelegram } from '@/lib/telegram'
 
 export async function GET() {
 
@@ -47,6 +48,17 @@ export async function POST(req: NextRequest) {
     venue: 'lounge',
     createdAt: order.createdAt,
   })
+
+  const itemLines = order.items
+    .map(i => `  • ${i.menuItem?.name ?? '?'} × ${i.quantity}`)
+    .join('\n')
+  await sendTelegram(
+    `🛒 <b>Новый заказ №${order.id}</b>\n\n` +
+    `📞 ${order.clientPhone}\n` +
+    `🪑 Стол ${order.tableNumber}\n\n` +
+    `${itemLines}\n\n` +
+    `💰 Итого: ${order.totalAmount} м.`
+  )
 
   return NextResponse.json(order, { status: 201 })
 }

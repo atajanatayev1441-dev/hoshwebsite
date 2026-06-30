@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { triggerPusher, PUSHER_CHANNELS, PUSHER_EVENTS } from '@/lib/pusher'
+import { sendTelegram } from '@/lib/telegram'
 
 export async function GET(req: NextRequest) {
   const venue = req.nextUrl.searchParams.get('venue')
@@ -46,6 +47,17 @@ export async function POST(req: NextRequest) {
     venue: venue ?? 'lounge',
     createdAt: booking.createdAt,
   })
+
+  const venueLabel = (venue ?? 'lounge') === 'coffee' ? 'HOŞ Coffee' : 'HOŞ Lounge'
+  const zoneLabel = booking.zone === 'vip' ? 'VIP зона' : 'Основной зал'
+  await sendTelegram(
+    `🪑 <b>Новое бронирование</b> — ${venueLabel}\n\n` +
+    `👤 ${booking.name || '—'}\n` +
+    `📞 ${booking.phone}\n` +
+    `📅 ${booking.date} в ${booking.time}\n` +
+    `🏛 ${zoneLabel} · ${booking.guestCount} гост.\n` +
+    (booking.note ? `💬 ${booking.note}` : '')
+  )
 
   return NextResponse.json(booking, { status: 201 })
 }
