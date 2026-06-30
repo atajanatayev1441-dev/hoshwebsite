@@ -244,32 +244,26 @@ export default function HomePage() {
                       aria-label="Предыдущее"
                       style={{
                         position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)',
-                        zIndex: 3, width: '44px', height: '44px',
-                        border: '1px solid rgba(255,255,255,0.18)', background: 'rgba(0,0,0,0.4)',
-                        backdropFilter: 'blur(8px)', color: '#fff', cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        transition: 'all 0.22s',
+                        zIndex: 3, background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)',
+                        cursor: 'pointer', padding: '8px', transition: 'color 0.2s',
                       }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(201,168,76,0.25)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(201,168,76,0.6)' }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.4)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.18)' }}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--gold)'}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)'}
                     >
-                      <ChevronLeft size={20} />
+                      <ChevronLeft size={36} />
                     </button>
                     <button
                       onClick={next}
                       aria-label="Следующее"
                       style={{
                         position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)',
-                        zIndex: 3, width: '44px', height: '44px',
-                        border: '1px solid rgba(255,255,255,0.18)', background: 'rgba(0,0,0,0.4)',
-                        backdropFilter: 'blur(8px)', color: '#fff', cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        transition: 'all 0.22s',
+                        zIndex: 3, background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)',
+                        cursor: 'pointer', padding: '8px', transition: 'color 0.2s',
                       }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(201,168,76,0.25)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(201,168,76,0.6)' }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.4)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.18)' }}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--gold)'}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)'}
                     >
-                      <ChevronRight size={20} />
+                      <ChevronRight size={36} />
                     </button>
                   </>
                 )}
@@ -294,19 +288,6 @@ export default function HomePage() {
                   </div>
                 )}
 
-                {/* ── Progress bar ── */}
-                {events.length > 1 && (
-                  <motion.div
-                    key={activeIdx + '-bar'}
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 5, ease: 'linear' }}
-                    style={{
-                      position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px',
-                      background: 'var(--gold)', transformOrigin: 'left', zIndex: 3,
-                    }}
-                  />
-                )}
               </div>
             </section>
           </>
