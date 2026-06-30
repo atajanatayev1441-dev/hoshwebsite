@@ -56,7 +56,11 @@ export async function POST(req: NextRequest) {
     `📞 ${booking.phone}\n` +
     `📅 ${booking.date} в ${booking.time}\n` +
     `🏛 ${zoneLabel} · ${booking.guestCount} гост.\n` +
-    (booking.note ? `💬 ${booking.note}` : '')
+    (booking.note ? `💬 ${booking.note}` : ''),
+    [[
+      { text: '✅ Подтвердить', callback_data: `book_ok_${booking.id}` },
+      { text: '❌ Отклонить',   callback_data: `book_no_${booking.id}` },
+    ]]
   )
 
   return NextResponse.json(booking, { status: 201 })

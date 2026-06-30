@@ -57,7 +57,11 @@ export async function POST(req: NextRequest) {
     `📞 ${order.clientPhone}\n` +
     `🪑 Стол ${order.tableNumber}\n\n` +
     `${itemLines}\n\n` +
-    `💰 Итого: ${order.totalAmount} м.`
+    `💰 Итого: ${order.totalAmount} м.`,
+    [[
+      { text: '✅ Принять',   callback_data: `order_ok_${order.id}` },
+      { text: '❌ Отклонить', callback_data: `order_no_${order.id}` },
+    ]]
   )
 
   return NextResponse.json(order, { status: 201 })
