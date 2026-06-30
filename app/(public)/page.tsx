@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useLang } from '@/components/providers/LangProvider'
 import { translations } from '@/lib/i18n'
-import { ArrowRight, MapPin, Clock, Phone } from 'lucide-react'
+import { ArrowRight, MapPin, Clock, Phone, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface Event {
   id: number
@@ -29,7 +29,9 @@ export default function HomePage() {
   const tr = translations[lang]
   const ru = lang === 'ru'
   const heroRef = useRef<HTMLDivElement>(null)
-  const [events, setEvents] = useState<Event[]>([])
+  const [events, setEvents]         = useState<Event[]>([])
+  const [activeIdx, setActiveIdx]   = useState(0)
+  const [paused, setPaused]         = useState(false)
 
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const imgY    = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
@@ -38,6 +40,12 @@ export default function HomePage() {
   useEffect(() => {
     fetch('/api/events').then(r => r.json()).then(setEvents).catch(() => {})
   }, [])
+
+  useEffect(() => {
+    if (events.length <= 1 || paused) return
+    const t = setInterval(() => setActiveIdx(i => (i + 1) % events.length), 3000)
+    return () => clearInterval(t)
+  }, [events.length, paused])
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -137,124 +145,174 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════
-          EVENTS — афиша мероприятий (сразу под hero)
+          EVENTS — слайдер афиш (сразу под hero)
       ══════════════════════════════════════ */}
       {events.length > 0 && (() => {
-        const featured = events[0]
-        const rest     = events.slice(1)
-        const fTitle   = ru ? featured.title_ru : featured.title_tk
-        const fDesc    = ru ? featured.description_ru : featured.description_tk
-        const fDay     = featured.date.slice(8)
-        const fMonth   = (ru ? MONTHS_RU : MONTHS_TK)[parseInt(featured.date.slice(5, 7)) - 1]
-        const fYear    = featured.date.slice(0, 4)
+        const ev    = events[activeIdx]
+        const title = ru ? ev.title_ru : ev.title_tk
+        const desc  = ru ? ev.description_ru : ev.description_tk
+        const day   = ev.date.slice(8)
+        const month = (ru ? MONTHS_RU : MONTHS_TK)[parseInt(ev.date.slice(5, 7)) - 1]
+        const year  = ev.date.slice(0, 4)
+        const prev  = () => { setPaused(true); setActiveIdx(i => (i - 1 + events.length) % events.length) }
+        const next  = () => { setPaused(true); setActiveIdx(i => (i + 1) % events.length) }
+
         return (
           <>
             <Divider />
-            <section style={{ background: '#080808' }}>
-              {/* ── Featured poster ── */}
-              <div
-                className="relative overflow-hidden"
-                style={{ minHeight: 'clamp(420px, 60vw, 680px)' }}
-              >
-                {/* Background image */}
-                {featured.imageUrl && (
+            <section
+              style={{ background: '#080808', position: 'relative' }}
+              onMouseEnter={() => setPaused(true)}
+              onMouseLeave={() => setPaused(false)}
+            >
+              {/* ── Poster slide ── */}
+              <div className="relative overflow-hidden" style={{ minHeight: 'clamp(420px, 60vw, 680px)' }}>
+
+                {/* Crossfade background images */}
+                <AnimatePresence mode="sync">
+                  {ev.imageUrl && (
+                    <motion.div
+                      key={ev.id + '-bg'}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.7, ease: 'easeInOut' }}
+                      style={{ position: 'absolute', inset: 0 }}
+                    >
+                      <Image
+                        src={ev.imageUrl}
+                        alt={title}
+                        fill
+                        className="object-cover object-center"
+                        style={{ filter: 'brightness(0.42)' }}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Permanent gradients */}
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(8,8,8,0.88) 35%, rgba(8,8,8,0.25) 100%)', zIndex: 1 }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(8,8,8,0.95) 0%, transparent 55%)', zIndex: 1 }} />
+
+                {/* ── Content ── */}
+                <div className="relative flex flex-col justify-end max-w-7xl mx-auto px-5 sm:px-8 md:px-20"
+                  style={{ minHeight: 'clamp(420px, 60vw, 680px)', paddingBottom: 'clamp(60px, 8vw, 100px)', paddingTop: '80px', zIndex: 2 }}
+                >
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={ev.id + '-text'}
+                      initial={{ opacity: 0, y: 28 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -16 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                    >
+                      <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '20px' }}>
+                        {ru ? 'БЛИЖАЙШИЕ МЕРОПРИЯТИЯ' : 'GOLAÝ ÇÄRELER'}
+                      </span>
+                      <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 6vw, 80px)', fontWeight: 300, color: 'var(--white)', lineHeight: 0.95, letterSpacing: '-0.01em', marginBottom: '20px', maxWidth: '700px' }}>
+                        {title}
+                      </h2>
+                      {desc && (
+                        <p style={{ fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 300, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, maxWidth: '480px', marginBottom: '28px' }}>
+                          {desc}
+                        </p>
+                      )}
+                      <div className="flex flex-wrap items-center gap-6">
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
+                          <span style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(40px, 5vw, 64px)', fontWeight: 300, color: 'var(--gold)', lineHeight: 1 }}>{day}</span>
+                          <div>
+                            <div style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)' }}>{month}</div>
+                            <div style={{ fontFamily: 'var(--font-body)', fontSize: '11px', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.3)' }}>{year}</div>
+                          </div>
+                        </div>
+                        <div style={{ width: '1px', height: '40px', background: 'rgba(255,255,255,0.12)' }} />
+                        <div className="flex flex-col gap-1">
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '7px', fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+                            <Clock size={12} style={{ color: 'var(--gold)' }} /> {ev.time}
+                          </span>
+                          {ev.location && (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '7px', fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+                              <MapPin size={12} style={{ color: 'var(--gold)' }} /> {ev.location}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                {/* ── Arrow buttons ── */}
+                {events.length > 1 && (
                   <>
-                    <Image
-                      src={featured.imageUrl}
-                      alt={fTitle}
-                      fill
-                      className="object-cover object-center"
-                      style={{ filter: 'brightness(0.45)' }}
-                    />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(8,8,8,0.85) 35%, rgba(8,8,8,0.3) 100%)' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(8,8,8,0.9) 0%, transparent 50%)' }} />
+                    <button
+                      onClick={prev}
+                      aria-label="Предыдущее"
+                      style={{
+                        position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)',
+                        zIndex: 3, width: '44px', height: '44px',
+                        border: '1px solid rgba(255,255,255,0.18)', background: 'rgba(0,0,0,0.4)',
+                        backdropFilter: 'blur(8px)', color: '#fff', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.22s',
+                      }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(201,168,76,0.25)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(201,168,76,0.6)' }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.4)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.18)' }}
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <button
+                      onClick={next}
+                      aria-label="Следующее"
+                      style={{
+                        position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)',
+                        zIndex: 3, width: '44px', height: '44px',
+                        border: '1px solid rgba(255,255,255,0.18)', background: 'rgba(0,0,0,0.4)',
+                        backdropFilter: 'blur(8px)', color: '#fff', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.22s',
+                      }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(201,168,76,0.25)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(201,168,76,0.6)' }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.4)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.18)' }}
+                    >
+                      <ChevronRight size={20} />
+                    </button>
                   </>
                 )}
 
-                {/* Content overlay */}
-                <div className="relative max-w-7xl mx-auto px-5 sm:px-8 md:px-20 flex flex-col justify-end" style={{ minHeight: 'clamp(420px, 60vw, 680px)', paddingBottom: 'clamp(40px, 6vw, 72px)', paddingTop: '80px' }}>
-                  <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.8 }}>
-                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '20px' }}>
-                      {ru ? 'БЛИЖАЙШЕЕ МЕРОПРИЯТИЕ' : 'GOLAÝ ÇÄRE'}
-                    </span>
-                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 6vw, 80px)', fontWeight: 300, color: 'var(--white)', lineHeight: 0.95, letterSpacing: '-0.01em', marginBottom: '20px', maxWidth: '700px' }}>
-                      {fTitle}
-                    </h2>
-                    {fDesc && (
-                      <p style={{ fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 300, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, maxWidth: '480px', marginBottom: '28px' }}>
-                        {fDesc}
-                      </p>
-                    )}
-                    <div className="flex flex-wrap items-center gap-6">
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
-                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(40px, 5vw, 64px)', fontWeight: 300, color: 'var(--gold)', lineHeight: 1 }}>{fDay}</span>
-                        <div>
-                          <div style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)' }}>{fMonth}</div>
-                          <div style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.3)' }}>{fYear}</div>
-                        </div>
-                      </div>
-                      <div style={{ width: '1px', height: '40px', background: 'rgba(255,255,255,0.12)' }} />
-                      <div className="flex flex-col gap-1">
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '7px', fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--muted)' }}>
-                          <Clock size={12} style={{ color: 'var(--gold)' }} /> {featured.time}
-                        </span>
-                        {featured.location && (
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '7px', fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--muted)' }}>
-                            <MapPin size={12} style={{ color: 'var(--gold)' }} /> {featured.location}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
+                {/* ── Dot indicators ── */}
+                {events.length > 1 && (
+                  <div style={{ position: 'absolute', bottom: '24px', right: '28px', zIndex: 3, display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    {events.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => { setPaused(true); setActiveIdx(i) }}
+                        style={{
+                          width: i === activeIdx ? '24px' : '6px',
+                          height: '6px',
+                          background: i === activeIdx ? 'var(--gold)' : 'rgba(255,255,255,0.3)',
+                          border: 'none', cursor: 'pointer', padding: 0,
+                          transition: 'all 0.35s ease',
+                        }}
+                        aria-label={`Слайд ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
 
-              {/* ── Additional events list ── */}
-              {rest.length > 0 && (
-                <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20" style={{ borderTop: '1px solid var(--border)', paddingTop: '0' }}>
-                  {rest.map((ev, i) => {
-                    const day   = ev.date.slice(8)
-                    const month = (ru ? MONTHS_RU : MONTHS_TK)[parseInt(ev.date.slice(5, 7)) - 1]
-                    const year  = ev.date.slice(0, 4)
-                    const title = ru ? ev.title_ru : ev.title_tk
-                    const desc  = ru ? ev.description_ru : ev.description_tk
-                    return (
-                      <div
-                        key={ev.id}
-                        data-animate
-                        data-delay={String(i * 0.07)}
-                        className="group flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-10 py-7 sm:py-8 transition-colors cursor-default"
-                        style={{ borderBottom: '1px solid var(--border)' }}
-                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(201,168,76,0.02)')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                      >
-                        <div className="flex-shrink-0 flex sm:flex-col items-baseline sm:items-end gap-3 sm:gap-0.5" style={{ minWidth: '72px' }}>
-                          <span style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 5vw, 52px)', fontWeight: 300, color: 'var(--gold)', lineHeight: 1 }}>{day}</span>
-                          <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)' }}>{month} {year}</span>
-                        </div>
-                        <div className="hidden sm:block flex-shrink-0" style={{ width: '1px', height: '48px', background: 'var(--border)' }} />
-                        <div className="flex-1 min-w-0">
-                          <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(18px, 2.2vw, 26px)', fontWeight: 300, color: 'var(--white)', marginBottom: '6px' }}>{title}</h3>
-                          {desc && <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.6 }}>{desc}</p>}
-                          <div className="flex flex-wrap items-center gap-4 mt-2">
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--muted)' }}>
-                              <Clock size={10} style={{ color: 'var(--gold)' }} />{ev.time}
-                            </span>
-                            {ev.location && (
-                              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--muted)' }}>
-                                <MapPin size={10} style={{ color: 'var(--gold)' }} />{ev.location}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="hidden sm:flex flex-shrink-0 items-center event-arrow" style={{ color: 'var(--gold)', opacity: 0.3, transition: 'all 0.3s' }}>
-                          <ArrowRight size={18} />
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
+                {/* ── Progress bar ── */}
+                {events.length > 1 && !paused && (
+                  <motion.div
+                    key={activeIdx + '-bar'}
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 3, ease: 'linear' }}
+                    style={{
+                      position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px',
+                      background: 'var(--gold)', transformOrigin: 'left', zIndex: 3,
+                    }}
+                  />
+                )}
+              </div>
             </section>
           </>
         )
