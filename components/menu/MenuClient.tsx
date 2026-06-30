@@ -8,7 +8,25 @@ import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
 import { MenuCard } from '@/components/menu/MenuCard'
 import { translations } from '@/lib/i18n'
-import type { CategoryWithItems } from '@/app/(public)/menu/page'
+export type CategoryWithItems = {
+  id: number
+  name_ru: string
+  name_tk: string
+  position: number
+  visible: boolean
+  items: {
+    id: number
+    categoryId: number
+    name_ru: string
+    name_tk: string
+    description_ru: string | null
+    description_tk: string | null
+    price: number
+    imageUrl: string | null
+    available: boolean
+    featured: boolean
+  }[]
+}
 
 export function MenuClient({ categories }: { categories: CategoryWithItems[] }) {
   const { lang } = useLang()
