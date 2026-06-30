@@ -169,64 +169,100 @@ export function CoffeeNavbar() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ duration: 0.28, ease: 'easeInOut' }}
             style={{
               position: 'fixed', inset: 0, zIndex: 40,
               background: BG,
               display: 'flex', flexDirection: 'column',
-              justifyContent: 'center', alignItems: 'center', gap: '2rem',
             }}
           >
-            <button
-              onClick={() => setOpen(false)}
-              style={{ position: 'absolute', top: '20px', right: '24px', background: 'none', border: 'none', cursor: 'pointer', color: MUTED }}
-            >
-              <X size={22} />
-            </button>
-
-            {/* Brand in mobile menu */}
-            <div style={{ position: 'absolute', top: '18px', left: '24px', display: 'flex', flexDirection: 'column', lineHeight: 1, gap: '2px' }}>
-              <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 300, color: TEXT }}>HOŞ</span>
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: '7px', fontWeight: 600, letterSpacing: '0.35em', textTransform: 'uppercase', color: SAGE }}>COFFEE</span>
-            </div>
-
-            {links.map((l, i) => (
-              <motion.div
-                key={l.href}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ delay: i * 0.06 }}
-              >
-                <a
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  style={{
-                    fontFamily: 'var(--font-heading)',
-                    fontSize: 'clamp(28px, 8vw, 44px)',
-                    fontWeight: 300,
-                    color: TEXT,
-                    textDecoration: 'none',
-                    letterSpacing: '0.02em',
-                  }}
-                >
-                  {ru ? l.labelRu : l.labelTk}
-                </a>
-              </motion.div>
-            ))}
-
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.22 }}>
+            {/* Top bar */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', height: '64px', borderBottom: `1px solid rgba(107,125,104,0.14)`, flexShrink: 0 }}>
+              {/* Back to Lounge */}
               <Link
                 href="/"
                 onClick={() => setOpen(false)}
-                style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: MUTED, textDecoration: 'none' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: MUTED, textDecoration: 'none' }}
               >
-                ← HOŞ Lounge
+                ← Lounge
               </Link>
-            </motion.div>
+
+              {/* Brand */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1, gap: '2px' }}>
+                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 300, color: TEXT }}>HOŞ</span>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: '6.5px', fontWeight: 600, letterSpacing: '0.35em', textTransform: 'uppercase', color: SAGE }}>COFFEE</span>
+              </div>
+
+              {/* Close */}
+              <button
+                onClick={() => setOpen(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: MUTED, display: 'flex', alignItems: 'center', padding: '4px' }}
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            {/* Nav links */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', padding: '0 36px', gap: '0' }}>
+              {links.map((l, i) => (
+                <motion.div
+                  key={l.href}
+                  initial={{ opacity: 0, x: 24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ delay: i * 0.07, duration: 0.3 }}
+                  style={{ width: '100%', borderBottom: `1px solid rgba(107,125,104,0.1)` }}
+                >
+                  <a
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    style={{
+                      display: 'block',
+                      padding: '22px 0',
+                      fontFamily: 'var(--font-heading)',
+                      fontSize: 'clamp(30px, 8vw, 46px)',
+                      fontWeight: 300,
+                      color: TEXT,
+                      textDecoration: 'none',
+                      letterSpacing: '0.01em',
+                    }}
+                  >
+                    {ru ? l.labelRu : l.labelTk}
+                  </a>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Bottom: lang + cart */}
+            <div style={{ padding: '24px 36px', borderTop: `1px solid rgba(107,125,104,0.14)`, display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <button
+                onClick={() => setLang(lang === 'ru' ? 'tk' : 'ru')}
+                style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', color: MUTED, background: 'transparent', border: `1px solid rgba(28,28,28,0.15)`, padding: '7px 12px', cursor: 'pointer' }}
+              >
+                {ru ? 'TK' : 'RU'}
+              </button>
+              {!authLoading && !client && (
+                <Link
+                  href="/auth/login"
+                  onClick={() => setOpen(false)}
+                  style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: SAGE, textDecoration: 'none' }}
+                >
+                  Войти
+                </Link>
+              )}
+              {!authLoading && client && (
+                <Link
+                  href="/profile"
+                  onClick={() => setOpen(false)}
+                  style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: SAGE, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}
+                >
+                  <User size={13} /> {client.name.split(' ')[0]}
+                </Link>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

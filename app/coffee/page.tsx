@@ -325,7 +325,7 @@ export default function CoffeePage() {
       {/* ══════════════════════════════════════
           ABOUT
       ══════════════════════════════════════ */}
-      <section id="about" style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: BG }}>
+      <section id="about" style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: BG, scrollMarginTop: '64px' }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
           <div data-animate-c>
@@ -459,7 +459,7 @@ export default function CoffeePage() {
       {/* ══════════════════════════════════════
           MENU — dynamic from API
       ══════════════════════════════════════ */}
-      <section id="menu" style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: BG }}>
+      <section id="menu" style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: BG, scrollMarginTop: '64px' }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20">
 
           <div className="text-center mb-12" data-animate-c>
@@ -765,7 +765,7 @@ export default function CoffeePage() {
       {/* ══════════════════════════════════════
           BOOKING — inline form
       ══════════════════════════════════════ */}
-      <section id="booking" style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: BG }}>
+      <section id="booking" style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: BG, scrollMarginTop: '64px' }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20">
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
