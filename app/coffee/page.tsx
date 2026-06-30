@@ -16,7 +16,7 @@ const TEXT    = '#1c1c1c'
 const MUTED   = '#8a857e'
 const SAGE    = '#6b7d68'
 const SAGE_DIM = 'rgba(107,125,104,0.6)'
-const BORDER  = 'rgba(0,0,0,0.08)'
+const BORDER  = 'rgba(0,0,0,0.14)'
 
 // ── Types ─────────────────────────────────────────────
 interface CategoryItem {
@@ -341,7 +341,7 @@ export default function CoffeePage() {
                 ? 'HOŞ Coffee — это не просто кофейня. Это пространство, где каждая чашка создаётся с любовью и вниманием к деталям. Мы работаем только со свежеобжаренными зёрнами от лучших хозяйств мира.'
                 : 'HOŞ Coffee — diňe bir kofehana däl. Bu ýerde her käse söýgi we jikme-jikliklere üns bilen taýýarlanýar. Biz dünýäniň iň gowy fermalaryndan täze gowrulan däneler bilen işleýäris.'}
             </p>
-            <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, lineHeight: 1.9, color: 'rgba(138,133,126,0.6)', fontSize: '14px', maxWidth: '420px', marginBottom: '40px' }}>
+            <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, lineHeight: 1.9, color: MUTED, fontSize: '14px', maxWidth: '420px', marginBottom: '40px' }}>
               {ru
                 ? 'Авторский кофе, свежая выпечка, уютные зоны для работы и отдыха.'
                 : 'Awtor kofe, täze çörek önümleri, iş we dynç alyş üçin amatly zonaları.'}
@@ -855,7 +855,7 @@ export default function CoffeePage() {
                     <p style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: MUTED, marginBottom: '10px' }}>
                       {ru ? 'ЗОНА' : 'ZONA'}
                     </p>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       {coffeeZones.map(z => {
                         const Icon = z.icon
                         const sel = bZone === z.id
