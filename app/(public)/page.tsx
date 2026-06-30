@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -8,15 +8,36 @@ import { useLang } from '@/components/providers/LangProvider'
 import { translations } from '@/lib/i18n'
 import { ArrowRight, MapPin, Clock, Phone } from 'lucide-react'
 
+interface Event {
+  id: number
+  title_ru: string
+  title_tk: string
+  description_ru: string | null
+  description_tk: string | null
+  date: string
+  time: string
+  location: string | null
+  imageUrl: string | null
+  active: boolean
+}
+
+const MONTHS_RU = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь']
+const MONTHS_TK = ['ýanwar','fewral','mart','aprel','maý','iýun','iýul','awgust','sentýabr','oktýabr','noýabr','dekabr']
+
 export default function HomePage() {
   const { lang } = useLang()
   const tr = translations[lang]
   const ru = lang === 'ru'
   const heroRef = useRef<HTMLDivElement>(null)
+  const [events, setEvents] = useState<Event[]>([])
 
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const imgY    = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
   const fadeOut = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+
+  useEffect(() => {
+    fetch('/api/events').then(r => r.json()).then(setEvents).catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -293,6 +314,95 @@ export default function HomePage() {
         </div>
       </section>
 
+
+      {events.length > 0 && (
+        <>
+          <Divider />
+
+          {/* ══════════════════════════════════════
+              EVENTS — ближайшие мероприятия
+          ══════════════════════════════════════ */}
+          <section style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: '#080808' }}>
+            <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20">
+
+              <div className="flex items-end justify-between mb-12" data-animate>
+                <div>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '16px' }}>
+                    {ru ? 'БЛИЖАЙШИЕ СОБЫТИЯ' : 'GOLAÝ ÇÄRELER'}
+                  </span>
+                  <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(28px, 4vw, 52px)', fontWeight: 300, color: 'var(--white)', letterSpacing: '-0.01em', lineHeight: 1 }}>
+                    {ru ? 'Мероприятия' : 'Çäreler'}
+                  </h2>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-0" style={{ border: '1px solid var(--border)' }}>
+                {events.map((ev, i) => {
+                  const day   = ev.date.slice(8)
+                  const month = ru ? MONTHS_RU[parseInt(ev.date.slice(5, 7)) - 1] : MONTHS_TK[parseInt(ev.date.slice(5, 7)) - 1]
+                  const year  = ev.date.slice(0, 4)
+                  const title = ru ? ev.title_ru : ev.title_tk
+                  const desc  = ru ? ev.description_ru : ev.description_tk
+                  return (
+                    <div
+                      key={ev.id}
+                      data-animate
+                      data-delay={String(i * 0.07)}
+                      className="group flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-10 px-6 sm:px-10 py-7 sm:py-8 transition-colors cursor-default"
+                      style={{ borderBottom: i < events.length - 1 ? '1px solid var(--border)' : 'none', background: 'transparent' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(201,168,76,0.03)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      {/* Date */}
+                      <div className="flex-shrink-0 flex sm:flex-col items-baseline sm:items-end gap-3 sm:gap-1 min-w-[80px]">
+                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(42px, 6vw, 64px)', fontWeight: 300, color: 'var(--gold)', lineHeight: 1 }}>
+                          {day}
+                        </span>
+                        <span style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+                          {month} {year}
+                        </span>
+                      </div>
+
+                      {/* Divider line */}
+                      <div className="hidden sm:block flex-shrink-0" style={{ width: '1px', height: '60px', background: 'var(--border)' }} />
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(20px, 2.5vw, 30px)', fontWeight: 300, color: 'var(--white)', marginBottom: '8px', lineHeight: 1.2 }}>
+                          {title}
+                        </h3>
+                        {desc && (
+                          <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.6, maxWidth: '520px' }}>
+                            {desc}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap items-center gap-4 mt-3">
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+                            <Clock size={11} style={{ color: 'var(--gold)' }} />
+                            {ev.time}
+                          </span>
+                          {ev.location && (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+                              <MapPin size={11} style={{ color: 'var(--gold)' }} />
+                              {ev.location}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Arrow */}
+                      <div className="hidden sm:flex flex-shrink-0 items-center event-arrow" style={{ color: 'var(--gold)', opacity: 0.35, transition: 'all 0.3s' }}>
+                        <ArrowRight size={20} />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+            </div>
+          </section>
+        </>
+      )}
 
       <Divider />
 

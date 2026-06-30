@@ -11,6 +11,7 @@ import {
   Tag,
   Coffee,
   ExternalLink,
+  Sparkles,
 } from 'lucide-react'
 
 interface AdminSidebarProps {
@@ -24,6 +25,7 @@ const navItems = [
   { href: '/admin/bookings', label: 'Бронирования', icon: CalendarDays, badgeKey: 'bookings' },
   { href: '/admin/menu', label: 'Меню', icon: UtensilsCrossed },
   { href: '/admin/promotions', label: 'Акции', icon: Tag },
+  { href: '/admin/events', label: 'Мероприятия', icon: Sparkles },
 ]
 
 const coffeeNavItems = [

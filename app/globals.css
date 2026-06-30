@@ -149,6 +149,12 @@
   .badge-cancelled { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3);  padding: 2px 8px; border-radius: 20px; font-size: 11px; }
 }
 
+/* ── Events section hover arrow ─────────────── */
+.group:hover .event-arrow {
+  opacity: 1 !important;
+  transform: translateX(4px);
+}
+
 /* ── Menu card image effect ─────────────────── */
 .menu-img {
   filter: grayscale(20%);
