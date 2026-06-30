@@ -6,7 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
-import { ArrowRight, MapPin, Clock, Phone, Plus, Users, Star, Leaf, CheckCircle, X, Search } from 'lucide-react'
+import { ArrowRight, MapPin, Clock, Phone, Plus, Users, Star, CheckCircle, X, Search } from 'lucide-react'
 import { toast } from 'sonner'
 
 // ── Color tokens ──────────────────────────────────────
@@ -167,9 +167,8 @@ export default function CoffeePage() {
     : []
 
   const coffeeZones = [
-    { id: 'main',    icon: Users, ru: 'Основной зал', tk: 'Esasy zal'  },
-    { id: 'window',  icon: Star,  ru: 'У окна',       tk: 'Penjiräniň ýanynda' },
-    { id: 'terrace', icon: Leaf,  ru: 'Терраса',      tk: 'Taras'      },
+    { id: 'main', icon: Users, ru: 'Основной зал', tk: 'Esasy zal' },
+    { id: 'vip',  icon: Star,  ru: 'VIP Зона',     tk: 'VIP Zona'  },
   ]
   const timeSlots = Array.from({ length: 27 }, (_, i) => {
     const m = 8 * 60 + i * 30

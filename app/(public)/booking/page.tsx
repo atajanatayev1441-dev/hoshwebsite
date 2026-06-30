@@ -3,15 +3,14 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Users, Star, Leaf, CheckCircle, Clock, X } from 'lucide-react'
+import { Users, Star, CheckCircle, Clock, X } from 'lucide-react'
 import { useLang } from '@/components/providers/LangProvider'
 import { translations } from '@/lib/i18n'
 import { toast } from 'sonner'
 
 const zones = [
-  { id: 'main',    icon: Users, ru: 'Основной зал', tk: 'Esasy zal',  descRu: 'Уютная атмосфера',           descTk: 'Amatly atmosfera' },
-  { id: 'vip',     icon: Star,  ru: 'VIP Зона',     tk: 'VIP Zona',   descRu: 'Для особых случаев',         descTk: 'Aýratyn wakalar üçin' },
-  { id: 'terrace', icon: Leaf,  ru: 'Терраса',      tk: 'Taras',      descRu: 'Открытая, с видом на улицу', descTk: 'Açyk, köçä syn' },
+  { id: 'main', icon: Users, ru: 'Основной зал', tk: 'Esasy zal', descRu: 'Уютная атмосфера',   descTk: 'Amatly atmosfera' },
+  { id: 'vip',  icon: Star,  ru: 'VIP Зона',     tk: 'VIP Zona',  descRu: 'Для особых случаев', descTk: 'Aýratyn wakalar üçin' },
 ]
 
 const timeSlots = Array.from({ length: 27 }, (_, i) => {
