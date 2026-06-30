@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     let client = await prisma.client.findUnique({ where: { phone } })
     if (!client) {
       const digits = phone.replace(/\D/g, '')
-      const all = await prisma.client.findMany({ select: { id: true, phone: true, name: true, passwordHash: true } })
+      const all = await prisma.client.findMany()
       client = all.find(c => c.phone.replace(/\D/g, '') === digits) ?? null
       // Normalize the legacy phone in DB so future logins work without fallback
       if (client) {
