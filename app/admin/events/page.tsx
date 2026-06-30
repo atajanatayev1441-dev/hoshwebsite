@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { Plus, Pencil, Trash2, X, Check, CalendarDays, MapPin, Clock } from 'lucide-react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { Plus, Pencil, Trash2, X, Check, CalendarDays, MapPin, Clock, Upload, Image as ImageIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import Image from 'next/image'
 
 interface Event {
   id: number
@@ -32,6 +33,8 @@ export default function AdminEventsPage() {
   const [modal, setModal] = useState<'create' | number | null>(null)
   const [form, setForm] = useState<Omit<Event, 'id'>>(empty)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -45,6 +48,23 @@ export default function AdminEventsPage() {
   const openCreate = () => { setForm(empty); setModal('create') }
   const openEdit   = (e: Event) => { const { id: _id, ...rest } = e; setForm(rest); setModal(e.id) }
   const close      = () => setModal(null)
+
+  const uploadFile = async (file: File) => {
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Upload failed')
+      setForm(f => ({ ...f, imageUrl: data.url }))
+      toast.success('Фото загружено')
+    } catch (err: any) {
+      toast.error(err.message ?? 'Ошибка загрузки')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const save = async () => {
     setSaving(true)
@@ -84,7 +104,6 @@ export default function AdminEventsPage() {
 
   const inp = 'w-full px-3 py-2 bg-sage-800 border border-sage-700 rounded-lg text-cream-100 text-sm focus:outline-none focus:ring-2 focus:ring-sage-500'
   const lbl = 'block text-xs font-medium text-sage-400 mb-1 tracking-wide'
-
   const today = new Date().toISOString().slice(0, 10)
 
   return (
@@ -112,8 +131,19 @@ export default function AdminEventsPage() {
             const isPast = ev.date < today
             return (
               <div key={ev.id} className={`flex items-center gap-4 p-4 rounded-xl border transition-opacity ${isPast ? 'opacity-50' : ''} bg-sage-900 border-sage-700`}>
+                {/* Poster thumbnail */}
+                {ev.imageUrl ? (
+                  <div className="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden relative">
+                    <Image src={ev.imageUrl} alt={ev.title_ru} fill className="object-cover" />
+                  </div>
+                ) : (
+                  <div className="flex-shrink-0 w-14 h-14 rounded-lg bg-sage-800 flex items-center justify-center">
+                    <ImageIcon size={18} className="text-sage-600" />
+                  </div>
+                )}
+
                 {/* Date block */}
-                <div className="flex-shrink-0 w-16 text-center">
+                <div className="flex-shrink-0 w-14 text-center">
                   <div className="text-2xl font-light text-amber-400 leading-none">{ev.date.slice(8)}</div>
                   <div className="text-xs text-sage-400 tracking-wide uppercase mt-0.5">
                     {['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'][parseInt(ev.date.slice(5, 7)) - 1]}
@@ -206,9 +236,57 @@ export default function AdminEventsPage() {
                 <textarea className={inp + ' resize-none'} rows={2} value={form.description_tk ?? ''} onChange={e => setForm(f => ({ ...f, description_tk: e.target.value }))} />
               </div>
 
+              {/* Image upload */}
               <div>
-                <label className={lbl}>Ссылка на фото (необязательно)</label>
-                <input className={inp} value={form.imageUrl ?? ''} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
+                <label className={lbl}>Афиша / фото</label>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={e => { const f = e.target.files?.[0]; if (f) uploadFile(f) }}
+                />
+                {form.imageUrl ? (
+                  <div className="relative rounded-lg overflow-hidden" style={{ height: '180px' }}>
+                    <Image src={form.imageUrl} alt="Poster" fill className="object-cover" />
+                    <div className="absolute inset-0 flex items-end justify-between p-3" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%)' }}>
+                      <button
+                        type="button"
+                        onClick={() => fileRef.current?.click()}
+                        disabled={uploading}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-colors"
+                        style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}
+                      >
+                        <Upload size={12} /> {uploading ? 'Загрузка...' : 'Заменить'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setForm(f => ({ ...f, imageUrl: '' }))}
+                        className="w-7 h-7 rounded-full flex items-center justify-center text-white"
+                        style={{ background: 'rgba(239,68,68,0.7)' }}
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    disabled={uploading}
+                    className="w-full flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-sage-600 hover:border-sage-400 transition-colors py-8 text-sage-400 hover:text-sage-300"
+                  >
+                    {uploading ? (
+                      <span className="text-sm">Загрузка...</span>
+                    ) : (
+                      <>
+                        <Upload size={24} />
+                        <span className="text-sm">Нажмите чтобы загрузить фото</span>
+                        <span className="text-xs opacity-60">JPG, PNG, WebP</span>
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
@@ -221,7 +299,7 @@ export default function AdminEventsPage() {
               <button onClick={close} className="px-4 py-2 text-sm text-sage-400 hover:text-cream-100 transition-colors">Отмена</button>
               <button
                 onClick={save}
-                disabled={saving || !form.title_ru || !form.date || !form.time}
+                disabled={saving || uploading || !form.title_ru || !form.date || !form.time}
                 className="px-5 py-2 bg-sage-600 hover:bg-sage-500 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors"
               >
                 {saving ? 'Сохранение...' : 'Сохранить'}
