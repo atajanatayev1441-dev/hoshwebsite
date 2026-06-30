@@ -11,14 +11,14 @@ interface ClientUser {
 interface ClientAuthContextValue {
   client: ClientUser | null
   loading: boolean
-  refresh: () => void
+  refresh: () => Promise<void>
   logout: () => void
 }
 
 const ClientAuthContext = createContext<ClientAuthContextValue>({
   client: null,
   loading: true,
-  refresh: () => {},
+  refresh: async () => {},
   logout: () => {},
 })
 

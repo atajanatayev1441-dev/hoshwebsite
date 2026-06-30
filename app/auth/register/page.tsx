@@ -32,10 +32,12 @@ export default function RegisterPage() {
 
     setLoading(true)
     try {
+      const rawPhone = form.phone.trim()
+      const phone = (rawPhone.startsWith('+') ? '+' : '') + rawPhone.replace(/\D/g, '')
       const res = await fetch('/api/client/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: form.name, phone: form.phone, password: form.password }),
+        body: JSON.stringify({ name: form.name, phone, password: form.password }),
         credentials: 'include',
       })
       const data = await res.json()

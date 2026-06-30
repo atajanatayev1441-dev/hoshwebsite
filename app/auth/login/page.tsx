@@ -38,15 +38,17 @@ function LoginForm() {
 
     setLoading(true)
     try {
+      const rawPhone = form.phone.trim()
+      const phone = (rawPhone.startsWith('+') ? '+' : '') + rawPhone.replace(/\D/g, '')
       const res = await fetch('/api/client/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: form.phone, password: form.password }),
+        body: JSON.stringify({ phone, password: form.password }),
         credentials: 'include',
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error ?? 'Ошибка входа'); return }
-      refresh()
+      await refresh()
       router.push('/profile')
     } catch {
       setError('Ошибка сервера. Попробуйте снова.')

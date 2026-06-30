@@ -5,14 +5,24 @@ import { signClientToken } from '@/lib/clientAuth'
 
 export const dynamic = 'force-dynamic'
 
+function normalizePhone(raw: string): string {
+  // Keep leading + then strip everything that isn't a digit
+  const trimmed = raw.trim()
+  const prefix = trimmed.startsWith('+') ? '+' : ''
+  return prefix + trimmed.replace(/\D/g, '')
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { phone, name, password } = await req.json()
+    const body = await req.json()
+    const phone = normalizePhone(body.phone ?? '')
+    const name  = (body.name ?? '').trim()
+    const password = body.password ?? ''
 
     if (!phone || !name) {
       return NextResponse.json({ error: 'Телефон и имя обязательны' }, { status: 400 })
     }
-    if (!password || password.length < 6) {
+    if (password.length < 6) {
       return NextResponse.json({ error: 'Пароль должен быть минимум 6 символов' }, { status: 400 })
     }
 
