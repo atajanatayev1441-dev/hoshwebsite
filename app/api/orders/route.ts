@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   })
 
   const itemLines = order.items
-    .map(i => `  • ${i.menuItem?.name ?? '?'} × ${i.quantity}`)
+    .map(i => `  • ${i.menuItem?.name_ru ?? '?'} × ${i.quantity}`)
     .join('\n')
   await sendTelegram(
     `🛒 <b>Новый заказ №${order.id}</b>\n\n` +
