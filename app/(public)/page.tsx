@@ -29,9 +29,8 @@ export default function HomePage() {
   const tr = translations[lang]
   const ru = lang === 'ru'
   const heroRef = useRef<HTMLDivElement>(null)
-  const [events, setEvents]         = useState<Event[]>([])
-  const [activeIdx, setActiveIdx]   = useState(0)
-  const [paused, setPaused]         = useState(false)
+  const [events, setEvents]       = useState<Event[]>([])
+  const [activeIdx, setActiveIdx] = useState(0)
 
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const imgY    = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
@@ -42,10 +41,10 @@ export default function HomePage() {
   }, [])
 
   useEffect(() => {
-    if (events.length <= 1 || paused) return
-    const t = setInterval(() => setActiveIdx(i => (i + 1) % events.length), 3000)
+    if (events.length <= 1) return
+    const t = setInterval(() => setActiveIdx(i => (i + 1) % events.length), 5000)
     return () => clearInterval(t)
-  }, [events.length, paused])
+  }, [events.length])
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -154,17 +153,13 @@ export default function HomePage() {
         const day   = ev.date.slice(8)
         const month = (ru ? MONTHS_RU : MONTHS_TK)[parseInt(ev.date.slice(5, 7)) - 1]
         const year  = ev.date.slice(0, 4)
-        const prev  = () => { setPaused(true); setActiveIdx(i => (i - 1 + events.length) % events.length) }
-        const next  = () => { setPaused(true); setActiveIdx(i => (i + 1) % events.length) }
+        const prev  = () => setActiveIdx(i => (i - 1 + events.length) % events.length)
+        const next  = () => setActiveIdx(i => (i + 1) % events.length)
 
         return (
           <>
             <Divider />
-            <section
-              style={{ background: '#080808', position: 'relative' }}
-              onMouseEnter={() => setPaused(true)}
-              onMouseLeave={() => setPaused(false)}
-            >
+            <section style={{ background: '#080808', position: 'relative' }}>
               {/* ── Poster slide ── */}
               <div className="relative overflow-hidden" style={{ minHeight: 'clamp(420px, 60vw, 680px)' }}>
 
@@ -285,7 +280,7 @@ export default function HomePage() {
                     {events.map((_, i) => (
                       <button
                         key={i}
-                        onClick={() => { setPaused(true); setActiveIdx(i) }}
+                        onClick={() => setActiveIdx(i)}
                         style={{
                           width: i === activeIdx ? '24px' : '6px',
                           height: '6px',
@@ -300,12 +295,12 @@ export default function HomePage() {
                 )}
 
                 {/* ── Progress bar ── */}
-                {events.length > 1 && !paused && (
+                {events.length > 1 && (
                   <motion.div
                     key={activeIdx + '-bar'}
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
-                    transition={{ duration: 3, ease: 'linear' }}
+                    transition={{ duration: 5, ease: 'linear' }}
                     style={{
                       position: 'absolute', bottom: 0, left: 0, right: 0, height: '2px',
                       background: 'var(--gold)', transformOrigin: 'left', zIndex: 3,
