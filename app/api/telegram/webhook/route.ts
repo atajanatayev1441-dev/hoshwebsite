@@ -30,8 +30,18 @@ async function handleUpcoming() {
     await sendTelegram('📅 Нет предстоящих бронирований')
     return
   }
-  const lines = bookings.map(b => fmtBooking(b as Booking)).join('\n\n')
-  await sendTelegram(`📅 <b>Ближайшие брони (${bookings.length})</b>\n\n${lines}`)
+  await sendTelegram(`📅 <b>Ближайшие брони (${bookings.length})</b>`)
+  for (const b of bookings) {
+    const booking = b as Booking
+    // confirmed + arrival not yet marked → show arrived buttons
+    const buttons = booking.status === 'confirmed' && booking.arrived === null
+      ? [[
+          { text: '🟢 Пришли',    callback_data: `vis_yes_${booking.id}` },
+          { text: '🔴 Не пришли', callback_data: `vis_no_${booking.id}`  },
+        ]]
+      : undefined
+    await sendTelegram(fmtBooking(booking), buttons)
+  }
 }
 
 async function handleHistory() {
@@ -76,11 +86,7 @@ export async function POST(req: NextRequest) {
         `📅 ${booking.date} в ${booking.time}\n` +
         `🏛 ${zoneLabel} · ${booking.guestCount} гост.` +
         (booking.note ? `\n💬 ${booking.note}` : '')
-      const buttons = newStatus === 'confirmed' ? [[
-        { text: '🟢 Пришли',     callback_data: `vis_yes_${bookingId}` },
-        { text: '🔴 Не пришли',  callback_data: `vis_no_${bookingId}`  },
-      ]] : undefined
-      await editTelegramMessage(chatId, messageId, text, buttons)
+      await editTelegramMessage(chatId, messageId, text)
     }
 
     /* Принять / Отклонить заказ */
