@@ -5,16 +5,38 @@ type InlineButton = { text: string; callback_data: string }
 
 export async function sendTelegram(
   text: string,
-  buttons?: InlineButton[][]
+  inlineButtons?: InlineButton[][]
 ): Promise<void> {
   if (!BOT_TOKEN || !CHAT_ID) return
   try {
     const body: Record<string, unknown> = { chat_id: CHAT_ID, text, parse_mode: 'HTML' }
-    if (buttons) body.reply_markup = { inline_keyboard: buttons }
+    if (inlineButtons) body.reply_markup = { inline_keyboard: inlineButtons }
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
+    })
+  } catch {}
+}
+
+export async function sendWithKeyboard(text: string): Promise<void> {
+  if (!BOT_TOKEN || !CHAT_ID) return
+  try {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: {
+          keyboard: [
+            [{ text: '📅 Ближайшие брони' }, { text: '📋 История' }],
+          ],
+          resize_keyboard: true,
+          persistent: true,
+        },
+      }),
     })
   } catch {}
 }

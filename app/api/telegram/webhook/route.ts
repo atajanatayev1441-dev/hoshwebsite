@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { sendTelegram, editTelegramMessage, answerCallback } from '@/lib/telegram'
+import { sendTelegram, sendWithKeyboard, editTelegramMessage, answerCallback } from '@/lib/telegram'
 
 type Booking = {
   id: number; name: string; phone: string; date: string; time: string
@@ -129,16 +129,10 @@ export async function POST(req: NextRequest) {
     const text: string = msg.text || ''
 
     if (text === '/start' || text === '/menu') {
-      await sendTelegram(
-        '👋 <b>HOŞ Admin Bot</b>\n\nВыберите действие:',
-        [[
-          { text: '📅 Ближайшие брони', callback_data: 'cmd_upcoming' },
-          { text: '📋 История',         callback_data: 'cmd_history'  },
-        ]]
-      )
+      await sendWithKeyboard('👋 <b>HOŞ Admin Bot</b>\n\nКнопки появились внизу 👇')
     }
-    if (text === '/upcoming' || text === '/брони') await handleUpcoming()
-    if (text === '/history'  || text === '/история') await handleHistory()
+    if (text === '📅 Ближайшие брони' || text === '/upcoming') await handleUpcoming()
+    if (text === '📋 История'         || text === '/history')  await handleHistory()
   }
 
   return NextResponse.json({ ok: true })
