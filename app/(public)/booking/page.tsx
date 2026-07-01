@@ -147,7 +147,7 @@ export default function BookingPage() {
         {/* LEFT — Form */}
         <div className="flex flex-col justify-center px-5 sm:px-8 md:px-16 py-14 md:py-24 lg:py-32">
           <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.4em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '16px' }}>
-            {ru ? 'ОНЛАЙН БРОНИРОВАНИЕ' : 'ONLAÝN ZAKAZ'}
+            {ru ? 'ОНЛАЙН БРОНИРОВАНИЕ' : 'ONLAÝN BRON'}
           </span>
           <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 5vw, 60px)', fontWeight: 300, color: 'var(--white)', lineHeight: 1.1, marginBottom: '48px' }}>
             {tr.bookingTitle}

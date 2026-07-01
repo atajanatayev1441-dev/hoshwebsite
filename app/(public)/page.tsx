@@ -116,7 +116,7 @@ export default function HomePage() {
                 {ru ? 'СМОТРЕТЬ МЕНЮ' : 'MENÝUNY GÖR'}
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link href="/booking" className="btn-outline">{ru ? 'ЗАБРОНИРОВАТЬ' : 'ZAKAZ ETMEK'}</Link>
+              <Link href="/booking" className="btn-outline">{ru ? 'ЗАБРОНИРОВАТЬ' : 'BRON ETMEK'}</Link>
             </div>
           </motion.div>
         </motion.div>
@@ -474,13 +474,13 @@ export default function HomePage() {
 
           <div data-animate>
             <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.42em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '20px' }}>
-              {ru ? 'БРОНИРОВАНИЕ' : 'ZAKAZ'}
+              {ru ? 'БРОНИРОВАНИЕ' : 'BRON'}
             </span>
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 300, color: 'var(--white)', lineHeight: 1.05, marginBottom: '4px' }}>
               {ru ? 'Зарезервируйте' : 'Stolyňyzy'}
             </h2>
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 300, fontStyle: 'italic', color: 'var(--gold)', lineHeight: 1.05, marginBottom: '28px' }}>
-              {ru ? 'ваш столик' : 'zakaz ediň'}
+              {ru ? 'ваш столик' : 'bronlaň'}
             </h2>
             <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, lineHeight: 1.9, color: 'var(--muted)', fontSize: '15px', maxWidth: '380px', marginBottom: '36px' }}>
               {ru ? 'Три зоны для вашего отдыха. Подтверждение придёт по SMS — без ожидания у входа.' : 'Dynç almak üçin üç zona. Tassyklama SMS arkaly geler.'}

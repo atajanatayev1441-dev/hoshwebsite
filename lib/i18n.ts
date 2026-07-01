@@ -80,18 +80,18 @@ export const translations = {
     // Nav
     home: 'Baş sahypa',
     menu: 'Menýu',
-    booking: 'Zakaz et',
+    booking: 'Bron et',
     promotions: 'Aksiýalar',
     // Hero
     heroTitle: 'HOŞ Coffee Lounge',
     heroTagline: 'Her käse bir hekaýa',
-    heroSubtitle: 'Awtor kofe, öý çörek we ajaýyp atmosfera',
+    heroSubtitle: 'Awtor kofe, öý çöregi we ajaýyp atmosfera',
     viewMenu: 'Menýuny gör',
-    bookTable: 'Stol zakaz et',
+    bookTable: 'Stol bronlamak',
     // Menu
     addToCart: 'Sebede goş',
-    cart: 'Sebede',
-    emptyCart: 'Sebede boş',
+    cart: 'Sebet',
+    emptyCart: 'Sebet boş',
     total: 'Jemi',
     placeOrder: 'Sargyt et',
     tableNumber: 'Stol belgisi',
@@ -107,8 +107,8 @@ export const translations = {
     orderStatus: 'Sargyt ýagdaýy',
     orderNumber: 'Sargyt №',
     // Booking
-    bookingTitle: 'Stol zakaz et',
-    bookingSubtitle: 'Zona, senäni we wagty saýlaň',
+    bookingTitle: 'Stol bronlamak',
+    bookingSubtitle: 'Zonany, sene we wagty saýlaň',
     zoneMain: 'Esasy zal',
     zoneVip: 'VIP Zona',
     zoneTerrace: 'Taras',
@@ -125,11 +125,11 @@ export const translations = {
     submitBooking: 'Arzany iberiň',
     bookingSubmitted: 'Arzaňyz iberildi. SMS tassyklamasyna garaşyň.',
     bookingConfirmed: 'Stol tassyklandy!',
-    bookingCancelled: 'Zakaz ýatyryldy',
-    bookingStatus: 'Zakaz ýagdaýy',
+    bookingCancelled: 'Bron ýatyryldy',
+    bookingStatus: 'Bron ýagdaýy',
     // Promotions
     promotionsTitle: 'Aksiýalar we ýörite teklipler',
-    promotionsSubtitle: 'Myhmanlary üçin peýdaly teklipler',
+    promotionsSubtitle: 'Myhmanlarymyz üçin amatly teklipler',
     // Common
     loading: 'Ýüklenýär...',
     error: 'Ýalňyşlyk ýüze çykdy',
@@ -149,7 +149,7 @@ export const translations = {
     address: 'Jerjinskiý köç. 143, Sirkiň garşysynda',
     phone: '+993 71 66 7777',
     hours: 'Her gün 09:00 – 23:00',
-    followUs: 'Sosial ulgamlarda biz',
+    followUs: 'Bizi sosial ulgamlarda tapyň',
   },
 } as const
 
