@@ -47,7 +47,7 @@ export function Navbar() {
         borderBottom: scrolled ? '1px solid rgba(201,168,76,0.12)' : 'none',
       }}
     >
-      <div className="max-w-7xl mx-auto px-8 flex items-center justify-between h-full">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-full">
 
         {/* Logo */}
         <Link href="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1, gap: '1px' }}>

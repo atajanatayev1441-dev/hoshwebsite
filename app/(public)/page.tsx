@@ -48,6 +48,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (window.matchMedia('(pointer: coarse)').matches) return // skip on mobile
     let cleanup: (() => void) | undefined
     ;(async () => {
       const { default: gsap } = await import('gsap')
@@ -87,8 +88,8 @@ export default function HomePage() {
           HERO — единственное фото на странице
       ══════════════════════════════════════ */}
       <section ref={heroRef} className="relative h-screen overflow-hidden">
-        <motion.div className="absolute inset-0 scale-110" style={{ y: imgY }}>
-          <Image src="/images/hero.jpg" alt="HOŞ Lounge" fill priority quality={95} className="object-cover object-center" />
+        <motion.div className="absolute inset-0 scale-105 md:scale-110" style={{ y: imgY }}>
+          <Image src="/images/hero.jpg" alt="HOŞ Lounge" fill priority quality={82} sizes="100vw" className="object-cover object-center" />
         </motion.div>
         <div className="absolute inset-0" style={{
           background: 'linear-gradient(to right, rgba(10,10,10,0.92) 45%, rgba(10,10,10,0.4) 100%)'
@@ -239,32 +240,25 @@ export default function HomePage() {
                 {/* ── Arrow buttons ── */}
                 {events.length > 1 && (
                   <>
-                    <button
-                      onClick={prev}
-                      aria-label="Предыдущее"
-                      style={{
-                        position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)',
-                        zIndex: 3, background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)',
-                        cursor: 'pointer', padding: '8px', transition: 'color 0.2s',
-                      }}
+                    <button onClick={prev} aria-label="Предыдущее" className="hidden sm:flex"
+                      style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', zIndex: 3, background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', padding: '8px', transition: 'color 0.2s' }}
                       onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--gold)'}
                       onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)'}
-                    >
-                      <ChevronLeft size={36} />
-                    </button>
-                    <button
-                      onClick={next}
-                      aria-label="Следующее"
-                      style={{
-                        position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)',
-                        zIndex: 3, background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)',
-                        cursor: 'pointer', padding: '8px', transition: 'color 0.2s',
-                      }}
+                    ><ChevronLeft size={36} /></button>
+                    <button onClick={next} aria-label="Следующее" className="hidden sm:flex"
+                      style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', zIndex: 3, background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', padding: '8px', transition: 'color 0.2s' }}
                       onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--gold)'}
                       onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)'}
-                    >
-                      <ChevronRight size={36} />
-                    </button>
+                    ><ChevronRight size={36} /></button>
+                    {/* Mobile swipe hint buttons — bottom left */}
+                    <div className="flex sm:hidden" style={{ position: 'absolute', bottom: '24px', left: '20px', zIndex: 3, gap: '8px' }}>
+                      <button onClick={prev} style={{ background: 'rgba(255,255,255,0.12)', border: 'none', color: '#fff', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                        <ChevronLeft size={18} />
+                      </button>
+                      <button onClick={next} style={{ background: 'rgba(255,255,255,0.12)', border: 'none', color: '#fff', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                        <ChevronRight size={18} />
+                      </button>
+                    </div>
                   </>
                 )}
 
@@ -402,7 +396,7 @@ export default function HomePage() {
       ══════════════════════════════════════ */}
       <div style={{ background: 'var(--gold)', overflow: 'hidden', padding: '13px 0' }}>
         <div className="flex animate-marquee whitespace-nowrap select-none">
-          {Array.from({ length: 12 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <span key={i} className="mx-8" style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.42em', textTransform: 'uppercase', color: 'var(--bg)' }}>
               Wake Up &nbsp;·&nbsp; Drink Coffee &nbsp;·&nbsp; Create &nbsp;·&nbsp; #Industrial &nbsp;·&nbsp; Brutalism &amp; Beans
             </span>

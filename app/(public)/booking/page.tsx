@@ -25,7 +25,7 @@ const inputStyle = {
   borderBottom: '1px solid rgba(255,255,255,0.2)',
   color: 'var(--white)',
   fontFamily: 'var(--font-body)',
-  fontSize: '15px',
+  fontSize: '16px',
   fontWeight: 300,
   padding: '10px 0',
   outline: 'none',
@@ -158,7 +158,7 @@ export default function BookingPage() {
             {/* Zone */}
             <div>
               <label style={labelStyle}>{ru ? 'ВЫБЕРИТЕ ЗОНУ' : 'ZONA SAÝLAŇ'}</label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
+              <div className="grid grid-cols-2 gap-3 mt-2">
                 {zones.map(z => {
                   const Icon = z.icon
                   const sel = zone === z.id
@@ -184,7 +184,7 @@ export default function BookingPage() {
             </div>
 
             {/* Date & Time */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label style={labelStyle}>{tr.selectDate}</label>
                 <input
