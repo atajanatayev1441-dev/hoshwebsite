@@ -1,5 +1,5 @@
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
-const CHAT_ID = process.env.TELEGRAM_CHAT_ID
+const CHAT_ID   = process.env.TELEGRAM_CHAT_ID
 
 type InlineButton = { text: string; callback_data: string }
 
@@ -22,7 +22,8 @@ export async function sendTelegram(
 export async function editTelegramMessage(
   chatId: number,
   messageId: number,
-  text: string
+  text: string,
+  buttons?: InlineButton[][]
 ): Promise<void> {
   if (!BOT_TOKEN) return
   try {
@@ -34,7 +35,7 @@ export async function editTelegramMessage(
         message_id: messageId,
         text,
         parse_mode: 'HTML',
-        reply_markup: { inline_keyboard: [] },
+        reply_markup: { inline_keyboard: buttons ?? [] },
       }),
     })
   } catch {}

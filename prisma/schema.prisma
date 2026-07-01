@@ -71,6 +71,7 @@ model Booking {
   clientLang String   @default("ru")
   note       String?
   status     String   @default("pending")
+  arrived    Boolean?
   venue      String   @default("lounge")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
