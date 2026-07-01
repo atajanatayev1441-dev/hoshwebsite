@@ -86,20 +86,6 @@ export function Navbar() {
               }} className="group-hover/link:!w-full" />
             </Link>
           ))}
-          <Link
-            href="/coffee"
-            style={{
-              fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500,
-              letterSpacing: '0.1em', textTransform: 'uppercase',
-              color: 'rgba(158,152,144,0.7)',
-              borderLeft: '1px solid rgba(255,255,255,0.07)', paddingLeft: '20px',
-              textDecoration: 'none', transition: 'color 0.25s',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#9e9890')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(158,152,144,0.7)')}
-          >
-            Coffee ↗
-          </Link>
         </nav>
 
         {/* ── Right controls ── */}

@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useLang } from '@/components/providers/LangProvider'
 import { translations } from '@/lib/i18n'
-import { ArrowRight, MapPin, Clock, Phone, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowRight, MapPin, Clock, Phone, ChevronLeft, ChevronRight, ExternalLink, Instagram, PhoneCall } from 'lucide-react'
 
 interface Event {
   id: number
@@ -297,103 +297,100 @@ export default function HomePage() {
       <Divider />
 
       {/* ══════════════════════════════════════
-          TWO VENUES — выбор заведения
+          LOCATIONS — все точки HOŞ
       ══════════════════════════════════════ */}
       <section style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: '#080808' }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20">
 
-          {/* Label */}
           <div className="text-center mb-12" data-animate>
             <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '16px' }}>
-              {ru ? 'НАШИ ЗАВЕДЕНИЯ' : 'BIZIŇ KÄRHANALARYMYZ'}
+              {ru ? 'НАШИ ТОЧКИ' : 'BIZIŇ NOKATLARYMYZ'}
             </span>
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 300, color: 'var(--white)', letterSpacing: '-0.01em' }}>
-              {ru ? 'Два места — одна семья' : 'Iki ýer — bir maşgala'}
+              {ru ? 'Семья HOŞ' : 'HOŞ maşgalasy'}
             </h2>
           </div>
 
-          {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px" style={{ background: 'rgba(255,255,255,0.06)' }} data-animate data-delay="0.1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-px" style={{ background: 'rgba(255,255,255,0.06)' }} data-animate data-delay="0.1">
 
-            {/* HOŞ LOUNGE — current site */}
-            <div className="relative group flex flex-col items-center justify-center text-center p-10 md:p-16 overflow-hidden"
-              style={{ background: '#0a0a0a', minHeight: '420px' }}>
-              {/* Gold glow */}
-              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.04) 0%, transparent 70%)', pointerEvents: 'none', transition: 'opacity 0.5s' }} className="group-hover:opacity-200" />
-              {/* Top accent */}
-              <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '40px', background: 'linear-gradient(to bottom, var(--gold), transparent)' }} />
-
-              {/* Logo */}
-              <div className="relative mb-8" style={{ width: 'clamp(120px, 20vw, 180px)', aspectRatio: '1/1' }}>
-                <Image
-                  src="/images/hoslounge.png"
-                  alt="HOŞ Lounge"
-                  fill
-                  className="object-contain transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: 'var(--muted)', display: 'block', marginBottom: '12px' }}>
-                {ru ? 'ЛАУНДЖ' : 'LOUNGE'}
-              </span>
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 300, color: 'var(--white)', lineHeight: 0.95, marginBottom: '16px' }}>
-                HOŞ<br /><em style={{ color: 'var(--gold)', fontSize: '0.65em' }}>Lounge</em>
-              </h3>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.7, maxWidth: '280px', marginBottom: '32px' }}>
-                {ru ? 'Индустриальная эстетика, авторский кофе, три зоны отдыха.' : 'Industrial estetika, awtor kofe, üç dynç alyş zonamyz.'}
-              </p>
-
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500,
-                letterSpacing: '0.2em', textTransform: 'uppercase',
-                color: 'var(--gold)', border: '1px solid rgba(201,168,76,0.35)',
-                padding: '10px 24px',
-              }}>
-                {ru ? 'ВЫ ЗДЕСЬ' : 'SIZ BU ÝERDE'}
-              </span>
-            </div>
-
-            {/* HOŞ COFFEE — link to second venue */}
-            <Link href="/coffee" className="relative group flex flex-col items-center justify-center text-center p-10 md:p-16 overflow-hidden"
-              style={{ background: '#0a0a0a', minHeight: '420px', textDecoration: 'none', display: 'flex' }}>
-              {/* Sage glow */}
-              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(107,131,107,0.06) 0%, transparent 70%)', pointerEvents: 'none', opacity: 0.5, transition: 'opacity 0.5s' }} className="group-hover:!opacity-100" />
-              {/* Top accent */}
-              <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '1px', height: '0px', background: 'linear-gradient(to bottom, rgba(107,131,107,0.8), transparent)', transition: 'height 0.4s ease' }} className="group-hover:!h-[40px]" />
-
-              {/* Logo */}
-              <div className="relative mb-8" style={{ width: 'clamp(120px, 20vw, 180px)', aspectRatio: '1/1' }}>
-                <Image
-                  src="/images/hoscoffee.png"
-                  alt="HOŞ Coffee"
-                  fill
-                  className="object-contain transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.5em', textTransform: 'uppercase', color: '#5a6b5a', display: 'block', marginBottom: '12px' }}>
+            {/* HOŞ COFFEE */}
+            <a href="https://hoscofe1.pikir.biz/" target="_blank" rel="noopener noreferrer"
+              className="relative group flex flex-col p-8 md:p-12 overflow-hidden"
+              style={{ background: '#0a0a0a', minHeight: '280px', textDecoration: 'none' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 0% 100%, rgba(107,125,104,0.07) 0%, transparent 70%)', transition: 'opacity 0.5s' }} className="opacity-0 group-hover:!opacity-100" />
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '40px', height: '1px', background: 'rgba(107,125,104,0.5)', transition: 'width 0.4s' }} className="group-hover:!w-full" />
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'rgba(107,125,104,0.7)', marginBottom: '20px', display: 'block' }}>
                 {ru ? 'КОФЕЙНЯ' : 'KOFEHANA'}
               </span>
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 300, color: 'var(--white)', lineHeight: 0.95, marginBottom: '16px' }}>
-                HOŞ<br /><em style={{ color: 'rgba(107,131,107,0.9)', fontSize: '0.65em' }}>Coffee</em>
+              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 300, color: 'var(--white)', lineHeight: 1, marginBottom: '12px' }}>
+                HOŞ <em style={{ color: 'rgba(107,125,104,0.9)' }}>Coffee</em>
               </h3>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.7, maxWidth: '280px', marginBottom: '32px' }}>
-                {ru ? 'Третья волна кофе, уютная атмосфера, свежие зёрна.' : 'Üçünji tolkun kofe, amatly atmosfera, täze däneler.'}
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.7, flex: 1 }}>
+                {ru ? 'Specialty кофе третьей волны. Свежеобжаренные зёрна.' : 'Üçünji tolkun specialty kofe. Täze gowrulan däneler.'}
               </p>
+              <div className="flex items-center gap-2 mt-6" style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(107,125,104,0.8)', transition: 'color 0.2s' }}>
+                <ExternalLink size={12} /> {ru ? 'ОТКРЫТЬ САЙТ' : 'SAÝTY AÇ'}
+              </div>
+            </a>
 
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500,
-                letterSpacing: '0.2em', textTransform: 'uppercase',
-                color: 'rgba(107,131,107,0.8)', border: '1px solid rgba(107,131,107,0.3)',
-                padding: '10px 24px', transition: 'all 0.3s',
-              }}
-              className="group-hover:border-[rgba(107,131,107,0.7)] group-hover:text-[rgba(107,131,107,1)]"
-              >
-                {ru ? 'ПЕРЕЙТИ →' : 'GIT →'}
+            {/* HOŞ BAKERY */}
+            <div className="relative flex flex-col p-8 md:p-12 overflow-hidden"
+              style={{ background: '#0a0a0a', minHeight: '280px', opacity: 0.6 }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '40px', height: '1px', background: 'rgba(201,168,76,0.3)' }} />
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'rgba(201,168,76,0.5)', marginBottom: '20px', display: 'block' }}>
+                {ru ? 'ПЕКАРНЯ' : 'ÇÖREKÇILIK'}
               </span>
-            </Link>
+              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 300, color: 'var(--white)', lineHeight: 1, marginBottom: '12px' }}>
+                HOŞ <em style={{ color: 'rgba(201,168,76,0.6)' }}>Bakery</em>
+              </h3>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.7, flex: 1 }}>
+                {ru ? 'Свежая выпечка каждое утро. Скоро открытие.' : 'Her gün täze çörek önümleri. Ýakynda açylýar.'}
+              </p>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(201,168,76,0.45)', marginTop: '24px' }}>
+                {ru ? 'СКОРО ОТКРЫТИЕ' : 'ÝAKYNDA'}
+              </div>
+            </div>
+
+            {/* HOŞ COFFEE SECOND PARK */}
+            <a href="https://www.instagram.com/hos.coffee.secondpark?igsh=c2cxc21hcTd0Z3Jw&utm_source=qr" target="_blank" rel="noopener noreferrer"
+              className="relative group flex flex-col p-8 md:p-12 overflow-hidden"
+              style={{ background: '#0a0a0a', minHeight: '280px', textDecoration: 'none' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 0% 100%, rgba(107,125,104,0.07) 0%, transparent 70%)', transition: 'opacity 0.5s' }} className="opacity-0 group-hover:!opacity-100" />
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '40px', height: '1px', background: 'rgba(107,125,104,0.5)', transition: 'width 0.4s' }} className="group-hover:!w-full" />
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'rgba(107,125,104,0.7)', marginBottom: '20px', display: 'block' }}>
+                {ru ? 'КОФЕЙНЯ · SECOND PARK' : 'KOFEHANA · SECOND PARK'}
+              </span>
+              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 300, color: 'var(--white)', lineHeight: 1, marginBottom: '12px' }}>
+                HOŞ <em style={{ color: 'rgba(107,125,104,0.9)' }}>Coffee</em>
+              </h3>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.7, flex: 1 }}>
+                {ru ? 'Second Park. Кофе и атмосфера в новом месте.' : 'Second Park. Täze ýerde kofe we atmosfera.'}
+              </p>
+              <div className="flex items-center gap-2 mt-6" style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(107,125,104,0.8)', transition: 'color 0.2s' }}>
+                <Instagram size={12} /> Instagram
+              </div>
+            </a>
+
+            {/* HOŞ COFFEE AIRPORT */}
+            <a href="tel:+99361999956"
+              className="relative group flex flex-col p-8 md:p-12 overflow-hidden"
+              style={{ background: '#0a0a0a', minHeight: '280px', textDecoration: 'none' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 0% 100%, rgba(107,125,104,0.07) 0%, transparent 70%)', transition: 'opacity 0.5s' }} className="opacity-0 group-hover:!opacity-100" />
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '40px', height: '1px', background: 'rgba(107,125,104,0.5)', transition: 'width 0.4s' }} className="group-hover:!w-full" />
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'rgba(107,125,104,0.7)', marginBottom: '20px', display: 'block' }}>
+                {ru ? 'КОФЕЙНЯ · АЭРОПОРТ' : 'KOFEHANA · HOWA MENZILI'}
+              </span>
+              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 300, color: 'var(--white)', lineHeight: 1, marginBottom: '12px' }}>
+                HOŞ <em style={{ color: 'rgba(107,125,104,0.9)' }}>Coffee</em>
+              </h3>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.7, flex: 1 }}>
+                {ru ? 'В аэропорту Ашхабада. Кофе перед вылетом.' : 'Aşgabat howa menzilinde. Uçuşdan öň kofe.'}
+              </p>
+              <div className="flex items-center gap-2 mt-6" style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(107,125,104,0.8)', transition: 'color 0.2s' }}>
+                <PhoneCall size={12} /> +993 61 99 9956
+              </div>
+            </a>
+
           </div>
         </div>
       </section>
