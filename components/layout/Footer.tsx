@@ -15,7 +15,7 @@ export function Footer() {
 
       {/* Top info strip */}
       <div className="border-b border-[#1e1b16]">
-        <div className="max-w-7xl mx-auto px-8 py-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-2 text-center">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-5 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-2 text-center">
           {[
             ru ? 'Ежедневно 09:00 – 23:00' : 'Her gün 09:00 – 23:00',
             ru ? 'ул. Держинского 143, напротив Цирка' : 'Jerjinskiý köç. 143, Sirkiň garşysynda',

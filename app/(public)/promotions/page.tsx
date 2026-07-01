@@ -26,24 +26,24 @@ export default function PromotionsPage() {
   return (
     <>
       {/* Hero */}
-      <div className="relative h-64 md:h-80 overflow-hidden">
-        <Image src="/images/photo_2026-06-19_18-49-24.jpg" alt="Promotions" fill className="object-cover object-center" />
+      <div className="relative h-52 sm:h-64 md:h-80 overflow-hidden">
+        <Image src="/images/photo_2026-06-19_18-49-24.jpg" alt="Promotions" fill priority sizes="100vw" quality={80} className="object-cover object-center" />
         <div className="absolute inset-0 bg-carbon-950/70" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-5">
           <p className="section-label mb-3">{lang === 'ru' ? 'Специальные предложения' : 'Ýörite teklipler'}</p>
-          <h1 className="font-display text-5xl md:text-6xl font-bold text-concrete-100">{tr.promotionsTitle}</h1>
+          <h1 className="font-display text-xl sm:text-3xl md:text-5xl font-light text-concrete-100 leading-tight">{tr.promotionsTitle}</h1>
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-20">
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="h-52 bg-carbon-900 border border-carbon-800 animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {promos.map((promo, i) => {
               const title = lang === 'ru' ? promo.title_ru : promo.title_tk
               const description = lang === 'ru' ? promo.description_ru : promo.description_tk

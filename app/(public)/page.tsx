@@ -102,16 +102,16 @@ export default function HomePage() {
           className="absolute inset-0 flex flex-col justify-center px-5 sm:px-8 md:px-20 max-w-4xl"
         >
           <motion.div initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 1 }}>
-            <span style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '28px' }}>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '20px' }}>
               {ru ? 'КОФЕ · ЛАУНДЖ · АШХАБАД' : 'KOFE · LOUNGE · AŞGABAT'}
             </span>
-            <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(90px, 14vw, 180px)', fontWeight: 300, lineHeight: 0.85, color: 'var(--white)', letterSpacing: '-0.02em', margin: 0 }}>
+            <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(72px, 14vw, 180px)', fontWeight: 300, lineHeight: 0.85, color: 'var(--white)', letterSpacing: '-0.02em', margin: 0 }}>
               HOŞ
             </h1>
-            <p style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(44px, 7vw, 90px)', fontWeight: 300, fontStyle: 'italic', color: 'var(--gold)', lineHeight: 1, marginBottom: '44px' }}>
+            <p style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 7vw, 90px)', fontWeight: 300, fontStyle: 'italic', color: 'var(--gold)', lineHeight: 1, marginBottom: '36px' }}>
               Lounge
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3 sm:gap-4">
               <Link href="/menu" className="btn-gold group">
                 {ru ? 'СМОТРЕТЬ МЕНЮ' : 'MENÝUNY GÖR'}
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
@@ -213,7 +213,7 @@ export default function HomePage() {
                           {desc}
                         </p>
                       )}
-                      <div className="flex flex-wrap items-center gap-6">
+                      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                         <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
                           <span style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(40px, 5vw, 64px)', fontWeight: 300, color: 'var(--gold)', lineHeight: 1 }}>{day}</span>
                           <div>
@@ -436,7 +436,7 @@ export default function HomePage() {
               { count: 9,  label: ru ? 'Лет опыта'  : 'Ýyl tejribe' },
             ].map((s, i) => (
               <div key={i} style={{ padding: '0 24px 0 0', borderRight: i < 2 ? '1px solid var(--border)' : 'none', marginLeft: i > 0 ? '24px' : 0 }}>
-                <div data-count={s.count} style={{ fontFamily: 'var(--font-heading)', fontSize: '56px', fontWeight: 300, color: 'var(--gold)', lineHeight: 1 }}>0</div>
+                <div data-count={s.count} style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 8vw, 56px)', fontWeight: 300, color: 'var(--gold)', lineHeight: 1 }}>0</div>
                 <div style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: '8px' }}>{s.label}</div>
               </div>
             ))}
@@ -454,7 +454,7 @@ export default function HomePage() {
           <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '24px' }}>
             {ru ? 'ФИЛОСОФИЯ' : 'FILOSOFIÝA'}
           </span>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(52px, 10vw, 120px)', fontWeight: 300, lineHeight: 0.9, color: 'var(--white)', letterSpacing: '-0.02em', marginBottom: '24px' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(34px, 10vw, 120px)', fontWeight: 300, lineHeight: 0.9, color: 'var(--white)', letterSpacing: '-0.02em', marginBottom: '24px' }}>
             #INDUSTRIAL
           </h2>
           <p style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(18px, 2.5vw, 28px)', fontStyle: 'italic', color: 'var(--gold)' }}>

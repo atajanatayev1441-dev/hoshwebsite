@@ -32,6 +32,24 @@ export function MenuCard({ item }: Props) {
     setCartOpen(true)
   }
 
+  const addButton = (
+    <button
+      onClick={handleAdd}
+      disabled={!item.available}
+      className="w-full py-3 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
+      style={{
+        fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500,
+        letterSpacing: '0.22em', textTransform: 'uppercase',
+        border: '1px solid var(--gold)', color: 'var(--gold)',
+        background: 'transparent',
+      }}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--gold)'; (e.currentTarget as HTMLElement).style.color = 'var(--bg)' }}
+      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--gold)' }}
+    >
+      {ru ? 'В КОРЗИНУ' : 'SEBEDE'}
+    </button>
+  )
+
   return (
     <div
       className="menu-card group relative overflow-hidden flex flex-col"
@@ -43,7 +61,6 @@ export function MenuCard({ item }: Props) {
       onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)')}
       onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
     >
-      {/* Featured: gold top bar */}
       {item.featured && (
         <div style={{ height: '2px', background: 'var(--gold)', flexShrink: 0 }} />
       )}
@@ -55,6 +72,7 @@ export function MenuCard({ item }: Props) {
             src={item.imageUrl}
             alt={name}
             fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="menu-img object-cover"
           />
         ) : (
@@ -65,7 +83,6 @@ export function MenuCard({ item }: Props) {
           </div>
         )}
 
-        {/* Featured badge */}
         {item.featured && (
           <div className="absolute top-3 left-3" style={{ background: 'var(--gold)', padding: '3px 10px' }}>
             <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--bg)' }}>
@@ -74,7 +91,6 @@ export function MenuCard({ item }: Props) {
           </div>
         )}
 
-        {/* Unavailable */}
         {!item.available && (
           <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(10,10,10,0.75)' }}>
             <span style={{ fontFamily: 'var(--font-body)', fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', border: '1px solid rgba(255,255,255,0.15)', padding: '6px 14px' }}>
@@ -94,31 +110,20 @@ export function MenuCard({ item }: Props) {
             {desc}
           </p>
         )}
-        <span style={{ fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 400, color: 'var(--gold)', display: 'block', marginTop: 'auto' }}>
+        <span style={{ fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 400, color: 'var(--gold)', display: 'block', marginTop: 'auto', marginBottom: '14px' }}>
           {fmt(item.price)}
         </span>
+
+        {/* Mobile: button always visible */}
+        <div className="md:hidden">{addButton}</div>
       </div>
 
-      {/* В корзину — slides up from bottom on hover */}
+      {/* Desktop: button slides up on hover */}
       <div
-        className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out p-4"
+        className="hidden md:block absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out p-4"
         style={{ background: 'var(--surface)' }}
       >
-        <button
-          onClick={handleAdd}
-          disabled={!item.available}
-          className="w-full py-3 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
-          style={{
-            fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500,
-            letterSpacing: '0.22em', textTransform: 'uppercase',
-            border: '1px solid var(--gold)', color: 'var(--gold)',
-            background: 'transparent',
-          }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--gold)'; (e.currentTarget as HTMLElement).style.color = 'var(--bg)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--gold)' }}
-        >
-          {ru ? 'В КОРЗИНУ' : 'SEBEDE'}
-        </button>
+        {addButton}
       </div>
     </div>
   )
