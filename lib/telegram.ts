@@ -31,7 +31,9 @@ export async function sendWithKeyboard(text: string): Promise<void> {
         parse_mode: 'HTML',
         reply_markup: {
           keyboard: [
-            [{ text: '📅 Ближайшие брони' }, { text: '📋 История' }],
+            [{ text: '📅 Ближайшие брони' }, { text: '🛒 Заказы сегодня' }],
+            [{ text: '📊 Статистика' },       { text: '📋 История' }],
+            [{ text: '🔍 Поиск' }],
           ],
           resize_keyboard: true,
           persistent: true,

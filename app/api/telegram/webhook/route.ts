@@ -19,6 +19,14 @@ function fmtBooking(b: Booking) {
     `📅 ${b.date} ${b.time} · ${zone} · ${b.guestCount} чел.${arrived}`
 }
 
+function todayBounds() {
+  const start = new Date(); start.setHours(0, 0, 0, 0)
+  const end   = new Date(); end.setHours(23, 59, 59, 999)
+  return { start, end }
+}
+
+/* ── Handlers ── */
+
 async function handleUpcoming() {
   const today = new Date().toISOString().split('T')[0]
   const bookings = await prisma.booking.findMany({
@@ -26,21 +34,21 @@ async function handleUpcoming() {
     orderBy: [{ date: 'asc' }, { time: 'asc' }],
     take: 15,
   })
-  if (!bookings.length) {
-    await sendTelegram('📅 Нет предстоящих бронирований')
-    return
-  }
+  if (!bookings.length) { await sendTelegram('📅 Нет предстоящих бронирований'); return }
   await sendTelegram(`📅 <b>Ближайшие брони (${bookings.length})</b>`)
   for (const b of bookings) {
     const booking = b as Booking
-    // confirmed + arrival not yet marked → show arrived buttons
-    const buttons = booking.status === 'confirmed' && booking.arrived === null
-      ? [[
-          { text: '🟢 Пришли',    callback_data: `vis_yes_${booking.id}` },
-          { text: '🔴 Не пришли', callback_data: `vis_no_${booking.id}`  },
-        ]]
-      : undefined
-    await sendTelegram(fmtBooking(booking), buttons)
+    const buttons: { text: string; callback_data: string }[][] = []
+    if (booking.status === 'confirmed' && booking.arrived === null) {
+      buttons.push([
+        { text: '🟢 Пришли',    callback_data: `vis_yes_${booking.id}` },
+        { text: '🔴 Не пришли', callback_data: `vis_no_${booking.id}`  },
+      ])
+    }
+    if (booking.status !== 'cancelled') {
+      buttons.push([{ text: '❌ Отменить', callback_data: `cancel_${booking.id}` }])
+    }
+    await sendTelegram(fmtBooking(booking), buttons.length ? buttons : undefined)
   }
 }
 
@@ -49,52 +57,115 @@ async function handleHistory() {
     orderBy: { createdAt: 'desc' },
     take: 10,
   })
-  if (!bookings.length) {
-    await sendTelegram('📋 История пуста')
-    return
-  }
+  if (!bookings.length) { await sendTelegram('📋 История пуста'); return }
   const lines = bookings.map(b => fmtBooking(b as Booking)).join('\n\n')
   await sendTelegram(`📋 <b>Последние 10 броней</b>\n\n${lines}`)
 }
 
+async function handleStats() {
+  const today = new Date().toISOString().split('T')[0]
+  const { start, end } = todayBounds()
+
+  const [bAll, bConfirmed, bPending, bCancelled, orders, revenue] = await Promise.all([
+    prisma.booking.count({ where: { date: today } }),
+    prisma.booking.count({ where: { date: today, status: 'confirmed' } }),
+    prisma.booking.count({ where: { date: today, status: 'pending' } }),
+    prisma.booking.count({ where: { date: today, status: 'cancelled' } }),
+    prisma.order.count({ where: { createdAt: { gte: start, lte: end } } }),
+    prisma.order.aggregate({ where: { createdAt: { gte: start, lte: end }, status: { not: 'cancelled' } }, _sum: { totalAmount: true } }),
+  ])
+
+  await sendTelegram(
+    `📊 <b>Статистика на сегодня</b>\n\n` +
+    `🪑 <b>Бронирования</b>\n` +
+    `  Всего: ${bAll}\n` +
+    `  ✅ Подтверждено: ${bConfirmed}\n` +
+    `  ⏳ Ожидают: ${bPending}\n` +
+    `  ❌ Отменено: ${bCancelled}\n\n` +
+    `🛒 <b>Заказы</b>\n` +
+    `  Количество: ${orders}\n` +
+    `  💰 Выручка: ${revenue._sum.totalAmount?.toFixed(0) ?? 0} м.`
+  )
+}
+
+async function handleOrdersToday() {
+  const { start, end } = todayBounds()
+  const orders = await prisma.order.findMany({
+    where: { createdAt: { gte: start, lte: end } },
+    include: { items: { include: { menuItem: true } } },
+    orderBy: { createdAt: 'desc' },
+    take: 20,
+  })
+  if (!orders.length) { await sendTelegram('🛒 Заказов сегодня нет'); return }
+  await sendTelegram(`🛒 <b>Заказы сегодня (${orders.length})</b>`)
+  for (const o of orders) {
+    const status = o.status === 'confirmed' ? '✅' : o.status === 'cancelled' ? '❌' : o.status === 'ready' ? '🟢' : '⏳'
+    const lines  = o.items.map(i => `  • ${i.menuItem?.name_ru ?? '?'} × ${i.quantity}`).join('\n')
+    await sendTelegram(
+      `${status} <b>Заказ №${o.id}</b>\n` +
+      `📞 ${o.clientPhone} · Стол ${o.tableNumber}\n` +
+      `${lines}\n💰 ${o.totalAmount} м.`
+    )
+  }
+}
+
+async function handleSearch(query: string) {
+  const q = query.trim()
+  if (!q) { await sendTelegram('Введите имя или номер телефона после /поиск'); return }
+  const bookings = await prisma.booking.findMany({
+    where: {
+      OR: [
+        { name:  { contains: q, mode: 'insensitive' } },
+        { phone: { contains: q } },
+      ],
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 10,
+  })
+  if (!bookings.length) {
+    await sendTelegram(`🔍 Ничего не найдено по запросу "<b>${q}</b>"`)
+    return
+  }
+  const lines = bookings.map(b => fmtBooking(b as Booking)).join('\n\n')
+  await sendTelegram(`🔍 <b>Результаты (${bookings.length})</b>\n\n${lines}`)
+}
+
+/* ── Main handler ── */
+
 export async function POST(req: NextRequest) {
   const body = await req.json()
 
-  /* ── Callback query (button press) ── */
+  /* Callback query */
   const cq = body.callback_query
   if (cq) {
     const { id: callbackId, data, message } = cq
     const chatId: number    = message?.chat?.id
     const messageId: number = message?.message_id
-
     await answerCallback(callbackId)
 
     /* Подтвердить / Отклонить бронь */
     if (data?.startsWith('book_')) {
       const [, action, rawId] = data.split('_')
-      const bookingId  = parseInt(rawId)
       const newStatus  = action === 'ok' ? 'confirmed' : 'cancelled'
-      const booking    = await prisma.booking.update({ where: { id: bookingId }, data: { status: newStatus } })
+      const booking    = await prisma.booking.update({ where: { id: parseInt(rawId) }, data: { status: newStatus } })
       const icon       = newStatus === 'confirmed' ? '✅' : '❌'
       const label      = newStatus === 'confirmed' ? 'ПОДТВЕРЖДЕНО' : 'ОТКЛОНЕНО'
       const zoneLabel  = booking.zone === 'vip' ? 'VIP зона' : 'Основной зал'
       const venueLabel = booking.venue === 'coffee' ? 'HOŞ Coffee' : 'HOŞ Lounge'
-      const text =
+      await editTelegramMessage(chatId, messageId,
         `${icon} <b>Бронирование ${label}</b> — ${venueLabel}\n\n` +
-        `👤 ${booking.name || '—'}\n` +
-        `📞 ${booking.phone}\n` +
+        `👤 ${booking.name || '—'}\n📞 ${booking.phone}\n` +
         `📅 ${booking.date} в ${booking.time}\n` +
         `🏛 ${zoneLabel} · ${booking.guestCount} гост.` +
         (booking.note ? `\n💬 ${booking.note}` : '')
-      await editTelegramMessage(chatId, messageId, text)
+      )
     }
 
     /* Принять / Отклонить заказ */
     if (data?.startsWith('order_')) {
       const [, action, rawId] = data.split('_')
-      const orderId   = parseInt(rawId)
       const newStatus = action === 'ok' ? 'confirmed' : 'cancelled'
-      const order     = await prisma.order.update({ where: { id: orderId }, data: { status: newStatus } })
+      const order     = await prisma.order.update({ where: { id: parseInt(rawId) }, data: { status: newStatus } })
       const icon  = newStatus === 'confirmed' ? '✅' : '❌'
       const label = newStatus === 'confirmed' ? 'ПРИНЯТ' : 'ОТКЛОНЁН'
       await editTelegramMessage(chatId, messageId,
@@ -106,39 +177,50 @@ export async function POST(req: NextRequest) {
     /* Пришли / Не пришли */
     if (data?.startsWith('vis_')) {
       const [, result, rawId] = data.split('_')
-      const bookingId = parseInt(rawId)
-      const arrived   = result === 'yes'
-      const booking   = await prisma.booking.update({ where: { id: bookingId }, data: { arrived } })
-      const zoneLabel  = booking.zone === 'vip' ? 'VIP зона' : 'Основной зал'
+      const arrived  = result === 'yes'
+      const booking  = await prisma.booking.update({ where: { id: parseInt(rawId) }, data: { arrived } })
       const venueLabel = booking.venue === 'coffee' ? 'HOŞ Coffee' : 'HOŞ Lounge'
-      const arrivedLabel = arrived ? '🟢 ГОСТИ ПРИШЛИ' : '🔴 ГОСТИ НЕ ПРИШЛИ'
+      const zoneLabel  = booking.zone === 'vip' ? 'VIP зона' : 'Основной зал'
       await editTelegramMessage(chatId, messageId,
         `✅ <b>Бронирование ПОДТВЕРЖДЕНО</b> — ${venueLabel}\n\n` +
-        `👤 ${booking.name || '—'}\n` +
-        `📞 ${booking.phone}\n` +
+        `👤 ${booking.name || '—'}\n📞 ${booking.phone}\n` +
         `📅 ${booking.date} в ${booking.time}\n` +
         `🏛 ${zoneLabel} · ${booking.guestCount} гост.\n\n` +
-        `${arrivedLabel}`
+        (arrived ? '🟢 ГОСТИ ПРИШЛИ' : '🔴 ГОСТИ НЕ ПРИШЛИ')
       )
     }
 
-    /* Команды через кнопки */
-    if (data === 'cmd_upcoming') await handleUpcoming()
-    if (data === 'cmd_history')  await handleHistory()
+    /* Отменить бронь */
+    if (data?.startsWith('cancel_')) {
+      const bookingId = parseInt(data.split('_')[1])
+      const booking   = await prisma.booking.update({ where: { id: bookingId }, data: { status: 'cancelled' } })
+      const venueLabel = booking.venue === 'coffee' ? 'HOŞ Coffee' : 'HOŞ Lounge'
+      await editTelegramMessage(chatId, messageId,
+        `❌ <b>Бронирование ОТМЕНЕНО</b> — ${venueLabel}\n\n` +
+        `👤 ${booking.name || '—'}\n📞 ${booking.phone}\n` +
+        `📅 ${booking.date} в ${booking.time}`
+      )
+    }
 
     return NextResponse.json({ ok: true })
   }
 
-  /* ── Текстовые команды ── */
+  /* Текстовые сообщения */
   const msg = body.message
   if (msg) {
-    const text: string = msg.text || ''
+    const text: string = (msg.text || '').trim()
 
-    if (text === '/start' || text === '/menu') {
-      await sendWithKeyboard('👋 <b>HOŞ Admin Bot</b>\n\nКнопки появились внизу 👇')
-    }
-    if (text === '📅 Ближайшие брони' || text === '/upcoming') await handleUpcoming()
-    if (text === '📋 История'         || text === '/history')  await handleHistory()
+    if (text === '/start')                       return void await sendWithKeyboard('👋 <b>HOŞ Admin Bot</b>\n\nКнопки появились внизу 👇')
+    if (text === '📅 Ближайшие брони')           return void await handleUpcoming()
+    if (text === '📋 История')                   return void await handleHistory()
+    if (text === '📊 Статистика')                return void await handleStats()
+    if (text === '🛒 Заказы сегодня')            return void await handleOrdersToday()
+    if (text === '🔍 Поиск')                     return void await sendTelegram('🔍 Введите: <code>/поиск Иван</code> или <code>/поиск +99371...</code>')
+    if (text.startsWith('/поиск '))              return void await handleSearch(text.slice(7))
+    if (text.startsWith('/search '))             return void await handleSearch(text.slice(8))
+    if (text.startsWith('/п '))                  return void await handleSearch(text.slice(3))
+    // любой другой текст — попробуем найти как поиск
+    if (!text.startsWith('/'))                   return void await handleSearch(text)
   }
 
   return NextResponse.json({ ok: true })
