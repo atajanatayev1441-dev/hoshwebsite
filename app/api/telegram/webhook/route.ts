@@ -210,17 +210,16 @@ export async function POST(req: NextRequest) {
   if (msg) {
     const text: string = (msg.text || '').trim()
 
-    if (text === '/start')                       return void await sendWithKeyboard('👋 <b>HOŞ Admin Bot</b>\n\nКнопки появились внизу 👇')
-    if (text === '📅 Ближайшие брони')           return void await handleUpcoming()
-    if (text === '📋 История')                   return void await handleHistory()
-    if (text === '📊 Статистика')                return void await handleStats()
-    if (text === '🛒 Заказы сегодня')            return void await handleOrdersToday()
-    if (text === '🔍 Поиск')                     return void await sendTelegram('🔍 Введите: <code>/поиск Иван</code> или <code>/поиск +99371...</code>')
-    if (text.startsWith('/поиск '))              return void await handleSearch(text.slice(7))
-    if (text.startsWith('/search '))             return void await handleSearch(text.slice(8))
-    if (text.startsWith('/п '))                  return void await handleSearch(text.slice(3))
-    // любой другой текст — попробуем найти как поиск
-    if (!text.startsWith('/'))                   return void await handleSearch(text)
+    if (text === '/start')              await sendWithKeyboard('👋 <b>HOŞ Admin Bot</b>\n\nКнопки появились внизу 👇')
+    else if (text === '📅 Ближайшие брони')  await handleUpcoming()
+    else if (text === '📋 История')          await handleHistory()
+    else if (text === '📊 Статистика')       await handleStats()
+    else if (text === '🛒 Заказы сегодня')   await handleOrdersToday()
+    else if (text === '🔍 Поиск')            await sendTelegram('🔍 Введите: <code>/поиск Иван</code> или <code>/поиск +99371...</code>')
+    else if (text.startsWith('/поиск '))     await handleSearch(text.slice(7))
+    else if (text.startsWith('/search '))    await handleSearch(text.slice(8))
+    else if (text.startsWith('/п '))         await handleSearch(text.slice(3))
+    else if (!text.startsWith('/'))          await handleSearch(text)
   }
 
   return NextResponse.json({ ok: true })
