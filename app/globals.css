@@ -4,16 +4,48 @@
 
 /* ── Design tokens ─────────────────────────── */
 :root {
-  --bg:         #0a0a0a;
-  --surface:    #111111;
-  --gold:       #C9A84C;
-  --gold-dim:   rgba(201,168,76,0.6);
-  --white:      #FAFAF8;
-  --muted:      #6B6B6B;
-  --border:     rgba(255,255,255,0.08);
+  /* Dark theme (default) */
+  --bg:          #0a0a0a;
+  --bg-2:        #080808;
+  --bg-3:        #0d0d0d;
+  --surface:     #111111;
+  --surface-2:   #161616;
+  --surface-3:   #1a1a1a;
+  --gold:        #C9A84C;
+  --gold-dim:    rgba(201,168,76,0.6);
+  --white:       #FAFAF8;
+  --muted:       #6B6B6B;
+  --muted-hi:    #9e9890;
+  --muted-lo:    #5c5852;
+  --muted-xlo:   #3e3830;
+  --border:      rgba(255,255,255,0.08);
+  --border-2:    rgba(255,255,255,0.12);
+  --navbar-bg:   rgba(10,10,10,0.92);
+  --navbar-border: rgba(201,168,76,0.12);
 
   --font-heading: var(--font-cormorant, 'Cormorant Garamond', Georgia, serif);
   --font-body:    var(--font-cormorant, 'Cormorant Garamond', Georgia, serif);
+}
+
+/* ── Light theme ─────────────────────────────── */
+html.light {
+  --bg:          #f5f0e6;
+  --bg-2:        #efe9da;
+  --bg-3:        #e8e2d2;
+  --surface:     #e2dbc9;
+  --surface-2:   #d8d0bc;
+  --surface-3:   #cec6b0;
+  --gold:        #8B6914;
+  --gold-dim:    rgba(139,105,20,0.6);
+  --white:       #1a1208;
+  --muted:       #7a6845;
+  --muted-hi:    #a09070;
+  --muted-lo:    #8a7a58;
+  --muted-xlo:   #c0b89a;
+  --border:      rgba(26,18,8,0.09);
+  --border-2:    rgba(26,18,8,0.15);
+  --navbar-bg:   rgba(245,240,230,0.94);
+  --navbar-border: rgba(139,105,20,0.2);
 }
 
 /* ── Base ───────────────────────────────────── */
@@ -228,4 +260,62 @@ a, button, input, select, textarea {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ── Theme-aware gradient overlays ──────────── */
+.g-hero-r {
+  background: linear-gradient(to right, rgba(10,10,10,0.92) 45%, rgba(10,10,10,0.35) 100%);
+}
+html.light .g-hero-r {
+  background: linear-gradient(to right, rgba(245,240,230,0.88) 45%, rgba(245,240,230,0.2) 100%);
+}
+.g-hero-b {
+  background: linear-gradient(to top, rgba(10,10,10,0.75) 0%, transparent 50%);
+}
+html.light .g-hero-b {
+  background: linear-gradient(to top, rgba(245,240,230,0.70) 0%, transparent 50%);
+}
+.g-event-r {
+  background: linear-gradient(to right, rgba(8,8,8,0.88) 35%, rgba(8,8,8,0.2) 100%);
+}
+html.light .g-event-r {
+  background: linear-gradient(to right, rgba(239,233,218,0.90) 35%, rgba(239,233,218,0.15) 100%);
+}
+.g-event-b {
+  background: linear-gradient(to top, rgba(8,8,8,0.95) 0%, transparent 55%);
+}
+html.light .g-event-b {
+  background: linear-gradient(to top, rgba(239,233,218,0.95) 0%, transparent 55%);
+}
+
+/* ── Light theme scrollbar ───────────────────── */
+html.light ::-webkit-scrollbar-thumb { background: #c0b89a; }
+
+/* ── Light theme — calendar picker ──────────── */
+html.light input[type="date"]::-webkit-calendar-picker-indicator,
+html.light input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0);
+}
+
+/* ── Light theme — booking form inputs ───────── */
+html.light input, html.light select, html.light textarea {
+  color-scheme: light;
+}
+
+/* ── Theme toggle button ─────────────────────── */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-2);
+  color: var(--muted-hi);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.25s, border-color 0.25s;
+}
+.theme-toggle:hover {
+  color: var(--gold);
+  border-color: var(--gold);
 }

@@ -3,11 +3,12 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { useTheme } from 'next-themes'
 import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
 import { useClientAuth } from '@/components/providers/ClientAuthProvider'
 import { translations } from '@/lib/i18n'
-import { ShoppingBag, X, Menu, User } from 'lucide-react'
+import { ShoppingBag, X, Menu, User, Sun, Moon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export function Navbar() {
@@ -15,10 +16,14 @@ export function Navbar() {
   const { lang, setLang } = useLang()
   const { count, setCartOpen } = useCart()
   const { client, loading: authLoading } = useClientAuth()
+  const { theme, setTheme, resolvedTheme } = useTheme()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const tr = translations[lang]
   const ru = lang === 'ru'
+
+  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40)
@@ -36,25 +41,27 @@ export function Navbar() {
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
 
+  const isDark = resolvedTheme === 'dark'
+
   return (
     <header
       className="fixed inset-x-0 top-0 z-50 transition-all duration-500"
       style={{
         height: '64px',
-        background: scrolled ? 'rgba(10,10,10,0.92)' : 'transparent',
+        background: scrolled ? 'var(--navbar-bg)' : 'transparent',
         backdropFilter: scrolled ? 'blur(20px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(201,168,76,0.12)' : 'none',
+        borderBottom: scrolled ? '1px solid var(--navbar-border)' : 'none',
       }}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-full">
 
         {/* Logo */}
         <Link href="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1, gap: '1px' }}>
-          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 300, color: '#f0ece3', letterSpacing: '0.04em', lineHeight: 1 }}>
+          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 300, color: 'var(--white)', letterSpacing: '0.04em', lineHeight: 1 }}>
             HOŞ
           </span>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: '7.5px', fontWeight: 600, letterSpacing: '0.35em', textTransform: 'uppercase', color: '#C9A84C', lineHeight: 1 }}>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: '7.5px', fontWeight: 600, letterSpacing: '0.35em', textTransform: 'uppercase', color: 'var(--gold)', lineHeight: 1 }}>
             LOUNGE
           </span>
         </Link>
@@ -67,21 +74,18 @@ export function Navbar() {
               className="relative group/link"
               style={{
                 fontFamily: 'var(--font-body)',
-                fontSize: '12px',
-                fontWeight: 500,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: isActive(l.href) ? '#C9A84C' : '#9e9890',
-                textDecoration: 'none',
-                transition: 'color 0.25s',
+                fontSize: '12px', fontWeight: 500,
+                letterSpacing: '0.1em', textTransform: 'uppercase',
+                color: isActive(l.href) ? 'var(--gold)' : 'var(--muted-hi)',
+                textDecoration: 'none', transition: 'color 0.25s',
               }}
-              onMouseEnter={e => { if (!isActive(l.href)) (e.currentTarget as HTMLElement).style.color = '#f0ece3' }}
-              onMouseLeave={e => { if (!isActive(l.href)) (e.currentTarget as HTMLElement).style.color = '#9e9890' }}
+              onMouseEnter={e => { if (!isActive(l.href)) (e.currentTarget as HTMLElement).style.color = 'var(--white)' }}
+              onMouseLeave={e => { if (!isActive(l.href)) (e.currentTarget as HTMLElement).style.color = 'var(--muted-hi)' }}
             >
               {l.label}
               <span style={{
                 position: 'absolute', bottom: '-3px', left: 0, height: '1px',
-                background: '#C9A84C', width: isActive(l.href) ? '100%' : '0%',
+                background: 'var(--gold)', width: isActive(l.href) ? '100%' : '0%',
                 transition: 'width 0.3s ease',
               }} className="group-hover/link:!w-full" />
             </Link>
@@ -89,29 +93,41 @@ export function Navbar() {
         </nav>
 
         {/* ── Right controls ── */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+
           {/* Language toggle */}
           <button
             onClick={() => setLang(lang === 'ru' ? 'tk' : 'ru')}
             style={{
               fontFamily: 'var(--font-body)',
               fontSize: '10px', fontWeight: 600, letterSpacing: '0.25em',
-              textTransform: 'uppercase', color: '#5c5852',
-              background: 'transparent', border: '1px solid #2a2720',
+              textTransform: 'uppercase', color: 'var(--muted-lo)',
+              background: 'transparent', border: '1px solid var(--border-2)',
               padding: '5px 10px', cursor: 'pointer', transition: 'all 0.25s',
             }}
-            onMouseEnter={e => { const el = e.currentTarget; el.style.color = '#C9A84C'; el.style.borderColor = '#C9A84C' }}
-            onMouseLeave={e => { const el = e.currentTarget; el.style.color = '#5c5852'; el.style.borderColor = '#2a2720' }}
+            onMouseEnter={e => { const el = e.currentTarget; el.style.color = 'var(--gold)'; el.style.borderColor = 'var(--gold)' }}
+            onMouseLeave={e => { const el = e.currentTarget; el.style.color = 'var(--muted-lo)'; el.style.borderColor = 'var(--border-2)' }}
           >
             {ru ? 'TK' : 'RU'}
           </button>
 
+          {/* Theme toggle */}
+          {mounted && (
+            <button
+              onClick={() => setTheme(isDark ? 'light' : 'dark')}
+              className="theme-toggle"
+              aria-label={isDark ? 'Светлая тема' : 'Тёмная тема'}
+            >
+              {isDark ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
+          )}
+
           {/* Cart */}
           <button
             onClick={() => setCartOpen(true)}
-            style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#9e9890', transition: 'color 0.25s' }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#C9A84C'}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#9e9890'}
+            style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--muted-hi)', transition: 'color 0.25s' }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--gold)'}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--muted-hi)'}
             aria-label="Корзина"
           >
             <ShoppingBag className="w-5 h-5" />
@@ -121,10 +137,9 @@ export function Navbar() {
                 style={{
                   position: 'absolute', top: '-2px', right: '-4px',
                   width: '16px', height: '16px',
-                  background: '#C9A84C', color: '#0a0a0a',
+                  background: 'var(--gold)', color: 'var(--bg)',
                   borderRadius: '50%', fontSize: '9px', fontWeight: 700,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontFamily: 'var(--font-dm-sans, sans-serif)',
                 }}
               >
                 {count > 9 ? '9+' : count}
@@ -132,7 +147,7 @@ export function Navbar() {
             )}
           </button>
 
-          {/* Auth button */}
+          {/* Auth */}
           {!authLoading && (
             client ? (
               <Link
@@ -141,10 +156,10 @@ export function Navbar() {
                   display: 'flex', alignItems: 'center', gap: '6px',
                   fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600,
                   letterSpacing: '0.15em', textTransform: 'uppercase',
-                  color: '#C9A84C', textDecoration: 'none', transition: 'color 0.2s',
+                  color: 'var(--gold)', textDecoration: 'none', transition: 'color 0.2s',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#f0ece3')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#C9A84C')}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--white)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--gold)')}
               >
                 <User size={14} />
                 {client.name.split(' ')[0]}
@@ -155,10 +170,10 @@ export function Navbar() {
                 style={{
                   fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600,
                   letterSpacing: '0.2em', textTransform: 'uppercase',
-                  color: '#9e9890', textDecoration: 'none', transition: 'color 0.2s',
+                  color: 'var(--muted-hi)', textDecoration: 'none', transition: 'color 0.2s',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#f0ece3')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#9e9890')}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--white)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-hi)')}
               >
                 ВОЙТИ
               </Link>
@@ -174,14 +189,14 @@ export function Navbar() {
           <button
             onClick={() => setOpen(!open)}
             className="md:hidden"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9e9890' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted-hi)' }}
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
-      {/* ── Mobile menu — fullscreen overlay with stagger ── */}
+      {/* ── Mobile menu ── */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -189,15 +204,14 @@ export function Navbar() {
             transition={{ duration: 0.25 }}
             style={{
               position: 'fixed', inset: 0, zIndex: 40,
-              background: '#0a0a0a',
+              background: 'var(--bg)',
               display: 'flex', flexDirection: 'column',
               justifyContent: 'center', alignItems: 'center', gap: '2.5rem',
             }}
           >
-            {/* Close */}
             <button
               onClick={() => setOpen(false)}
-              style={{ position: 'absolute', top: '20px', right: '32px', background: 'none', border: 'none', cursor: 'pointer', color: '#5c5852' }}
+              style={{ position: 'absolute', top: '20px', right: '32px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted-lo)' }}
             >
               <X size={24} />
             </button>
@@ -205,10 +219,8 @@ export function Navbar() {
             {links.map((l, i) => (
               <motion.div
                 key={l.href}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 16 }}
-                transition={{ delay: i * 0.07, duration: 0.4 }}
+                initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 16 }} transition={{ delay: i * 0.07, duration: 0.4 }}
               >
                 <Link
                   href={l.href}
@@ -216,7 +228,7 @@ export function Navbar() {
                   style={{
                     fontFamily: 'var(--font-heading)',
                     fontSize: 'clamp(32px, 9vw, 48px)',
-                    color: isActive(l.href) ? '#C9A84C' : '#f0ece3',
+                    color: isActive(l.href) ? 'var(--gold)' : 'var(--white)',
                     textDecoration: 'none', letterSpacing: '0.03em',
                   }}
                 >
@@ -225,10 +237,7 @@ export function Navbar() {
               </motion.div>
             ))}
 
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ delay: 0.32 }}
-            >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ delay: 0.32 }}>
               <Link href="/booking" onClick={() => setOpen(false)} className="btn-gold" style={{ marginTop: '1rem' }}>
                 {tr.bookTable}
               </Link>

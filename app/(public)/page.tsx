@@ -91,12 +91,8 @@ export default function HomePage() {
         <motion.div className="absolute inset-0 scale-105 md:scale-110" style={{ y: imgY }}>
           <Image src="/images/hero.jpg" alt="HOŞ Lounge" fill priority quality={82} sizes="100vw" className="object-cover object-center" />
         </motion.div>
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to right, rgba(10,10,10,0.92) 45%, rgba(10,10,10,0.4) 100%)'
-        }} />
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to top, rgba(10,10,10,0.75) 0%, transparent 50%)'
-        }} />
+        <div className="absolute inset-0 g-hero-r" />
+        <div className="absolute inset-0 g-hero-b" />
 
         <motion.div style={{ opacity: fadeOut }}
           className="absolute inset-0 flex flex-col justify-center px-5 sm:px-8 md:px-20 max-w-4xl"
@@ -126,7 +122,7 @@ export default function HomePage() {
           className="absolute bottom-0 left-0 right-0"
           style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
         >
-          <div className="max-w-7xl mx-auto grid grid-cols-3 divide-x" style={{ '--tw-divide-color': 'rgba(255,255,255,0.08)' } as any}>
+          <div className="max-w-7xl mx-auto grid grid-cols-3 divide-x" style={{ '--tw-divide-color': 'var(--border)' } as any}>
             {[
               { count: 3,  label: ru ? 'ЗОНЫ'    : 'ZONALAR' },
               { count: 47, label: ru ? 'ПОЗИЦИЙ' : 'POZISIÝA' },
@@ -160,7 +156,7 @@ export default function HomePage() {
         return (
           <>
             <Divider />
-            <section style={{ background: '#080808', position: 'relative' }}>
+            <section style={{ background: 'var(--bg-2)', position: 'relative' }}>
               {/* ── Poster slide ── */}
               <div className="relative overflow-hidden" style={{ minHeight: 'clamp(420px, 60vw, 680px)' }}>
 
@@ -187,8 +183,8 @@ export default function HomePage() {
                 </AnimatePresence>
 
                 {/* Permanent gradients */}
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(8,8,8,0.88) 35%, rgba(8,8,8,0.25) 100%)', zIndex: 1 }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(8,8,8,0.95) 0%, transparent 55%)', zIndex: 1 }} />
+                <div className="g-event-r" style={{ position: 'absolute', inset: 0, zIndex: 1 }} />
+                <div className="g-event-b" style={{ position: 'absolute', inset: 0, zIndex: 1 }} />
 
                 {/* ── Content ── */}
                 <div className="relative flex flex-col justify-end max-w-7xl mx-auto px-5 sm:px-8 md:px-20"
@@ -293,7 +289,7 @@ export default function HomePage() {
       {/* ══════════════════════════════════════
           LOCATIONS — все точки HOŞ
       ══════════════════════════════════════ */}
-      <section style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: '#080808' }}>
+      <section style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: 'var(--bg-2)' }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20">
 
           <div className="text-center mb-12" data-animate>
@@ -310,7 +306,7 @@ export default function HomePage() {
             {/* HOŞ COFFEE */}
             <a href="https://hoscofe1.pikir.biz/" target="_blank" rel="noopener noreferrer"
               className="relative group flex flex-col p-8 md:p-12 overflow-hidden"
-              style={{ background: '#0a0a0a', minHeight: '280px', textDecoration: 'none' }}>
+              style={{ background: 'var(--bg)', minHeight: '280px', textDecoration: 'none' }}>
               <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 0% 100%, rgba(107,125,104,0.07) 0%, transparent 70%)', transition: 'opacity 0.5s' }} className="opacity-0 group-hover:!opacity-100" />
               <div style={{ position: 'absolute', top: 0, left: 0, width: '40px', height: '1px', background: 'rgba(107,125,104,0.5)', transition: 'width 0.4s' }} className="group-hover:!w-full" />
               <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'rgba(107,125,104,0.7)', marginBottom: '20px', display: 'block' }}>
@@ -329,7 +325,7 @@ export default function HomePage() {
 
             {/* HOŞ BAKERY */}
             <div className="relative flex flex-col p-8 md:p-12 overflow-hidden"
-              style={{ background: '#0a0a0a', minHeight: '280px', opacity: 0.6 }}>
+              style={{ background: 'var(--bg)', minHeight: '280px', opacity: 0.6 }}>
               <div style={{ position: 'absolute', top: 0, left: 0, width: '40px', height: '1px', background: 'rgba(201,168,76,0.3)' }} />
               <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'rgba(201,168,76,0.5)', marginBottom: '20px', display: 'block' }}>
                 {ru ? 'ПЕКАРНЯ' : 'ÇÖREKÇILIK'}
@@ -348,7 +344,7 @@ export default function HomePage() {
             {/* HOŞ COFFEE SECOND PARK */}
             <a href="https://www.instagram.com/hos.coffee.secondpark?igsh=c2cxc21hcTd0Z3Jw&utm_source=qr" target="_blank" rel="noopener noreferrer"
               className="relative group flex flex-col p-8 md:p-12 overflow-hidden"
-              style={{ background: '#0a0a0a', minHeight: '280px', textDecoration: 'none' }}>
+              style={{ background: 'var(--bg)', minHeight: '280px', textDecoration: 'none' }}>
               <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 0% 100%, rgba(107,125,104,0.07) 0%, transparent 70%)', transition: 'opacity 0.5s' }} className="opacity-0 group-hover:!opacity-100" />
               <div style={{ position: 'absolute', top: 0, left: 0, width: '40px', height: '1px', background: 'rgba(107,125,104,0.5)', transition: 'width 0.4s' }} className="group-hover:!w-full" />
               <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'rgba(107,125,104,0.7)', marginBottom: '20px', display: 'block' }}>
@@ -368,7 +364,7 @@ export default function HomePage() {
             {/* HOŞ COFFEE AIRPORT */}
             <a href="tel:+99361999956"
               className="relative group flex flex-col p-8 md:p-12 overflow-hidden"
-              style={{ background: '#0a0a0a', minHeight: '280px', textDecoration: 'none' }}>
+              style={{ background: 'var(--bg)', minHeight: '280px', textDecoration: 'none' }}>
               <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 0% 100%, rgba(107,125,104,0.07) 0%, transparent 70%)', transition: 'opacity 0.5s' }} className="opacity-0 group-hover:!opacity-100" />
               <div style={{ position: 'absolute', top: 0, left: 0, width: '40px', height: '1px', background: 'rgba(107,125,104,0.5)', transition: 'width 0.4s' }} className="group-hover:!w-full" />
               <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'rgba(107,125,104,0.7)', marginBottom: '20px', display: 'block' }}>
@@ -449,7 +445,7 @@ export default function HomePage() {
       {/* ══════════════════════════════════════
           PHILOSOPHY — только текст, без фото
       ══════════════════════════════════════ */}
-      <section style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: '#0d0d0d' }}>
+      <section style={{ padding: 'clamp(60px, 10vw, 120px) 0', background: 'var(--bg-3)' }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-20 text-center" data-animate>
           <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '24px' }}>
             {ru ? 'ФИЛОСОФИЯ' : 'FILOSOFIÝA'}
@@ -496,7 +492,7 @@ export default function HomePage() {
               { icon: Clock,  labelRu: 'ЧАСЫ РАБОТЫ', labelTk: 'IŞ WAGTY', valRu: 'Ежедневно 09:00 – 23:00', valTk: 'Her gün 09:00 – 23:00' },
               { icon: Phone,  labelRu: 'ТЕЛЕФОН',     labelTk: 'TELEFON',  valRu: '+993 71 66 7777',           valTk: '+993 71 66 7777' },
             ].map(({ icon: Icon, labelRu, labelTk, valRu, valTk }, i) => (
-              <div key={i} className="flex items-center gap-5 px-6 py-5" style={{ background: '#161616', border: '1px solid var(--border)' }}>
+              <div key={i} className="flex items-center gap-5 px-6 py-5" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)' }}>
                 <div style={{ width: 40, height: 40, border: '1px solid rgba(201,168,76,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Icon size={15} style={{ color: 'var(--gold)' }} />
                 </div>
