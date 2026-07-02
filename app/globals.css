@@ -27,25 +27,25 @@
   --font-body:    var(--font-cormorant, 'Cormorant Garamond', Georgia, serif);
 }
 
-/* ── Light theme ─────────────────────────────── */
+/* ── Gold-dark theme ("warm amber") ─────────── */
 html.light {
-  --bg:          #f5f0e6;
-  --bg-2:        #efe9da;
-  --bg-3:        #e8e2d2;
-  --surface:     #e2dbc9;
-  --surface-2:   #d8d0bc;
-  --surface-3:   #cec6b0;
-  --gold:        #8B6914;
-  --gold-dim:    rgba(139,105,20,0.6);
-  --white:       #1a1208;
-  --muted:       #7a6845;
-  --muted-hi:    #a09070;
-  --muted-lo:    #8a7a58;
-  --muted-xlo:   #c0b89a;
-  --border:      rgba(26,18,8,0.09);
-  --border-2:    rgba(26,18,8,0.15);
-  --navbar-bg:   rgba(245,240,230,0.94);
-  --navbar-border: rgba(139,105,20,0.2);
+  --bg:          #0e0a01;
+  --bg-2:        #0a0700;
+  --bg-3:        #130f02;
+  --surface:     #1e1800;
+  --surface-2:   #261f00;
+  --surface-3:   #2e2600;
+  --gold:        #e8c84a;
+  --gold-dim:    rgba(232,200,74,0.6);
+  --white:       #f2dfa0;
+  --muted:       #9a8a50;
+  --muted-hi:    #c0aa70;
+  --muted-lo:    #6a5c30;
+  --muted-xlo:   #3a3015;
+  --border:      rgba(232,200,74,0.09);
+  --border-2:    rgba(232,200,74,0.16);
+  --navbar-bg:   rgba(14,10,1,0.94);
+  --navbar-border: rgba(232,200,74,0.22);
 }
 
 /* ── Base ───────────────────────────────────── */
@@ -267,40 +267,29 @@ a, button, input, select, textarea {
   background: linear-gradient(to right, rgba(10,10,10,0.92) 45%, rgba(10,10,10,0.35) 100%);
 }
 html.light .g-hero-r {
-  background: linear-gradient(to right, rgba(245,240,230,0.88) 45%, rgba(245,240,230,0.2) 100%);
+  background: linear-gradient(to right, rgba(14,10,1,0.93) 45%, rgba(14,10,1,0.35) 100%);
 }
 .g-hero-b {
   background: linear-gradient(to top, rgba(10,10,10,0.75) 0%, transparent 50%);
 }
 html.light .g-hero-b {
-  background: linear-gradient(to top, rgba(245,240,230,0.70) 0%, transparent 50%);
+  background: linear-gradient(to top, rgba(14,10,1,0.78) 0%, transparent 50%);
 }
 .g-event-r {
   background: linear-gradient(to right, rgba(8,8,8,0.88) 35%, rgba(8,8,8,0.2) 100%);
 }
 html.light .g-event-r {
-  background: linear-gradient(to right, rgba(239,233,218,0.90) 35%, rgba(239,233,218,0.15) 100%);
+  background: linear-gradient(to right, rgba(10,7,0,0.90) 35%, rgba(10,7,0,0.2) 100%);
 }
 .g-event-b {
   background: linear-gradient(to top, rgba(8,8,8,0.95) 0%, transparent 55%);
 }
 html.light .g-event-b {
-  background: linear-gradient(to top, rgba(239,233,218,0.95) 0%, transparent 55%);
+  background: linear-gradient(to top, rgba(10,7,0,0.96) 0%, transparent 55%);
 }
 
-/* ── Light theme scrollbar ───────────────────── */
-html.light ::-webkit-scrollbar-thumb { background: #c0b89a; }
-
-/* ── Light theme — calendar picker ──────────── */
-html.light input[type="date"]::-webkit-calendar-picker-indicator,
-html.light input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(0);
-}
-
-/* ── Light theme — booking form inputs ───────── */
-html.light input, html.light select, html.light textarea {
-  color-scheme: light;
-}
+/* ── Gold theme scrollbar ────────────────────── */
+html.light ::-webkit-scrollbar-thumb { background: #3a3015; }
 
 /* ── Theme toggle button ─────────────────────── */
 .theme-toggle {
