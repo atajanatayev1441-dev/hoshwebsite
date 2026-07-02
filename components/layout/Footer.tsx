@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useLang } from '@/components/providers/LangProvider'
 import { translations } from '@/lib/i18n'
 import { MapPin, Phone, Clock, Instagram } from 'lucide-react'
@@ -35,12 +36,13 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div className="mb-6">
-              <span style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 300, letterSpacing: '0.15em', color: 'var(--white)', display: 'block', lineHeight: 1 }}>
-                HOS
-              </span>
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.45em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginTop: '4px' }}>
-                Lounge
-              </span>
+              <Image
+                src="/images/logo-transparent.png"
+                alt="HOŞ Lounge"
+                width={80}
+                height={80}
+                style={{ objectFit: 'contain' }}
+              />
             </div>
             <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--muted)', lineHeight: 1.7, maxWidth: '220px' }}>
               {ru

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
@@ -57,13 +58,15 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-full">
 
         {/* Logo */}
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1, gap: '1px' }}>
-          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 300, color: 'var(--white)', letterSpacing: '0.04em', lineHeight: 1 }}>
-            HOŞ
-          </span>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: '7.5px', fontWeight: 600, letterSpacing: '0.35em', textTransform: 'uppercase', color: 'var(--gold)', lineHeight: 1 }}>
-            LOUNGE
-          </span>
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+          <Image
+            src="/images/logo-transparent.png"
+            alt="HOŞ Lounge"
+            width={52}
+            height={52}
+            style={{ objectFit: 'contain' }}
+            priority
+          />
         </Link>
 
         {/* ── Desktop nav ── */}
