@@ -60,7 +60,7 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
           <Image
-            src="/images/logo-transparent.png"
+            src="/images/logo-gold.png"
             alt="HOŞ Lounge"
             width={52}
             height={52}

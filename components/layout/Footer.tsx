@@ -37,7 +37,7 @@ export function Footer() {
           <div>
             <div className="mb-6">
               <Image
-                src="/images/logo-transparent.png"
+                src="/images/logo-gold.png"
                 alt="HOŞ Lounge"
                 width={80}
                 height={80}

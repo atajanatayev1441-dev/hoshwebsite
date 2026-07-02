@@ -106,32 +106,52 @@ export default function HomePage() {
             {ru ? 'КОФЕ · ЛАУНДЖ · АШХАБАД' : 'KOFE · LOUNGE · AŞGABAT'}
           </motion.span>
 
-          {/* Logo — mix-blend-mode:screen убирает тёмный фон, остаётся только золото */}
+          {/* Logo — только золото, полностью прозрачный фон */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.35, rotate: -18 }}
+            initial={{ opacity: 0, scale: 0.08, rotate: 540 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ delay: 0.25, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-            style={{ marginBottom: '40px' }}
+            transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+            style={{ marginBottom: '40px', position: 'relative' }}
           >
+            {/* Взрыв свечения при появлении */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.4 }}
+              animate={{ opacity: [0, 0.9, 0], scale: [0.4, 1.8, 2.5] }}
+              transition={{ delay: 1.85, duration: 0.9, ease: 'easeOut' }}
+              style={{
+                position: 'absolute', inset: '-10%',
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(201,168,76,0.55) 0%, rgba(201,168,76,0.15) 50%, transparent 75%)',
+                pointerEvents: 'none',
+              }}
+            />
+
+            {/* Постоянное дыхание + пульс свечения */}
             <motion.div
               animate={{ scale: [1, 1.04, 1] }}
-              transition={{ delay: 2, duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+              transition={{ delay: 3, duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <h1 style={{ margin: 0, padding: 0, lineHeight: 0 }}>
-                <Image
-                  src="/images/logo-transparent.png"
-                  alt="HOŞ Lounge"
-                  width={320}
-                  height={320}
-                  priority
-                  style={{
-                    width: 'clamp(190px, 38vw, 320px)',
-                    height: 'auto',
-                    mixBlendMode: 'screen',
-                    filter: 'drop-shadow(0 0 40px rgba(201,168,76,0.45)) drop-shadow(0 0 80px rgba(201,168,76,0.2))',
-                  }}
-                />
-              </h1>
+              <motion.div
+                animate={{
+                  filter: [
+                    'drop-shadow(0 0 18px rgba(201,168,76,0.4)) drop-shadow(0 0 55px rgba(201,168,76,0.15))',
+                    'drop-shadow(0 0 42px rgba(201,168,76,0.85)) drop-shadow(0 0 110px rgba(201,168,76,0.35))',
+                    'drop-shadow(0 0 18px rgba(201,168,76,0.4)) drop-shadow(0 0 55px rgba(201,168,76,0.15))',
+                  ],
+                }}
+                transition={{ delay: 3, duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <h1 style={{ margin: 0, padding: 0, lineHeight: 0 }}>
+                  <Image
+                    src="/images/logo-gold.png"
+                    alt="HOŞ Lounge"
+                    width={320}
+                    height={320}
+                    priority
+                    style={{ width: 'clamp(200px, 40vw, 340px)', height: 'auto' }}
+                  />
+                </h1>
+              </motion.div>
             </motion.div>
           </motion.div>
 
