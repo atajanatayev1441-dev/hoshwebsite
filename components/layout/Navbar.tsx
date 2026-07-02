@@ -64,7 +64,12 @@ export function Navbar() {
             alt="HOŞ Lounge"
             width={52}
             height={52}
-            style={{ objectFit: 'contain' }}
+            style={{
+              objectFit: 'contain',
+              filter: mounted && !isDark
+                ? 'drop-shadow(0 1px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 12px rgba(122,92,14,0.35))'
+                : 'drop-shadow(0 0 8px rgba(201,168,76,0.25))',
+            }}
             priority
           />
         </Link>

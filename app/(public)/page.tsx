@@ -95,25 +95,57 @@ export default function HomePage() {
         <div className="absolute inset-0 g-hero-b" />
 
         <motion.div style={{ opacity: fadeOut }}
-          className="absolute inset-0 flex flex-col justify-center px-5 sm:px-8 md:px-20 max-w-4xl"
+          className="absolute inset-0 flex flex-col items-center justify-center px-5 sm:px-8 text-center"
         >
-          <motion.div initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 1 }}>
-            <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '20px' }}>
-              {ru ? 'КОФЕ · ЛАУНДЖ · АШХАБАД' : 'KOFE · LOUNGE · AŞGABAT'}
-            </span>
-            <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(72px, 14vw, 180px)', fontWeight: 300, lineHeight: 0.85, color: 'var(--white)', letterSpacing: '-0.02em', margin: 0 }}>
-              HOŞ
-            </h1>
-            <p style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(36px, 7vw, 90px)', fontWeight: 300, fontStyle: 'italic', color: 'var(--gold)', lineHeight: 1, marginBottom: '36px' }}>
-              Lounge
-            </p>
-            <div className="flex flex-wrap gap-3 sm:gap-4">
-              <Link href="/menu" className="btn-gold group">
-                {ru ? 'СМОТРЕТЬ МЕНЮ' : 'MENÝUNY GÖR'}
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link href="/booking" className="btn-outline">{ru ? 'ЗАБРОНИРОВАТЬ' : 'BRON ETMEK'}</Link>
-            </div>
+          {/* Eyebrow */}
+          <motion.span
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.8 }}
+            style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.35em', textTransform: 'uppercase', color: 'var(--gold)', display: 'block', marginBottom: '28px' }}
+          >
+            {ru ? 'КОФЕ · ЛАУНДЖ · АШХАБАД' : 'KOFE · LOUNGE · AŞGABAT'}
+          </motion.span>
+
+          {/* Logo — mix-blend-mode:screen убирает тёмный фон, остаётся только золото */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.35, rotate: -18 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ delay: 0.25, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            style={{ marginBottom: '40px' }}
+          >
+            <motion.div
+              animate={{ scale: [1, 1.04, 1] }}
+              transition={{ delay: 2, duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <h1 style={{ margin: 0, padding: 0, lineHeight: 0 }}>
+                <Image
+                  src="/images/logo-transparent.png"
+                  alt="HOŞ Lounge"
+                  width={320}
+                  height={320}
+                  priority
+                  style={{
+                    width: 'clamp(190px, 38vw, 320px)',
+                    height: 'auto',
+                    mixBlendMode: 'screen',
+                    filter: 'drop-shadow(0 0 40px rgba(201,168,76,0.45)) drop-shadow(0 0 80px rgba(201,168,76,0.2))',
+                  }}
+                />
+              </h1>
+            </motion.div>
+          </motion.div>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.9 }}
+            className="flex flex-wrap gap-3 sm:gap-4 justify-center"
+          >
+            <Link href="/menu" className="btn-gold group">
+              {ru ? 'СМОТРЕТЬ МЕНЮ' : 'MENÝUNY GÖR'}
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link href="/booking" className="btn-outline">{ru ? 'ЗАБРОНИРОВАТЬ' : 'BRON ETMEK'}</Link>
           </motion.div>
         </motion.div>
 
