@@ -51,11 +51,13 @@ function CategoryCard({ cat, name, onSelect }: { cat: CategoryWithItems; name: s
         <div className="absolute inset-0" style={{ background: '#171310' }} />
       )}
       <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.82) 100%)' }} />
+      {/* Fixed light colors here (not theme vars) — this tile is always a dark
+          photo scrim regardless of the page's light/dark theme. */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-3">
-        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(15px, 4.5vw, 24px)', fontWeight: 400, color: 'var(--white)', lineHeight: 1.15 }}>
+        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(15px, 4.5vw, 24px)', fontWeight: 400, color: '#FAFAF8', lineHeight: 1.15 }}>
           {name}
         </h3>
-        <span style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(9px, 2.4vw, 11px)', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginTop: '6px' }}>
+        <span style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(9px, 2.4vw, 11px)', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A84C', marginTop: '6px' }}>
           {cat.items.length} {cat.items.length === 1 ? 'позиция' : 'позиций'}
         </span>
       </div>
@@ -81,10 +83,10 @@ export function MenuClient({ categories }: { categories: CategoryWithItems[] }) 
         <Image src="/images/photo_2026-06-19_18-49-22.jpg" alt="Menu" fill className="object-cover object-center" />
         <div className="absolute inset-0" style={{ background: 'rgba(10,10,10,0.72)' }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.42em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '12px', display: 'block' }}>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.42em', textTransform: 'uppercase', color: '#C9A84C', marginBottom: '12px', display: 'block' }}>
             {ru ? 'HOŞ LOUNGE' : 'HOŞ LOUNGE'}
           </span>
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(40px, 8vw, 80px)', fontWeight: 300, color: 'var(--white)', margin: 0 }}>
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(40px, 8vw, 80px)', fontWeight: 300, color: '#FAFAF8', margin: 0 }}>
             {ru ? 'Меню' : 'Menýu'}
           </h1>
         </div>
