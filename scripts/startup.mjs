@@ -18,10 +18,6 @@ async function main() {
     console.log(`[startup] DB has ${categoryCount} categories — skipping seed.`)
   }
 
-  // 3. Always refresh photos (fixes broken/404 URLs)
-  console.log('[startup] Refreshing menu photos...')
-  execSync('node scripts/update-photos.mjs', { stdio: 'inherit' })
-
   await prisma.$disconnect()
 
   // 3. Start Next.js
