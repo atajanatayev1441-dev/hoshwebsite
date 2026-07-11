@@ -33,6 +33,16 @@ function parsePrice(value: unknown): number {
   return Number.isFinite(n) ? n : 0
 }
 
+// JSON exports name the photo field all sorts of ways — check the common aliases.
+function pickImage(entry: Record<string, unknown>): string | null {
+  const keys = ['imageUrl', 'image', 'photo', 'img', 'picture', 'imageURL', 'image_url', 'photoUrl', 'фото', 'картинка']
+  for (const key of keys) {
+    const value = entry[key]
+    if (typeof value === 'string' && value.trim()) return value.trim()
+  }
+  return null
+}
+
 // Strips extension, trims, lowercases — used as a key so "Latte.jpg" matches "latte".
 function normKey(s: string): string {
   return s.trim().toLowerCase().replace(/\.[a-z0-9]{2,4}$/i, '')
@@ -69,7 +79,7 @@ function normalizeJson(data: unknown): ImportRow[] {
           description_ru: item.description_ru ?? null,
           description_tk: item.description_tk ?? null,
           price: parsePrice(item.price),
-          imageUrl: item.imageUrl || null,
+          imageUrl: pickImage(item),
           available: parseBool(item.available, true),
           featured: parseBool(item.featured, false),
         })
@@ -84,7 +94,7 @@ function normalizeJson(data: unknown): ImportRow[] {
         description_ru: entry.description_ru ?? null,
         description_tk: entry.description_tk ?? null,
         price: parsePrice(entry.price),
-        imageUrl: entry.imageUrl || null,
+        imageUrl: pickImage(entry),
         available: parseBool(entry.available, true),
         featured: parseBool(entry.featured, false),
       })

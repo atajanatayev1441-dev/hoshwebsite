@@ -88,6 +88,10 @@ const HEADER_ALIASES: Record<string, string> = {
   imageurl: 'imageUrl',
   image_url: 'imageUrl',
   image: 'imageUrl',
+  photo: 'imageUrl',
+  photourl: 'imageUrl',
+  img: 'imageUrl',
+  picture: 'imageUrl',
   фото: 'imageUrl',
   картинка: 'imageUrl',
 
