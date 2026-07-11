@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useCart } from '@/components/providers/CartProvider'
 import { useLang } from '@/components/providers/LangProvider'
 import { translations } from '@/lib/i18n'
+import { cldOptimize } from '@/lib/cloudinary'
 
 interface Props {
   item: {
@@ -36,10 +37,10 @@ export function MenuCard({ item }: Props) {
     <button
       onClick={handleAdd}
       disabled={!item.available}
-      className="w-full py-3 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
+      className="w-full py-2 sm:py-3 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
       style={{
-        fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500,
-        letterSpacing: '0.22em', textTransform: 'uppercase',
+        fontFamily: 'var(--font-body)', fontSize: 'clamp(9px, 2.6vw, 11px)', fontWeight: 500,
+        letterSpacing: '0.16em', textTransform: 'uppercase',
         border: '1px solid var(--gold)', color: 'var(--gold)',
         background: 'transparent',
       }}
@@ -69,23 +70,24 @@ export function MenuCard({ item }: Props) {
       <div className="relative overflow-hidden" style={{ aspectRatio: '3/2', flexShrink: 0 }}>
         {item.imageUrl ? (
           <Image
-            src={item.imageUrl}
+            src={cldOptimize(item.imageUrl, 480)}
             alt={name}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            unoptimized
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="menu-img object-cover"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center" style={{ background: '#1a1a1a' }}>
-            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '64px', fontWeight: 300, color: 'rgba(201,168,76,0.15)' }}>
+            <span style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 10vw, 64px)', fontWeight: 300, color: 'rgba(201,168,76,0.15)' }}>
               {name.charAt(0)}
             </span>
           </div>
         )}
 
         {item.featured && (
-          <div className="absolute top-3 left-3" style={{ background: 'var(--gold)', padding: '3px 10px' }}>
-            <span style={{ fontFamily: 'var(--font-body)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--bg)' }}>
+          <div className="absolute top-2 left-2 sm:top-3 sm:left-3" style={{ background: 'var(--gold)', padding: '2px 8px' }}>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: '8px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--bg)' }}>
               {ru ? 'ХИТ' : 'HIT'}
             </span>
           </div>
@@ -93,7 +95,7 @@ export function MenuCard({ item }: Props) {
 
         {!item.available && (
           <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(10,10,10,0.75)' }}>
-            <span style={{ fontFamily: 'var(--font-body)', fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', border: '1px solid rgba(255,255,255,0.15)', padding: '6px 14px' }}>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--muted)', border: '1px solid rgba(255,255,255,0.15)', padding: '5px 10px' }}>
               {tr.unavailable}
             </span>
           </div>
@@ -101,16 +103,16 @@ export function MenuCard({ item }: Props) {
       </div>
 
       {/* Content */}
-      <div className="flex flex-col flex-1 p-4 pb-5">
-        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 300, color: 'var(--white)', marginBottom: '8px', lineHeight: 1.2 }}>
+      <div className="flex flex-col flex-1 p-2.5 sm:p-4 pb-3 sm:pb-5">
+        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(14px, 4.2vw, 22px)', fontWeight: 300, color: 'var(--white)', marginBottom: '4px', lineHeight: 1.2 }}>
           {name}
         </h3>
         {desc && (
-          <p className="line-clamp-2 flex-1" style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.6, marginBottom: '16px' }}>
+          <p className="line-clamp-2 flex-1" style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(10px, 2.8vw, 13px)', fontWeight: 300, color: 'var(--muted)', lineHeight: 1.5, marginBottom: '10px' }}>
             {desc}
           </p>
         )}
-        <span style={{ fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 400, color: 'var(--gold)', display: 'block', marginTop: 'auto', marginBottom: '14px' }}>
+        <span style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(12px, 3.4vw, 15px)', fontWeight: 400, color: 'var(--gold)', display: 'block', marginTop: 'auto', marginBottom: '10px' }}>
           {fmt(item.price)}
         </span>
 

@@ -1,13 +1,15 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ShoppingBag, ChevronLeft } from 'lucide-react'
 import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
 import { MenuCard } from '@/components/menu/MenuCard'
 import { translations } from '@/lib/i18n'
+import { cldOptimize } from '@/lib/cloudinary'
+
 export type CategoryWithItems = {
   id: number
   name_ru: string
@@ -28,23 +30,49 @@ export type CategoryWithItems = {
   }[]
 }
 
+function CategoryCard({ cat, name, onSelect }: { cat: CategoryWithItems; name: string; onSelect: () => void }) {
+  const thumb = cat.items.find((i) => i.imageUrl)?.imageUrl ?? null
+  return (
+    <button
+      onClick={onSelect}
+      className="relative overflow-hidden group text-left"
+      style={{ aspectRatio: '4/3', border: '1px solid rgba(255,255,255,0.12)' }}
+    >
+      {thumb ? (
+        <Image
+          src={cldOptimize(thumb, 400)}
+          alt={name}
+          fill
+          unoptimized
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      ) : (
+        <div className="absolute inset-0" style={{ background: '#171310' }} />
+      )}
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.82) 100%)' }} />
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-3">
+        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(15px, 4.5vw, 24px)', fontWeight: 400, color: 'var(--white)', lineHeight: 1.15 }}>
+          {name}
+        </h3>
+        <span style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(9px, 2.4vw, 11px)', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginTop: '6px' }}>
+          {cat.items.length} {cat.items.length === 1 ? 'позиция' : 'позиций'}
+        </span>
+      </div>
+    </button>
+  )
+}
+
 export function MenuClient({ categories }: { categories: CategoryWithItems[] }) {
   const { lang } = useLang()
   const { count, setCartOpen } = useCart()
   const tr = translations[lang]
   const ru = lang === 'ru'
 
-  const [activeId, setActiveId] = useState<number | 'all'>('all')
-  const tabsRef = useRef<HTMLDivElement>(null)
+  const [activeId, setActiveId] = useState<number | null>(null)
 
-  const scrollTabs = (dir: 'left' | 'right') => {
-    tabsRef.current?.scrollBy({ left: dir === 'left' ? -200 : 200, behavior: 'smooth' })
-  }
-
-  const allItems = categories.flatMap(c => c.items)
-  const visibleItems = activeId === 'all'
-    ? allItems
-    : (categories.find(c => c.id === activeId)?.items ?? [])
+  const activeCategory = categories.find((c) => c.id === activeId) ?? null
+  const activeName = activeCategory ? (ru ? activeCategory.name_ru : activeCategory.name_tk || activeCategory.name_ru) : ''
 
   return (
     <>
@@ -62,7 +90,7 @@ export function MenuClient({ categories }: { categories: CategoryWithItems[] }) 
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-8 sm:py-12">
 
         {/* Empty state */}
         {categories.length === 0 ? (
@@ -77,69 +105,57 @@ export function MenuClient({ categories }: { categories: CategoryWithItems[] }) 
             <div style={{ width: '40px', height: '1px', background: 'var(--gold)', margin: '32px auto 0' }} />
           </div>
         ) : (
-          <>
-            {/* Category tabs */}
-            <div className="relative flex items-center mb-10" style={{ borderBottom: '1px solid var(--border)' }}>
-              <button
-                onClick={() => scrollTabs('left')}
-                aria-label={ru ? 'Влево' : 'Çepe'}
-                className="hidden sm:flex flex-shrink-0 items-center justify-center w-8 h-8 mr-1"
-                style={{ color: 'var(--muted)' }}
+          <AnimatePresence mode="wait">
+            {!activeCategory ? (
+              /* Category cards grid */
+              <motion.div
+                key="categories"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5"
               >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <div ref={tabsRef} className="flex overflow-x-auto scrollbar-hide gap-0 flex-1">
-                {[{ id: 'all' as const, name_ru: ru ? 'Все' : 'Ählisi', name_tk: 'Ählisi' }, ...categories].map((cat) => {
-                  const isActive = activeId === cat.id
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => setActiveId(cat.id)}
-                      className="flex-shrink-0 px-5 py-4 relative whitespace-nowrap"
-                      style={{
-                        fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 500,
-                        letterSpacing: '0.12em', textTransform: 'uppercase',
-                        color: isActive ? 'var(--gold)' : 'var(--muted)',
-                        background: 'transparent', border: 'none', cursor: 'pointer',
-                        transition: 'color 0.2s',
-                      }}
-                    >
-                      {ru ? cat.name_ru : (cat as any).name_tk || cat.name_ru}
-                      {isActive && (
-                        <motion.div
-                          layoutId="tab-underline"
-                          className="absolute bottom-0 left-0 right-0"
-                          style={{ height: '2px', background: 'var(--gold)' }}
-                          transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                        />
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
-              <button
-                onClick={() => scrollTabs('right')}
-                aria-label={ru ? 'Вправо' : 'Saga'}
-                className="hidden sm:flex flex-shrink-0 items-center justify-center w-8 h-8 ml-1"
-                style={{ color: 'var(--muted)' }}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Grid */}
-            {visibleItems.length === 0 ? (
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--muted)', textAlign: 'center', padding: '60px 0' }}>
-                {ru ? 'В этой категории нет позиций' : 'Bu kategoriýada pozisiýa ýok'}
-              </p>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {visibleItems.map((item, i) => (
-                  <MenuCard key={item.id} item={item} index={i} />
+                {categories.map((cat) => (
+                  <CategoryCard
+                    key={cat.id}
+                    cat={cat}
+                    name={ru ? cat.name_ru : cat.name_tk || cat.name_ru}
+                    onSelect={() => setActiveId(cat.id)}
+                  />
                 ))}
-              </div>
+              </motion.div>
+            ) : (
+              /* Items inside the selected category */
+              <motion.div
+                key="items"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              >
+                <div className="flex items-center gap-3 mb-6 sm:mb-8">
+                  <button
+                    onClick={() => setActiveId(null)}
+                    className="flex items-center justify-center flex-shrink-0 w-9 h-9"
+                    style={{ border: '1px solid var(--border)', color: 'var(--gold)' }}
+                    aria-label={ru ? 'Назад к категориям' : 'Kategoriýalara gaýt'}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(22px, 5vw, 34px)', fontWeight: 300, color: 'var(--white)' }}>
+                    {activeName}
+                  </h2>
+                </div>
+
+                {activeCategory.items.length === 0 ? (
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--muted)', textAlign: 'center', padding: '60px 0' }}>
+                    {ru ? 'В этой категории нет позиций' : 'Bu kategoriýada pozisiýa ýok'}
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+                    {activeCategory.items.map((item, i) => (
+                      <MenuCard key={item.id} item={item} index={i} />
+                    ))}
+                  </div>
+                )}
+              </motion.div>
             )}
-          </>
+          </AnimatePresence>
         )}
       </div>
 

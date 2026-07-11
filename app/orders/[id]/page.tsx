@@ -156,6 +156,13 @@ export default function OrderStatusPage({ params }: { params: { id: string } }) 
             </span>
           </div>
 
+          {/* Courier notice */}
+          {order.status === 'ready' && (
+            <p className="text-center text-sm text-sage-600 dark:text-sage-300 mb-6">
+              {lang === 'ru' ? 'Ваш заказ отправлен, ждите звонка курьера' : 'Sargydyňyz iberildi, kurýeriň jaňyna garaşyň'}
+            </p>
+          )}
+
           {/* Items */}
           <div className="space-y-2 mb-4">
             {order.items.map((item, i) => (

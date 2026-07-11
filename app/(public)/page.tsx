@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { useLang } from '@/components/providers/LangProvider'
 import { translations } from '@/lib/i18n'
 import { ArrowRight, MapPin, Clock, Phone, ChevronLeft, ChevronRight, ExternalLink, Instagram, PhoneCall } from 'lucide-react'
+import { cldOptimize } from '@/lib/cloudinary'
 
 interface Event {
   id: number
@@ -224,9 +225,10 @@ export default function HomePage() {
                       style={{ position: 'absolute', inset: 0 }}
                     >
                       <Image
-                        src={ev.imageUrl}
+                        src={cldOptimize(ev.imageUrl, 1600)}
                         alt={title}
                         fill
+                        unoptimized
                         className="object-cover object-center"
                         style={{ filter: 'brightness(0.42)' }}
                       />
