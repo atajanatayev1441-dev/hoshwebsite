@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import ImportMenuModal from '@/components/admin/ImportMenuModal'
+import { cldOptimize } from '@/lib/cloudinary'
 
 interface Category {
   id: number
@@ -214,7 +215,7 @@ function ItemModal({
               <label className="block text-xs font-medium text-sage-600 dark:text-sage-300 mb-1">Фото</label>
               {form.imageUrl && (
                 <div className="relative w-full h-28 mb-2 overflow-hidden rounded-lg bg-black/20">
-                  <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" />
+                  <img src={cldOptimize(form.imageUrl, 300)} alt="preview" className="w-full h-full object-cover" />
                   <button
                     type="button"
                     onClick={() => set('imageUrl', '')}
@@ -500,7 +501,7 @@ export default function AdminCoffeeMenuPage() {
                   >
                     {item.imageUrl && (
                       <img
-                        src={item.imageUrl}
+                        src={cldOptimize(item.imageUrl, 100)}
                         alt={item.name_ru}
                         className="w-12 h-12 rounded-xl object-cover flex-shrink-0"
                       />

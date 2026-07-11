@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingBag, ChevronLeft } from 'lucide-react'
@@ -72,6 +72,17 @@ export function MenuClient({ categories }: { categories: CategoryWithItems[] }) 
   const ru = lang === 'ru'
 
   const [activeId, setActiveId] = useState<number | null>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const isFirstRender = useRef(true)
+
+  // Switching category (or going back) can shrink the page a lot — without
+  // this, a short category left you scrolled past its content into the
+  // footer instead of landing on what you just opened. Skip on mount so we
+  // don't scroll the hero out of view on first load.
+  useEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return }
+    contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [activeId])
 
   const activeCategory = categories.find((c) => c.id === activeId) ?? null
   const activeName = activeCategory ? (ru ? activeCategory.name_ru : activeCategory.name_tk || activeCategory.name_ru) : ''
@@ -92,7 +103,7 @@ export function MenuClient({ categories }: { categories: CategoryWithItems[] }) 
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-8 sm:py-12">
+      <div ref={contentRef} className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-8 sm:py-12">
 
         {/* Empty state */}
         {categories.length === 0 ? (

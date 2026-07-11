@@ -23,6 +23,7 @@ import {
   Plus, Pencil, Trash2, GripVertical, Eye, EyeOff, Star, X, Save, Upload, Loader2, FileUp,
 } from 'lucide-react'
 import ImportMenuModal from '@/components/admin/ImportMenuModal'
+import { cldOptimize } from '@/lib/cloudinary'
 
 interface Category {
   id: number
@@ -214,7 +215,7 @@ function ItemModal({
               {/* Image preview */}
               {form.imageUrl && (
                 <div className="relative w-full h-28 mb-2 overflow-hidden rounded-lg bg-black/20">
-                  <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" />
+                  <img src={cldOptimize(form.imageUrl, 300)} alt="preview" className="w-full h-full object-cover" />
                   <button
                     type="button"
                     onClick={() => set('imageUrl', '')}
@@ -492,7 +493,7 @@ export default function AdminMenuPage() {
                   >
                     {item.imageUrl && (
                       <img
-                        src={item.imageUrl}
+                        src={cldOptimize(item.imageUrl, 100)}
                         alt={item.name_ru}
                         className="w-12 h-12 rounded-xl object-cover flex-shrink-0"
                       />
