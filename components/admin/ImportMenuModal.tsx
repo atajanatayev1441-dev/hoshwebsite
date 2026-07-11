@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { X, Upload, FileJson, FileSpreadsheet, Loader2, CheckCircle2 } from 'lucide-react'
+import { X, Upload, FileJson, FileSpreadsheet, Loader2, CheckCircle2, ImagePlus } from 'lucide-react'
 
 interface Props {
   venue: 'lounge' | 'coffee'
@@ -31,7 +31,9 @@ export default function ImportMenuModal({ venue, onClose, onImported }: Props) {
   const [mode, setMode] = useState<'merge' | 'replace'>('merge')
   const [raw, setRaw] = useState('')
   const [fileName, setFileName] = useState('')
+  const [photos, setPhotos] = useState<File[]>([])
   const [loading, setLoading] = useState(false)
+  const [progress, setProgress] = useState('')
   const [error, setError] = useState('')
   const [result, setResult] = useState<{ categoriesCreated: number; itemsCreated: number; itemsUpdated: number } | null>(null)
 
@@ -43,6 +45,15 @@ export default function ImportMenuModal({ venue, onClose, onImported }: Props) {
     else if (file.name.toLowerCase().endsWith('.json')) setFormat('json')
     const text = await file.text()
     setRaw(text)
+  }
+
+  const handlePhotos = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? [])
+    setPhotos((prev) => [...prev, ...files])
+  }
+
+  const removePhoto = (name: string) => {
+    setPhotos((prev) => prev.filter((f) => f.name !== name))
   }
 
   const handleImport = async () => {
@@ -57,10 +68,24 @@ export default function ImportMenuModal({ venue, onClose, onImported }: Props) {
     setError('')
     setResult(null)
     try {
+      // Upload any selected photos first, matched to items by filename later on the server.
+      const images: Record<string, string> = {}
+      for (let i = 0; i < photos.length; i++) {
+        const file = photos[i]
+        setProgress(`Загрузка фото ${i + 1}/${photos.length}...`)
+        const fd = new FormData()
+        fd.append('file', file)
+        const upRes = await fetch('/api/upload', { method: 'POST', body: fd })
+        const upData = await upRes.json()
+        if (!upRes.ok) throw new Error(upData.error || `Не удалось загрузить ${file.name}`)
+        images[file.name] = upData.url
+      }
+      setProgress('')
+
       const res = await fetch('/api/admin/menu/import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ venue, mode, format, raw }),
+        body: JSON.stringify({ venue, mode, format, raw, images }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Ошибка импорта')
@@ -70,6 +95,7 @@ export default function ImportMenuModal({ venue, onClose, onImported }: Props) {
       setError(err.message || 'Ошибка импорта')
     } finally {
       setLoading(false)
+      setProgress('')
     }
   }
 
@@ -143,6 +169,36 @@ export default function ImportMenuModal({ venue, onClose, onImported }: Props) {
             </label>
           </div>
 
+          <div>
+            <label className="flex items-center gap-2 cursor-pointer w-full py-2.5 px-3 border border-dashed border-sage-600 hover:border-gold-400 rounded-lg transition-colors text-sage-400 hover:text-gold-400 text-sm">
+              <ImagePlus className="w-4 h-4" />
+              Прикрепить фото позиций (можно выбрать сразу несколько)
+              <input type="file" accept="image/*" multiple onChange={handlePhotos} className="hidden" />
+            </label>
+            <p className="text-xs text-sage-400 mt-1">
+              Назовите файлы как позиции в меню (например «Латте.jpg») — фото подставятся автоматически.
+              Либо укажите имя файла в колонке <code>imageUrl</code>/«фото».
+            </p>
+            {photos.length > 0 && (
+              <ul className="mt-2 space-y-1 max-h-28 overflow-y-auto">
+                {photos.map((f) => (
+                  <li key={f.name} className="flex items-center justify-between text-xs text-sage-500 bg-cream-50 dark:bg-sage-800 rounded px-2 py-1">
+                    <span className="truncate">{f.name}</span>
+                    <button onClick={() => removePhoto(f.name)} className="text-sage-400 hover:text-red-500 ml-2">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {progress && (
+            <div className="flex items-center gap-2 text-sage-500 text-sm">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              {progress}
+            </div>
+          )}
           {error && <p className="text-red-400 text-sm">{error}</p>}
           {result && (
             <div className="flex items-center gap-2 text-green-500 text-sm">

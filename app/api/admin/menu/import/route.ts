@@ -33,6 +33,23 @@ function parsePrice(value: unknown): number {
   return Number.isFinite(n) ? n : 0
 }
 
+// Strips extension, trims, lowercases — used as a key so "Latte.jpg" matches "latte".
+function normKey(s: string): string {
+  return s.trim().toLowerCase().replace(/\.[a-z0-9]{2,4}$/i, '')
+}
+
+// Resolves a row's photo: an explicit URL/path is used as-is; a bare filename
+// (or, failing that, the item's own name) is matched against uploaded photos.
+function resolveImage(images: Record<string, string>, raw: string | null | undefined, name: string): string | null {
+  if (raw && raw.trim()) {
+    const trimmed = raw.trim()
+    if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith('/')) return trimmed
+    const match = images[normKey(trimmed)]
+    if (match) return match
+  }
+  return images[normKey(name)] ?? null
+}
+
 // Accepts either a flat list of rows (category_ru, name_ru, ...) or a nested
 // list of categories with an `items` array. Normalizes both into flat rows.
 function normalizeJson(data: unknown): ImportRow[] {
@@ -99,6 +116,12 @@ export async function POST(req: NextRequest) {
   const format: 'json' | 'csv' = body.format === 'csv' ? 'csv' : 'json'
   const raw: string = body.raw ?? ''
 
+  // Client uploads any selected photos first and passes { filename: url } here.
+  const images: Record<string, string> = {}
+  for (const [fname, url] of Object.entries(body.images ?? {})) {
+    images[normKey(fname)] = String(url)
+  }
+
   let rows: ImportRow[]
   try {
     if (format === 'csv') {
@@ -155,17 +178,20 @@ export async function POST(req: NextRequest) {
     for (const row of groupRows) {
       const itemKey = row.name_ru.trim().toLowerCase()
       const existingItem = itemByName.get(itemKey)
-      const data = {
+      const resolvedImage = resolveImage(images, row.imageUrl, row.name_ru)
+      const data: any = {
         categoryId: category.id,
         name_ru: row.name_ru,
         name_tk: row.name_tk || row.name_ru,
         description_ru: row.description_ru,
         description_tk: row.description_tk,
         price: row.price,
-        imageUrl: row.imageUrl,
         available: row.available,
         featured: row.featured,
       }
+      // Only touch imageUrl when we actually resolved one — an import without
+      // photo data shouldn't wipe out a photo set previously via the UI.
+      if (resolvedImage) data.imageUrl = resolvedImage
       if (existingItem) {
         await prisma.menuItem.update({ where: { id: existingItem.id }, data })
         itemsUpdated++
