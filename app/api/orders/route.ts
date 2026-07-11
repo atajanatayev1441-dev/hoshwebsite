@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
   await sendTelegram(
     `🛒 <b>Новый заказ №${order.id}</b>\n\n` +
     `📞 ${order.clientPhone}\n` +
-    `🪑 Стол ${order.tableNumber}\n\n` +
+    `👤 ${order.tableNumber}\n\n` +
     `${itemLines}\n\n` +
     `💰 Итого: ${order.totalAmount} м.`,
     [[

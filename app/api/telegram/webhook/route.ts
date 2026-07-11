@@ -103,7 +103,7 @@ async function handleOrdersToday() {
     const lines  = o.items.map(i => `  • ${i.menuItem?.name_ru ?? '?'} × ${i.quantity}`).join('\n')
     await sendTelegram(
       `${status} <b>Заказ №${o.id}</b>\n` +
-      `📞 ${o.clientPhone} · Стол ${o.tableNumber}\n` +
+      `📞 ${o.clientPhone} · 👤 ${o.tableNumber}\n` +
       `${lines}\n💰 ${o.totalAmount} м.`
     )
   }
@@ -170,7 +170,7 @@ export async function POST(req: NextRequest) {
       const label = newStatus === 'confirmed' ? 'ПРИНЯТ' : 'ОТКЛОНЁН'
       await editTelegramMessage(chatId, messageId,
         `${icon} <b>Заказ №${order.id} ${label}</b>\n\n` +
-        `📞 ${order.clientPhone}\n🪑 Стол ${order.tableNumber}\n💰 ${order.totalAmount} м.`
+        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n💰 ${order.totalAmount} м.`
       )
     }
 

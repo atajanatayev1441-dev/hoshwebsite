@@ -81,13 +81,13 @@ export function AdminNotificationHandler({
       playBeep()
 
       const venue = data.venue === 'coffee' ? 'HOŞ Coffee' : 'HOŞ Lounge'
-      toast.success(`Новый заказ #${data.id} · Стол ${data.tableNumber} · ${venue}`, {
+      toast.success(`Новый заказ #${data.id} · ${data.tableNumber} · ${venue}`, {
         duration: 6000,
       })
 
       if (Notification.permission === 'granted') {
         new Notification(`${venue} — Новый заказ`, {
-          body: `Стол ${data.tableNumber} · Заказ #${data.id}`,
+          body: `${data.tableNumber} · Заказ #${data.id}`,
           icon: '/favicon.ico',
         })
       }

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   ShoppingBag, CalendarDays, CheckCircle, TrendingUp,
-  Clock, Table as TableIcon,
+  Clock, User,
 } from 'lucide-react'
 
 interface Stats {
@@ -174,10 +174,10 @@ export default function DashboardPage() {
                   className="flex items-start justify-between gap-3 py-3 border-b border-cream-100 dark:border-sage-800 last:border-0"
                 >
                   <div className="flex items-start gap-2">
-                    <TableIcon className="w-4 h-4 text-sage-400 mt-0.5 flex-shrink-0" />
+                    <User className="w-4 h-4 text-sage-400 mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="text-sm font-medium text-sage-800 dark:text-cream-100">
-                        Стол {order.tableNumber} · #{order.id}
+                        {order.tableNumber} · #{order.id}
                       </p>
                       <p className="text-xs text-sage-400">
                         {order.items.map((i) => `${i.menuItem.name_ru} ×${i.quantity}`).join(', ')}

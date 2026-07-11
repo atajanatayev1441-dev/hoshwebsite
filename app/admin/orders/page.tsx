@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Phone, Clock, Table as TableIcon, ChevronDown, RefreshCw } from 'lucide-react'
+import { Phone, Clock, User, ChevronDown, RefreshCw } from 'lucide-react'
 
 interface OrderItem {
   id: number
@@ -31,9 +31,9 @@ const TABS = [
 
 const STATUS_LABELS: Record<string, string> = {
   pending: 'Ожидает',
-  confirmed: 'Подтверждён',
+  confirmed: 'Принят',
   preparing: 'Готовится',
-  ready: 'Готов',
+  ready: 'Отправлен',
   cancelled: 'Отменён',
 }
 
@@ -176,8 +176,8 @@ export default function AdminOrdersPage() {
                     </div>
                     <div className="flex items-center gap-3 text-xs text-sage-500 dark:text-sage-400">
                       <span className="flex items-center gap-1">
-                        <TableIcon className="w-3 h-3" />
-                        Стол {order.tableNumber}
+                        <User className="w-3 h-3" />
+                        {order.tableNumber}
                       </span>
                       <span className="flex items-center gap-1">
                         <Phone className="w-3 h-3" />
@@ -261,7 +261,7 @@ export default function AdminOrdersPage() {
                                 onClick={() => updateStatus(order.id, 'ready')}
                                 className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg font-medium transition-colors disabled:opacity-50"
                               >
-                                Готов
+                                Отправить
                               </button>
                             )}
                           </div>

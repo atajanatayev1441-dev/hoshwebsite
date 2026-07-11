@@ -24,11 +24,11 @@ interface Order {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; icon: typeof Clock; color: string; bg: string }> = {
-  pending:   { label: 'Ожидает',   icon: Clock,        color: '#b45309', bg: '#fef3c7' },
-  confirmed: { label: 'Принят',    icon: CheckCircle,  color: '#166534', bg: '#dcfce7' },
-  preparing: { label: 'Готовится', icon: ChefHat,      color: '#1d4ed8', bg: '#dbeafe' },
-  ready:     { label: 'Готов',     icon: Package,      color: '#7c3aed', bg: '#ede9fe' },
-  cancelled: { label: 'Отменён',   icon: XCircle,      color: '#b91c1c', bg: '#fee2e2' },
+  pending:   { label: 'Ожидает',        icon: Clock,        color: '#b45309', bg: '#fef3c7' },
+  confirmed: { label: 'Принят',         icon: CheckCircle,  color: '#166534', bg: '#dcfce7' },
+  preparing: { label: 'Готовится',      icon: ChefHat,      color: '#1d4ed8', bg: '#dbeafe' },
+  ready:     { label: 'Отправлен',      icon: Package,      color: '#7c3aed', bg: '#ede9fe' },
+  cancelled: { label: 'Отменён',        icon: XCircle,      color: '#b91c1c', bg: '#fee2e2' },
 }
 
 function fmt(n: number) {
@@ -81,7 +81,7 @@ function OrderCard({ order, index }: { order: Order; index: number }) {
 
       {/* Footer */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: '12px' }}>
-        <span style={{ fontSize: '12px', color: '#8a857e' }}>{timeStr(order.createdAt)} · Стол {order.tableNumber}</span>
+        <span style={{ fontSize: '12px', color: '#8a857e' }}>{timeStr(order.createdAt)} · {order.tableNumber}</span>
         <span style={{ fontWeight: 600, fontSize: '15px', color: '#1c1c1c' }}>{fmt(order.totalAmount)}</span>
       </div>
     </motion.div>

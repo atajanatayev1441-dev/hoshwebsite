@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Minus, Plus, ShoppingBag, Phone, Hash, CheckCircle } from 'lucide-react'
+import { X, Minus, Plus, ShoppingBag, Phone, User, CheckCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { useCart } from '@/components/providers/CartProvider'
 import { useLang } from '@/components/providers/LangProvider'
@@ -16,7 +16,7 @@ export function CartDrawer() {
   const tr = translations[lang]
   const ru = lang === 'ru'
 
-  const [tableNumber, setTableNumber] = useState('')
+  const [customerName, setCustomerName] = useState('')
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [orderId, setOrderId] = useState<number | null>(null)
@@ -30,7 +30,7 @@ export function CartDrawer() {
   const fmt = (p: number) => new Intl.NumberFormat('ru-RU').format(p) + ' ' + tr.currency
 
   const handleOrder = async () => {
-    if (!tableNumber.trim()) { toast.error(ru ? 'Введите номер стола' : 'Stol belgisini giriziň'); return }
+    if (!customerName.trim()) { toast.error(ru ? 'Введите имя' : 'Adyňyzy giriziň'); return }
     if (!phone.trim()) { toast.error(ru ? 'Введите номер телефона' : 'Telefon belgisin giriziň'); return }
     setLoading(true)
     try {
@@ -38,7 +38,7 @@ export function CartDrawer() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          tableNumber, clientPhone: phone, clientLang: lang,
+          tableNumber: customerName, clientPhone: phone, clientLang: lang,
           items: items.map((i) => ({ menuItemId: i.id, quantity: i.quantity, price: i.price })),
           totalAmount: total,
         }),
@@ -57,7 +57,7 @@ export function CartDrawer() {
 
   const handleClose = () => {
     setCartOpen(false)
-    if (orderId) { setOrderId(null); setTableNumber(''); setPhone('') }
+    if (orderId) { setOrderId(null); setCustomerName(''); setPhone('') }
   }
 
   return (
@@ -150,11 +150,11 @@ export function CartDrawer() {
                       <span className="text-gold-400 font-body font-medium">{fmt(total)}</span>
                     </div>
                     <div className="relative">
-                      <Hash className="absolute left-3 top-3.5 w-4 h-4 text-[#3e3830]" />
+                      <User className="absolute left-3 top-3.5 w-4 h-4 text-[#3e3830]" />
                       <input
-                        type="text" value={tableNumber}
-                        onChange={(e) => setTableNumber(e.target.value)}
-                        placeholder={tr.tableNumberPlaceholder}
+                        type="text" value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        placeholder={tr.customerNamePlaceholder}
                         className="w-full pl-9 pr-4 py-3 bg-transparent border-b border-[#2a2720] focus:border-gold-500 focus:outline-none text-[#f0ece3] text-sm font-body placeholder:text-[#3e3830] transition-colors"
                         style={{ colorScheme: 'dark' }}
                       />

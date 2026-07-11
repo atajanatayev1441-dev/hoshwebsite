@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { ShoppingBag } from 'lucide-react'
+import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
 import { MenuCard } from '@/components/menu/MenuCard'
@@ -35,6 +35,11 @@ export function MenuClient({ categories }: { categories: CategoryWithItems[] }) 
   const ru = lang === 'ru'
 
   const [activeId, setActiveId] = useState<number | 'all'>('all')
+  const tabsRef = useRef<HTMLDivElement>(null)
+
+  const scrollTabs = (dir: 'left' | 'right') => {
+    tabsRef.current?.scrollBy({ left: dir === 'left' ? -200 : 200, behavior: 'smooth' })
+  }
 
   const allItems = categories.flatMap(c => c.items)
   const visibleItems = activeId === 'all'
@@ -74,34 +79,52 @@ export function MenuClient({ categories }: { categories: CategoryWithItems[] }) 
         ) : (
           <>
             {/* Category tabs */}
-            <div className="flex overflow-x-auto scrollbar-hide gap-0 mb-10" style={{ borderBottom: '1px solid var(--border)' }}>
-              {[{ id: 'all' as const, name_ru: ru ? 'Все' : 'Ählisi', name_tk: 'Ählisi' }, ...categories].map((cat) => {
-                const isActive = activeId === cat.id
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setActiveId(cat.id)}
-                    className="flex-shrink-0 px-5 py-4 relative whitespace-nowrap"
-                    style={{
-                      fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 500,
-                      letterSpacing: '0.12em', textTransform: 'uppercase',
-                      color: isActive ? 'var(--gold)' : 'var(--muted)',
-                      background: 'transparent', border: 'none', cursor: 'pointer',
-                      transition: 'color 0.2s',
-                    }}
-                  >
-                    {ru ? cat.name_ru : (cat as any).name_tk || cat.name_ru}
-                    {isActive && (
-                      <motion.div
-                        layoutId="tab-underline"
-                        className="absolute bottom-0 left-0 right-0"
-                        style={{ height: '2px', background: 'var(--gold)' }}
-                        transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                      />
-                    )}
-                  </button>
-                )
-              })}
+            <div className="relative flex items-center mb-10" style={{ borderBottom: '1px solid var(--border)' }}>
+              <button
+                onClick={() => scrollTabs('left')}
+                aria-label={ru ? 'Влево' : 'Çepe'}
+                className="hidden sm:flex flex-shrink-0 items-center justify-center w-8 h-8 mr-1"
+                style={{ color: 'var(--muted)' }}
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <div ref={tabsRef} className="flex overflow-x-auto scrollbar-hide gap-0 flex-1">
+                {[{ id: 'all' as const, name_ru: ru ? 'Все' : 'Ählisi', name_tk: 'Ählisi' }, ...categories].map((cat) => {
+                  const isActive = activeId === cat.id
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveId(cat.id)}
+                      className="flex-shrink-0 px-5 py-4 relative whitespace-nowrap"
+                      style={{
+                        fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 500,
+                        letterSpacing: '0.12em', textTransform: 'uppercase',
+                        color: isActive ? 'var(--gold)' : 'var(--muted)',
+                        background: 'transparent', border: 'none', cursor: 'pointer',
+                        transition: 'color 0.2s',
+                      }}
+                    >
+                      {ru ? cat.name_ru : (cat as any).name_tk || cat.name_ru}
+                      {isActive && (
+                        <motion.div
+                          layoutId="tab-underline"
+                          className="absolute bottom-0 left-0 right-0"
+                          style={{ height: '2px', background: 'var(--gold)' }}
+                          transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+                        />
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+              <button
+                onClick={() => scrollTabs('right')}
+                aria-label={ru ? 'Вправо' : 'Saga'}
+                className="hidden sm:flex flex-shrink-0 items-center justify-center w-8 h-8 ml-1"
+                style={{ color: 'var(--muted)' }}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
 
             {/* Grid */}
