@@ -109,6 +109,25 @@ async function handleOrdersToday() {
   }
 }
 
+async function handleActiveOrders() {
+  const orders = await prisma.order.findMany({
+    where: { status: { in: ['confirmed', 'preparing'] } },
+    include: { items: { include: { menuItem: true } } },
+    orderBy: { createdAt: 'asc' },
+  })
+  if (!orders.length) { await sendTelegram('📦 Нет активных заказов'); return }
+  await sendTelegram(`📦 <b>Активные заказы (${orders.length})</b>`)
+  for (const o of orders) {
+    const lines = o.items.map(i => `  • ${i.menuItem?.name_ru ?? '?'} × ${i.quantity}`).join('\n')
+    await sendTelegram(
+      `✅ <b>Заказ №${o.id}</b>\n` +
+      `📞 ${o.clientPhone} · 👤 ${o.tableNumber}\n` +
+      `${lines}\n💰 ${o.totalAmount} м.`,
+      [[{ text: '📤 Отправлено', callback_data: `ordersent_${o.id}` }]]
+    )
+  }
+}
+
 async function handleSearch(query: string) {
   const q = query.trim()
   if (!q) { await sendTelegram('Введите имя или номер телефона после /поиск'); return }
@@ -161,6 +180,16 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    /* Отметить заказ отправленным */
+    if (data?.startsWith('ordersent_')) {
+      const orderId = parseInt(data.split('_')[1])
+      const order    = await prisma.order.update({ where: { id: orderId }, data: { status: 'ready' } })
+      await editTelegramMessage(chatId, messageId,
+        `📤 <b>Заказ №${order.id} ОТПРАВЛЕН</b>\n\n` +
+        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n💰 ${order.totalAmount} м.`
+      )
+    }
+
     /* Принять / Отклонить заказ */
     if (data?.startsWith('order_')) {
       const [, action, rawId] = data.split('_')
@@ -170,7 +199,8 @@ export async function POST(req: NextRequest) {
       const label = newStatus === 'confirmed' ? 'ПРИНЯТ' : 'ОТКЛОНЁН'
       await editTelegramMessage(chatId, messageId,
         `${icon} <b>Заказ №${order.id} ${label}</b>\n\n` +
-        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n💰 ${order.totalAmount} м.`
+        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n💰 ${order.totalAmount} м.`,
+        newStatus === 'confirmed' ? [[{ text: '📤 Отправлено', callback_data: `ordersent_${order.id}` }]] : undefined
       )
     }
 
@@ -215,6 +245,7 @@ export async function POST(req: NextRequest) {
     else if (text === '📋 История')          await handleHistory()
     else if (text === '📊 Статистика')       await handleStats()
     else if (text === '🛒 Заказы сегодня')   await handleOrdersToday()
+    else if (text === '📦 Активные заказы')  await handleActiveOrders()
     else if (text === '🔍 Поиск')            await sendTelegram('🔍 Введите: <code>/поиск Иван</code> или <code>/поиск +99371...</code>')
     else if (text.startsWith('/поиск '))     await handleSearch(text.slice(7))
     else if (text.startsWith('/search '))    await handleSearch(text.slice(8))
