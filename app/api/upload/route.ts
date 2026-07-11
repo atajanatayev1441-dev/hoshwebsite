@@ -27,7 +27,9 @@ export async function POST(req: NextRequest) {
     )
     const data = await res.json()
     if (!res.ok || !data.secure_url) {
-      return NextResponse.json({ error: 'Cloudinary upload failed', detail: data }, { status: 500 })
+      console.error('Cloudinary upload failed:', data)
+      const message = data?.error?.message || 'Cloudinary upload failed'
+      return NextResponse.json({ error: `Cloudinary: ${message}` }, { status: 500 })
     }
     return NextResponse.json({ url: data.secure_url })
   }
