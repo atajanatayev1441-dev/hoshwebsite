@@ -152,6 +152,15 @@ async function handleSearch(query: string) {
 /* ── Main handler ── */
 
 export async function POST(req: NextRequest) {
+  // Telegram echoes this header back on every webhook call once set via
+  // setWebhook's secret_token — without it, anyone could POST forged
+  // callback_query/message payloads straight to this URL and confirm or
+  // cancel orders/bookings without ever going through the bot.
+  const secret = req.headers.get('x-telegram-bot-api-secret-token')
+  if (!process.env.TELEGRAM_WEBHOOK_SECRET || secret !== process.env.TELEGRAM_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const body = await req.json()
 
   /* Callback query */

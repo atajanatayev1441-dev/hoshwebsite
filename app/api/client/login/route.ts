@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { signClientToken } from '@/lib/clientAuth'
+import { rateLimit, clientIp } from '@/lib/rateLimit'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,11 @@ function normalizePhone(raw: string): string {
 
 export async function POST(req: NextRequest) {
   try {
+    const { allowed } = await rateLimit(`client-login:${clientIp(req.headers)}`, 10, 300)
+    if (!allowed) {
+      return NextResponse.json({ error: 'Слишком много попыток, попробуйте позже' }, { status: 429 })
+    }
+
     const body = await req.json()
     const phone = normalizePhone(body.phone ?? '')
     const password = body.password ?? ''

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { triggerPusher, PUSHER_CHANNELS, PUSHER_EVENTS } from '@/lib/pusher'
 import { sendTelegram } from '@/lib/telegram'
+import { rateLimit, clientIp } from '@/lib/rateLimit'
 
 export async function GET(req: NextRequest) {
   const venue = req.nextUrl.searchParams.get('venue')
@@ -14,6 +15,11 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const { allowed } = await rateLimit(`bookings:${clientIp(req.headers)}`, 5, 60)
+  if (!allowed) {
+    return NextResponse.json({ error: 'Слишком много запросов, попробуйте позже' }, { status: 429 })
+  }
+
   const body = await req.json()
   const { zone, date, time, guestCount, name, phone, note, clientLang, venue } = body
 

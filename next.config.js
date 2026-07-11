@@ -3,7 +3,9 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
-      { protocol: 'https', hostname: '**' },
+      // Only Cloudinary — a bare '**' turns /_next/image into an open SSRF
+      // proxy that will fetch any https URL an attacker passes it.
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
     ],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { triggerPusher, PUSHER_CHANNELS, PUSHER_EVENTS } from '@/lib/pusher'
+import { rateLimit, clientIp } from '@/lib/rateLimit'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,6 +15,11 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const { allowed } = await rateLimit(`orders:${clientIp(req.headers)}`, 5, 60)
+  if (!allowed) {
+    return NextResponse.json({ error: 'Слишком много заказов, попробуйте позже' }, { status: 429 })
+  }
+
   const body = await req.json()
   const { tableNumber, clientPhone, clientLang, items, totalAmount } = body
 

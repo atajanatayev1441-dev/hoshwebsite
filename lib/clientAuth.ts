@@ -1,9 +1,11 @@
 import { SignJWT, jwtVerify } from 'jose'
 import type { NextRequest } from 'next/server'
 
-const secret = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET ?? 'dev-secret-change-in-production'
-)
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error('NEXTAUTH_SECRET must be set — refusing to start with an insecure default')
+}
+
+const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET)
 
 export interface ClientPayload {
   id: number
