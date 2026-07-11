@@ -20,8 +20,9 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
-  Plus, Pencil, Trash2, GripVertical, Eye, EyeOff, Star, X, Save, Upload, Loader2,
+  Plus, Pencil, Trash2, GripVertical, Eye, EyeOff, Star, X, Save, Upload, Loader2, FileUp,
 } from 'lucide-react'
+import ImportMenuModal from '@/components/admin/ImportMenuModal'
 
 interface Category {
   id: number
@@ -272,6 +273,7 @@ export default function AdminMenuPage() {
   const [itemModal, setItemModal] = useState<Partial<MenuItem> | null | 'new'>(null)
   const [newCatName, setNewCatName] = useState('')
   const [loading, setLoading] = useState(true)
+  const [importOpen, setImportOpen] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -381,8 +383,15 @@ export default function AdminMenuPage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <div className="mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <h1 className="font-playfair text-2xl font-semibold text-sage-800 dark:text-cream-100">Меню</h1>
+        <button
+          onClick={() => setImportOpen(true)}
+          className="btn-secondary text-sm flex items-center gap-1.5 py-2"
+        >
+          <FileUp className="w-4 h-4" />
+          Импорт
+        </button>
       </div>
 
       {loading ? (
@@ -541,6 +550,14 @@ export default function AdminMenuPage() {
           categoryId={selectedCatId ?? 0}
           onSave={saveItem}
           onClose={() => setItemModal(null)}
+        />
+      )}
+
+      {importOpen && (
+        <ImportMenuModal
+          venue="lounge"
+          onClose={() => setImportOpen(false)}
+          onImported={fetchAll}
         />
       )}
     </div>

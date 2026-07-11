@@ -20,9 +20,10 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
-  Plus, Pencil, Trash2, GripVertical, Eye, EyeOff, Star, X, Save, Upload, Loader2,
+  Plus, Pencil, Trash2, GripVertical, Eye, EyeOff, Star, X, Save, Upload, Loader2, FileUp,
 } from 'lucide-react'
 import Image from 'next/image'
+import ImportMenuModal from '@/components/admin/ImportMenuModal'
 
 interface Category {
   id: number
@@ -270,6 +271,7 @@ export default function AdminCoffeeMenuPage() {
   const [itemModal, setItemModal] = useState<Partial<MenuItem> | null | 'new'>(null)
   const [newCatName, setNewCatName] = useState('')
   const [loading, setLoading] = useState(true)
+  const [importOpen, setImportOpen] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -382,13 +384,22 @@ export default function AdminCoffeeMenuPage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="relative w-8 h-8 rounded-full overflow-hidden bg-[#3e4e3a] flex items-center justify-center" style={{ padding: '2px' }}>
-          <Image src="/images/hoscoffee.png" alt="HOŞ Coffee" width={32} height={32} className="object-contain" />
+      <div className="flex items-center justify-between gap-3 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="relative w-8 h-8 rounded-full overflow-hidden bg-[#3e4e3a] flex items-center justify-center" style={{ padding: '2px' }}>
+            <Image src="/images/hoscoffee.png" alt="HOŞ Coffee" width={32} height={32} className="object-contain" />
+          </div>
+          <h1 className="font-playfair text-2xl font-semibold text-sage-800 dark:text-cream-100">
+            Меню Coffee
+          </h1>
         </div>
-        <h1 className="font-playfair text-2xl font-semibold text-sage-800 dark:text-cream-100">
-          Меню Coffee
-        </h1>
+        <button
+          onClick={() => setImportOpen(true)}
+          className="btn-secondary text-sm flex items-center gap-1.5 py-2"
+        >
+          <FileUp className="w-4 h-4" />
+          Импорт
+        </button>
       </div>
 
       {loading ? (
@@ -547,6 +558,14 @@ export default function AdminCoffeeMenuPage() {
           categoryId={selectedCatId ?? 0}
           onSave={saveItem}
           onClose={() => setItemModal(null)}
+        />
+      )}
+
+      {importOpen && (
+        <ImportMenuModal
+          venue="coffee"
+          onClose={() => setImportOpen(false)}
+          onImported={fetchAll}
         />
       )}
     </div>
