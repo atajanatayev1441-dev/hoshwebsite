@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { triggerPusher, PUSHER_CHANNELS, PUSHER_EVENTS } from '@/lib/pusher'
 import { sendTelegram } from '@/lib/telegram'
 import { rateLimit, clientIp } from '@/lib/rateLimit'
+import { isOrderingOpen, orderingClosedMessage } from '@/lib/businessHours'
 
 export async function GET() {
 
@@ -22,6 +23,11 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json()
   const { tableNumber, clientPhone, clientLang, items, totalAmount } = body
+
+  if (!isOrderingOpen()) {
+    const lang = clientLang === 'tk' ? 'tk' : 'ru'
+    return NextResponse.json({ error: orderingClosedMessage[lang] }, { status: 403 })
+  }
 
   if (!tableNumber || !clientPhone || !items?.length) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })

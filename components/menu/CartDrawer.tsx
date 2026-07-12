@@ -8,6 +8,7 @@ import { useCart } from '@/components/providers/CartProvider'
 import { useLang } from '@/components/providers/LangProvider'
 import { useClientAuth } from '@/components/providers/ClientAuthProvider'
 import { translations } from '@/lib/i18n'
+import { isOrderingOpen, orderingClosedMessage } from '@/lib/businessHours'
 
 export function CartDrawer() {
   const { items, updateQty, clearCart, total, cartOpen, setCartOpen } = useCart()
@@ -20,6 +21,7 @@ export function CartDrawer() {
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [orderId, setOrderId] = useState<number | null>(null)
+  const [kitchenOpen, setKitchenOpen] = useState(true)
 
   useEffect(() => {
     if (client?.phone) {
@@ -27,9 +29,18 @@ export function CartDrawer() {
     }
   }, [client?.phone])
 
+  useEffect(() => {
+    if (cartOpen) setKitchenOpen(isOrderingOpen())
+  }, [cartOpen])
+
   const fmt = (p: number) => new Intl.NumberFormat('ru-RU').format(p) + ' ' + tr.currency
 
   const handleOrder = async () => {
+    if (!isOrderingOpen()) {
+      setKitchenOpen(false)
+      toast.error(ru ? orderingClosedMessage.ru : orderingClosedMessage.tk)
+      return
+    }
     if (!customerName.trim()) { toast.error(ru ? 'Введите имя' : 'Adyňyzy giriziň'); return }
     if (!phone.trim()) { toast.error(ru ? 'Введите номер телефона' : 'Telefon belgisin giriziň'); return }
     setLoading(true)
@@ -48,8 +59,8 @@ export function CartDrawer() {
       setOrderId(data.id)
       clearCart()
       toast.success(ru ? 'Заказ принят! Ожидайте SMS подтверждения' : 'Sargyt kabul edildi! SMS garaşyň')
-    } catch {
-      toast.error(ru ? 'Ошибка. Попробуйте снова' : 'Ýalňyşlyk. Gaýtadan synanşyň')
+    } catch (err: any) {
+      toast.error(err?.message || (ru ? 'Ошибка. Попробуйте снова' : 'Ýalňyşlyk. Gaýtadan synanşyň'))
     } finally {
       setLoading(false)
     }
@@ -149,13 +160,24 @@ export function CartDrawer() {
                       <span className="text-[#7a7570] font-body text-sm">{tr.total}</span>
                       <span className="text-gold-400 font-body font-medium">{fmt(total)}</span>
                     </div>
+
+                    {!kitchenOpen && (
+                      <p
+                        className="text-sm font-body text-center px-3 py-2.5"
+                        style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.25)', color: '#e0c88a' }}
+                      >
+                        {ru ? orderingClosedMessage.ru : orderingClosedMessage.tk}
+                      </p>
+                    )}
+
                     <div className="relative">
                       <User className="absolute left-3 top-3.5 w-4 h-4 text-[#3e3830]" />
                       <input
                         type="text" value={customerName}
                         onChange={(e) => setCustomerName(e.target.value)}
                         placeholder={tr.customerNamePlaceholder}
-                        className="w-full pl-9 pr-4 py-3 bg-transparent border-b border-[#2a2720] focus:border-gold-500 focus:outline-none text-[#f0ece3] text-sm font-body placeholder:text-[#3e3830] transition-colors"
+                        disabled={!kitchenOpen}
+                        className="w-full pl-9 pr-4 py-3 bg-transparent border-b border-[#2a2720] focus:border-gold-500 focus:outline-none text-[#f0ece3] text-sm font-body placeholder:text-[#3e3830] transition-colors disabled:opacity-40"
                         style={{ colorScheme: 'dark' }}
                       />
                     </div>
@@ -165,14 +187,15 @@ export function CartDrawer() {
                         type="tel" value={phone}
                         onChange={(e) => { if (!client) setPhone(e.target.value) }}
                         readOnly={!!client}
+                        disabled={!kitchenOpen}
                         placeholder={tr.phonePlaceholder}
-                        className="w-full pl-9 pr-4 py-3 bg-transparent border-b border-[#2a2720] focus:border-gold-500 focus:outline-none text-[#f0ece3] text-sm font-body placeholder:text-[#3e3830] transition-colors"
+                        className="w-full pl-9 pr-4 py-3 bg-transparent border-b border-[#2a2720] focus:border-gold-500 focus:outline-none text-[#f0ece3] text-sm font-body placeholder:text-[#3e3830] transition-colors disabled:opacity-40"
                         style={{ colorScheme: 'dark', fontSize: '16px', background: client ? 'rgba(255,255,255,0.04)' : 'transparent', cursor: client ? 'default' : 'text' }}
                       />
                     </div>
                     <button
                       onClick={handleOrder}
-                      disabled={loading}
+                      disabled={loading || !kitchenOpen}
                       className="btn-gold w-full justify-center disabled:opacity-50"
                     >
                       {loading ? (ru ? 'Отправка...' : 'Iberilýär...') : tr.placeOrder}
