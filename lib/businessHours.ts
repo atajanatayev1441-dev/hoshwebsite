@@ -5,6 +5,11 @@ const OPEN_HOUR = 9
 const CLOSE_HOUR = 22
 
 export function isOrderingOpen(date: Date = new Date()): boolean {
+  // Manual override (e.g. holiday closure, testing) — set FORCE_KITCHEN_STATUS
+  // to "closed" or "open" on Railway to bypass the clock entirely.
+  if (process.env.FORCE_KITCHEN_STATUS === 'closed') return false
+  if (process.env.FORCE_KITCHEN_STATUS === 'open') return true
+
   const hour = Number(
     new Intl.DateTimeFormat('en-US', { timeZone: TIMEZONE, hourCycle: 'h23', hour: 'numeric' }).format(date)
   )
