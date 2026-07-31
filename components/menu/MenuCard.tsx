@@ -78,7 +78,7 @@ export function MenuCard({ item }: Props) {
             className="menu-img object-cover"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center" style={{ background: '#1a1a1a' }}>
+          <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'var(--surface-2)' }}>
             <span style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 10vw, 64px)', fontWeight: 300, color: 'rgba(201,168,76,0.15)' }}>
               {name.charAt(0)}
             </span>

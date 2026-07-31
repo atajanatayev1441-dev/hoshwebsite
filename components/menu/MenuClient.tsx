@@ -48,16 +48,14 @@ function CategoryCard({ cat, name, onSelect }: { cat: CategoryWithItems; name: s
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       ) : (
-        <div className="absolute inset-0" style={{ background: '#171310' }} />
+        <div className="absolute inset-0" style={{ background: 'var(--surface-2)' }} />
       )}
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.82) 100%)' }} />
-      {/* Fixed light colors here (not theme vars) — this tile is always a dark
-          photo scrim regardless of the page's light/dark theme. */}
+      <div className="absolute inset-0 g-menu-cat" />
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-3">
-        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(15px, 4.5vw, 24px)', fontWeight: 400, color: '#FAFAF8', lineHeight: 1.15 }}>
+        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(15px, 4.5vw, 24px)', fontWeight: 400, color: 'var(--white)', lineHeight: 1.15 }}>
           {name}
         </h3>
-        <span style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(9px, 2.4vw, 11px)', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A84C', marginTop: '6px' }}>
+        <span style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(9px, 2.4vw, 11px)', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginTop: '6px' }}>
           {cat.items.length} {cat.items.length === 1 ? 'позиция' : 'позиций'}
         </span>
       </div>

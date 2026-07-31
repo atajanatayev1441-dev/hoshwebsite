@@ -287,6 +287,12 @@ html.light .g-event-r {
 html.light .g-event-b {
   background: linear-gradient(to top, rgba(232,224,208,0.96) 0%, transparent 55%);
 }
+.g-menu-cat {
+  background: linear-gradient(180deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.82) 100%);
+}
+html.light .g-menu-cat {
+  background: linear-gradient(180deg, rgba(242,235,224,0.2) 0%, rgba(242,235,224,0.88) 100%);
+}
 
 /* ── Light theme scrollbar ────────────────────── */
 html.light ::-webkit-scrollbar-thumb { background: #c0ae7a; }
