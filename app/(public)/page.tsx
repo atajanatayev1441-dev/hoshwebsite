@@ -483,7 +483,7 @@ export default function HomePage() {
             {[
               { count: 2,   label: ru ? 'Зоны'       : 'Zona' },
               { count: 147, label: ru ? 'Позиций'    : 'Menýu' },
-              { count: 9,  label: ru ? 'Лет опыта'  : 'Ýyl tejribe' },
+              { count: 6,  label: ru ? 'Лет опыта'  : 'Ýyl tejribe' },
             ].map((s, i) => (
               <div key={i} style={{ padding: '0 24px 0 0', borderRight: i < 2 ? '1px solid var(--border)' : 'none', marginLeft: i > 0 ? '24px' : 0 }}>
                 <div data-count={s.count} style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(32px, 8vw, 56px)', fontWeight: 300, color: 'var(--gold)', lineHeight: 1 }}>0</div>

@@ -27,25 +27,25 @@
   --font-body:    var(--font-cormorant, 'Cormorant Garamond', Georgia, serif);
 }
 
-/* ── Light theme (parchment + dark gold) ──────── */
+/* ── Emerald theme (deep green + bright emerald accent) ──────── */
 html.light {
-  --bg:          #f2ebe0;
-  --bg-2:        #e8e0d0;
-  --bg-3:        #ede6d6;
-  --surface:     #e0d8c8;
-  --surface-2:   #d4ccba;
-  --surface-3:   #c8c0aa;
-  --gold:        #7a5c0e;
-  --gold-dim:    rgba(122,92,14,0.6);
-  --white:       #1c1408;
-  --muted:       #5c4e2a;
-  --muted-hi:    #7a6a40;
-  --muted-lo:    #9a8858;
-  --muted-xlo:   #c0ae7a;
-  --border:      rgba(28,20,8,0.10);
-  --border-2:    rgba(28,20,8,0.18);
-  --navbar-bg:   rgba(242,235,224,0.96);
-  --navbar-border: rgba(122,92,14,0.18);
+  --bg:          #071612;
+  --bg-2:        #050f0c;
+  --bg-3:        #0a1c15;
+  --surface:     #0e2119;
+  --surface-2:   #132c21;
+  --surface-3:   #17372a;
+  --gold:        #3ECF8E;
+  --gold-dim:    rgba(62,207,142,0.6);
+  --white:       #EAF6EE;
+  --muted:       #6E9683;
+  --muted-hi:    #A3C9B4;
+  --muted-lo:    #4E7161;
+  --muted-xlo:   #2C4437;
+  --border:      rgba(234,246,238,0.08);
+  --border-2:    rgba(62,207,142,0.16);
+  --navbar-bg:   rgba(7,22,18,0.92);
+  --navbar-border: rgba(62,207,142,0.14);
 }
 
 /* ── Base ───────────────────────────────────── */
@@ -267,35 +267,35 @@ a, button, input, select, textarea {
   background: linear-gradient(to right, rgba(10,10,10,0.92) 45%, rgba(10,10,10,0.35) 100%);
 }
 html.light .g-hero-r {
-  background: linear-gradient(to right, rgba(242,235,224,0.88) 45%, rgba(242,235,224,0.2) 100%);
+  background: linear-gradient(to right, rgba(7,22,18,0.92) 45%, rgba(7,22,18,0.35) 100%);
 }
 .g-hero-b {
   background: linear-gradient(to top, rgba(10,10,10,0.75) 0%, transparent 50%);
 }
 html.light .g-hero-b {
-  background: linear-gradient(to top, rgba(242,235,224,0.82) 0%, transparent 52%);
+  background: linear-gradient(to top, rgba(7,22,18,0.8) 0%, transparent 52%);
 }
 .g-event-r {
   background: linear-gradient(to right, rgba(8,8,8,0.88) 35%, rgba(8,8,8,0.2) 100%);
 }
 html.light .g-event-r {
-  background: linear-gradient(to right, rgba(232,224,208,0.92) 35%, rgba(232,224,208,0.15) 100%);
+  background: linear-gradient(to right, rgba(5,15,12,0.92) 35%, rgba(5,15,12,0.15) 100%);
 }
 .g-event-b {
   background: linear-gradient(to top, rgba(8,8,8,0.95) 0%, transparent 55%);
 }
 html.light .g-event-b {
-  background: linear-gradient(to top, rgba(232,224,208,0.96) 0%, transparent 55%);
+  background: linear-gradient(to top, rgba(5,15,12,0.96) 0%, transparent 55%);
 }
 .g-menu-cat {
   background: linear-gradient(180deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.82) 100%);
 }
 html.light .g-menu-cat {
-  background: linear-gradient(180deg, rgba(242,235,224,0.2) 0%, rgba(242,235,224,0.88) 100%);
+  background: linear-gradient(180deg, rgba(7,22,18,0.2) 0%, rgba(7,22,18,0.86) 100%);
 }
 
-/* ── Light theme scrollbar ────────────────────── */
-html.light ::-webkit-scrollbar-thumb { background: #c0ae7a; }
+/* ── Emerald theme scrollbar ───────────────────── */
+html.light ::-webkit-scrollbar-thumb { background: #3ECF8E; }
 
 /* ── Theme toggle button ─────────────────────── */
 .theme-toggle {

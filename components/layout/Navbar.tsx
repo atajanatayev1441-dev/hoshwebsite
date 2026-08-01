@@ -9,7 +9,7 @@ import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
 import { useClientAuth } from '@/components/providers/ClientAuthProvider'
 import { translations } from '@/lib/i18n'
-import { ShoppingBag, X, Menu, User, Sun, Moon } from 'lucide-react'
+import { ShoppingBag, X, Menu, User, Leaf, Moon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export function Navbar() {
@@ -124,9 +124,9 @@ export function Navbar() {
             <button
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
               className="theme-toggle"
-              aria-label={isDark ? 'Светлая тема' : 'Тёмная тема'}
+              aria-label={isDark ? 'Изумрудная тема' : 'Тёмная тема'}
             >
-              {isDark ? <Sun size={15} /> : <Moon size={15} />}
+              {isDark ? <Leaf size={15} /> : <Moon size={15} />}
             </button>
           )}
 
