@@ -1,6 +1,7 @@
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
 const CHAT_ID   = process.env.TELEGRAM_CHAT_ID
 const CHAT_ID_2 = process.env.TELEGRAM_CHAT_ID_2
+const CHAT_ID_3 = process.env.TELEGRAM_CHAT_ID_3
 
 type InlineButton = { text: string; callback_data: string }
 
@@ -8,6 +9,7 @@ function getChatIds(): string[] {
   const ids: string[] = []
   if (CHAT_ID)   ids.push(CHAT_ID)
   if (CHAT_ID_2) ids.push(CHAT_ID_2)
+  if (CHAT_ID_3) ids.push(CHAT_ID_3)
   return ids
 }
 
