@@ -177,8 +177,8 @@ export default function HomePage() {
         >
           <div className="max-w-7xl mx-auto grid grid-cols-3 divide-x" style={{ '--tw-divide-color': 'var(--border)' } as any}>
             {[
-              { count: 3,  label: ru ? 'ЗОНЫ'    : 'ZONALAR' },
-              { count: 47, label: ru ? 'ПОЗИЦИЙ' : 'POZISIÝA' },
+              { count: 2,   label: ru ? 'ЗОНЫ'    : 'ZONALAR' },
+              { count: 147, label: ru ? 'ПОЗИЦИЙ' : 'POZISIÝA' },
               { count: 0,  label: ru ? 'ЧАСЫ'    : 'SAGAT', display: '09–23' },
             ].map((s, i) => (
               <div key={i} className="py-4 sm:py-6 flex flex-col items-center gap-1" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
@@ -475,14 +475,14 @@ export default function HomePage() {
                 : 'HOŞ Lounge — özboluşly industrial häsiýetli giňişlik. Açyk kerpiç, beton diwarlary we kämil kofe yzyna gaýtmak isleýän atmosfera döredýär.'}
             </p>
             <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, lineHeight: 1.9, color: 'var(--muted)', fontSize: '14px', maxWidth: '420px' }}>
-              {ru ? 'Авторский кофе, изысканные десерты, три зоны: основной зал, VIP и открытая терраса.' : 'Awtor kofe, ajaýyp süýjülikler, üç zona: esasy zal, VIP we açyk taras.'}
+              {ru ? 'Авторский кофе, изысканные десерты, две зоны: основной зал и VIP.' : 'Awtor kofe, ajaýyp süýjülikler, iki zona: esasy zal we VIP.'}
             </p>
           </div>
 
           <div data-animate data-delay="0.12" className="grid grid-cols-3 gap-0 self-center" style={{ borderTop: '1px solid var(--border)', paddingTop: '40px' }}>
             {[
-              { count: 3,  label: ru ? 'Зоны'       : 'Zona' },
-              { count: 47, label: ru ? 'Позиций'    : 'Menýu' },
+              { count: 2,   label: ru ? 'Зоны'       : 'Zona' },
+              { count: 147, label: ru ? 'Позиций'    : 'Menýu' },
               { count: 9,  label: ru ? 'Лет опыта'  : 'Ýyl tejribe' },
             ].map((s, i) => (
               <div key={i} style={{ padding: '0 24px 0 0', borderRight: i < 2 ? '1px solid var(--border)' : 'none', marginLeft: i > 0 ? '24px' : 0 }}>
