@@ -149,7 +149,32 @@ export async function POST(req: NextRequest) {
   }
 
   if (mode === 'replace') {
-    await prisma.category.deleteMany({ where: { venue } })
+    const existingCats = await prisma.category.findMany({ where: { venue }, select: { id: true } })
+    const catIds = existingCats.map((c) => c.id)
+    if (catIds.length) {
+      // Items with no order history are safe to delete outright.
+      await prisma.menuItem.deleteMany({
+        where: { categoryId: { in: catIds }, orderItems: { none: {} } },
+      })
+      // Anything left is referenced by a past order — deleting it would corrupt
+      // that order's history (or fail outright, since the FK restricts it). Hide
+      // it from customers instead of removing it.
+      await prisma.menuItem.updateMany({
+        where: { categoryId: { in: catIds } },
+        data: { available: false },
+      })
+      // Categories now empty can go; categories that still hold order-locked
+      // items are archived (hidden + renamed) so the import below creates a
+      // fresh category instead of reusing this leftover one.
+      await prisma.category.deleteMany({ where: { id: { in: catIds }, items: { none: {} } } })
+      const leftover = await prisma.category.findMany({ where: { id: { in: catIds } } })
+      for (const c of leftover) {
+        await prisma.category.update({
+          where: { id: c.id },
+          data: { visible: false, name_ru: `${c.name_ru} (архив)`, name_tk: `${c.name_tk} (архив)` },
+        })
+      }
+    }
   }
 
   const existingCategories = await prisma.category.findMany({ where: { venue } })
