@@ -544,8 +544,8 @@ export default function HomePage() {
             {[
               { icon: MapPin, labelRu: 'АДРЕС',       labelTk: 'SALGY',    valRu: 'ул. Держинского 143, напротив Цирка',    valTk: 'Jerjinskiý köç. 143, Sirkiň garşysynda' },
               { icon: Clock,  labelRu: 'ЧАСЫ РАБОТЫ', labelTk: 'IŞ WAGTY', valRu: 'Ежедневно 09:00 – 23:00', valTk: 'Her gün 09:00 – 23:00' },
-              { icon: Phone,  labelRu: 'ТЕЛЕФОН',     labelTk: 'TELEFON',  valRu: '+993 71 66 7777',           valTk: '+993 71 66 7777' },
-            ].map(({ icon: Icon, labelRu, labelTk, valRu, valTk }, i) => (
+              { icon: Phone,  labelRu: 'ТЕЛЕФОН',     labelTk: 'TELEFON',  valRu: '+993 71 66 7777',           valTk: '+993 71 66 7777', href: 'tel:+99371667777' },
+            ].map(({ icon: Icon, labelRu, labelTk, valRu, valTk, href }, i) => (
               <div key={i} className="flex items-center gap-5 px-6 py-5" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)' }}>
                 <div style={{ width: 40, height: 40, border: '1px solid rgba(201,168,76,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Icon size={15} style={{ color: 'var(--gold)' }} />
@@ -554,9 +554,15 @@ export default function HomePage() {
                   <p style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 500, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '3px' }}>
                     {ru ? labelRu : labelTk}
                   </p>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 300, color: 'var(--white)' }}>
-                    {ru ? valRu : valTk}
-                  </p>
+                  {href ? (
+                    <a href={href} style={{ fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 300, color: 'var(--white)', textDecoration: 'none' }}>
+                      {ru ? valRu : valTk}
+                    </a>
+                  ) : (
+                    <p style={{ fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 300, color: 'var(--white)' }}>
+                      {ru ? valRu : valTk}
+                    </p>
+                  )}
                 </div>
               </div>
             ))}

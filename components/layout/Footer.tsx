@@ -18,13 +18,21 @@ export function Footer() {
       <div style={{ borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-5 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-2 text-center">
           {[
-            ru ? 'Ежедневно 09:00 – 23:00' : 'Her gün 09:00 – 23:00',
-            ru ? 'ул. Держинского 143, напротив Цирка' : 'Jerjinskiý köç. 143, Sirkiň garşysynda',
-            '+993 71 66 7777',
-          ].map((text, i) => (
-            <span key={i} style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)' }}>
-              {text}
-            </span>
+            { text: ru ? 'Ежедневно 09:00 – 23:00' : 'Her gün 09:00 – 23:00' },
+            { text: ru ? 'ул. Держинского 143, напротив Цирка' : 'Jerjinskiý köç. 143, Sirkiň garşysynda' },
+            { text: '+993 71 66 7777', href: 'tel:+99371667777' },
+          ].map(({ text, href }, i) => (
+            href ? (
+              <a key={i} href={href} style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)', textDecoration: 'none', transition: 'color 0.2s' }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
+                {text}
+              </a>
+            ) : (
+              <span key={i} style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+                {text}
+              </span>
+            )
           ))}
         </div>
       </div>
@@ -77,12 +85,20 @@ export function Footer() {
             <ul className="space-y-4">
               {[
                 { Icon: MapPin, text: ru ? 'ул. Держинского 143, напротив Цирка' : 'Jerjinskiý köç. 143, Sirkiň garşysynda' },
-                { Icon: Phone,  text: '+993 71 66 7777' },
+                { Icon: Phone,  text: '+993 71 66 7777', href: 'tel:+99371667777' },
                 { Icon: Clock,  text: ru ? 'Ежедневно 09:00 – 23:00' : 'Her gün 09:00 – 23:00' },
-              ].map(({ Icon, text }, i) => (
+              ].map(({ Icon, text, href }, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <Icon style={{ width: '14px', height: '14px', color: 'var(--gold)', flexShrink: 0 }} />
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--muted)' }}>{text}</span>
+                  {href ? (
+                    <a href={href} style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--muted)', textDecoration: 'none', transition: 'color 0.2s' }}
+                      onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold)')}
+                      onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
+                      {text}
+                    </a>
+                  ) : (
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--muted)' }}>{text}</span>
+                  )}
                 </li>
               ))}
             </ul>
