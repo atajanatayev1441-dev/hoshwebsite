@@ -18,7 +18,7 @@ export function Footer() {
       <div style={{ borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-5 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-2 text-center">
           {[
-            { text: ru ? 'Ежедневно 09:00 – 23:00' : 'Her gün 09:00 – 23:00' },
+            { text: ru ? 'Ежедневно 08:00 – 23:00' : 'Her gün 08:00 – 23:00' },
             { text: ru ? 'ул. Держинского 143, напротив Цирка' : 'Jerjinskiý köç. 143, Sirkiň garşysynda' },
             { text: '+993 71 66 7777', href: 'tel:+99371667777' },
           ].map(({ text, href }, i) => (
@@ -87,7 +87,7 @@ export function Footer() {
               {[
                 { Icon: MapPin, text: ru ? 'ул. Держинского 143, напротив Цирка' : 'Jerjinskiý köç. 143, Sirkiň garşysynda' },
                 { Icon: Phone,  text: '+993 71 66 7777', href: 'tel:+99371667777' },
-                { Icon: Clock,  text: ru ? 'Ежедневно 09:00 – 23:00' : 'Her gün 09:00 – 23:00' },
+                { Icon: Clock,  text: ru ? 'Ежедневно 08:00 – 23:00' : 'Her gün 08:00 – 23:00' },
               ].map(({ Icon, text, href }, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <Icon style={{ width: '14px', height: '14px', color: 'var(--gold)', flexShrink: 0 }} />

@@ -180,7 +180,7 @@ export default function HomePage() {
             {[
               { count: 2,   label: ru ? 'ЗОНЫ'    : 'ZONALAR' },
               { count: 147, label: ru ? 'ПОЗИЦИЙ' : 'POZISIÝA' },
-              { count: 0,  label: ru ? 'ЧАСЫ'    : 'SAGAT', display: '09–23' },
+              { count: 0,  label: ru ? 'ЧАСЫ'    : 'SAGAT', display: '08–23' },
             ].map((s, i) => (
               <div key={i} className="py-4 sm:py-6 flex flex-col items-center gap-1" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
                 {s.count > 0
@@ -544,7 +544,7 @@ export default function HomePage() {
           <div className="space-y-3" data-animate data-delay="0.1">
             {[
               { icon: MapPin, labelRu: 'АДРЕС',       labelTk: 'SALGY',    valRu: 'ул. Держинского 143, напротив Цирка',    valTk: 'Jerjinskiý köç. 143, Sirkiň garşysynda' },
-              { icon: Clock,  labelRu: 'ЧАСЫ РАБОТЫ', labelTk: 'IŞ WAGTY', valRu: 'Ежедневно 09:00 – 23:00', valTk: 'Her gün 09:00 – 23:00' },
+              { icon: Clock,  labelRu: 'ЧАСЫ РАБОТЫ', labelTk: 'IŞ WAGTY', valRu: 'Ежедневно 08:00 – 23:00', valTk: 'Her gün 08:00 – 23:00' },
               { icon: Phone,  labelRu: 'ТЕЛЕФОН',     labelTk: 'TELEFON',  valRu: '+993 71 66 7777',           valTk: '+993 71 66 7777', href: 'tel:+99371667777' },
             ].map(({ icon: Icon, labelRu, labelTk, valRu, valTk, href }, i) => (
               <div key={i} className="flex items-center gap-5 px-6 py-5" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)' }}>

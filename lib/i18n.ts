@@ -73,7 +73,7 @@ export const translations = {
     // Footer
     address: 'ул. Держинского 143, напротив Цирка',
     phone: '+993 71 66 7777',
-    hours: 'Ежедневно 09:00 – 23:00',
+    hours: 'Ежедневно 08:00 – 23:00',
     followUs: 'Мы в социальных сетях',
   },
   tk: {
@@ -148,7 +148,7 @@ export const translations = {
     // Footer
     address: 'Jerjinskiý köç. 143, Sirkiň garşysynda',
     phone: '+993 71 66 7777',
-    hours: 'Her gün 09:00 – 23:00',
+    hours: 'Her gün 08:00 – 23:00',
     followUs: 'Bizi sosial ulgamlarda tapyň',
   },
 } as const
