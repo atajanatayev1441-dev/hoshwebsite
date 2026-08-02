@@ -9,7 +9,7 @@ import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
 import { useClientAuth } from '@/components/providers/ClientAuthProvider'
 import { translations } from '@/lib/i18n'
-import { ShoppingBag, X, Menu, User, Leaf, Moon } from 'lucide-react'
+import { ShoppingBag, X, Menu, User, Sun, Moon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export function Navbar() {
@@ -64,12 +64,8 @@ export function Navbar() {
             alt="HOŞ Lounge"
             width={52}
             height={52}
-            style={{
-              objectFit: 'contain',
-              filter: mounted && !isDark
-                ? 'drop-shadow(0 1px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 12px rgba(122,92,14,0.35))'
-                : 'drop-shadow(0 0 8px rgba(201,168,76,0.25))',
-            }}
+            className="site-logo"
+            style={{ objectFit: 'contain' }}
             priority
           />
         </Link>
@@ -124,9 +120,9 @@ export function Navbar() {
             <button
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
               className="theme-toggle"
-              aria-label={isDark ? 'Изумрудная тема' : 'Тёмная тема'}
+              aria-label={isDark ? 'Золотая тема' : 'Тёмная тема'}
             >
-              {isDark ? <Leaf size={15} /> : <Moon size={15} />}
+              {isDark ? <Sun size={15} /> : <Moon size={15} />}
             </button>
           )}
 

@@ -49,6 +49,7 @@ export function Footer() {
                 alt="HOŞ Lounge"
                 width={80}
                 height={80}
+                className="site-logo"
                 style={{ objectFit: 'contain' }}
               />
             </div>

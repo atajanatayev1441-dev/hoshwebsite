@@ -149,6 +149,7 @@ export default function HomePage() {
                     width={320}
                     height={320}
                     priority
+                    className="site-logo"
                     style={{ width: 'clamp(200px, 40vw, 340px)', height: 'auto' }}
                   />
                 </h1>
