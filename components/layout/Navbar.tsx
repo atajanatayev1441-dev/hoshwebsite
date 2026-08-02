@@ -4,12 +4,11 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { useTheme } from 'next-themes'
 import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
 import { useClientAuth } from '@/components/providers/ClientAuthProvider'
 import { translations } from '@/lib/i18n'
-import { ShoppingBag, X, Menu, User, Sun, Moon } from 'lucide-react'
+import { ShoppingBag, X, Menu, User } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export function Navbar() {
@@ -17,14 +16,10 @@ export function Navbar() {
   const { lang, setLang } = useLang()
   const { count, setCartOpen } = useCart()
   const { client, loading: authLoading } = useClientAuth()
-  const { theme, setTheme, resolvedTheme } = useTheme()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const tr = translations[lang]
   const ru = lang === 'ru'
-
-  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40)
@@ -41,8 +36,6 @@ export function Navbar() {
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
-
-  const isDark = resolvedTheme === 'dark'
 
   return (
     <header
@@ -114,17 +107,6 @@ export function Navbar() {
           >
             {ru ? 'TK' : 'RU'}
           </button>
-
-          {/* Theme toggle */}
-          {mounted && (
-            <button
-              onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className="theme-toggle"
-              aria-label={isDark ? 'Золотая тема' : 'Тёмная тема'}
-            >
-              {isDark ? <Sun size={15} /> : <Moon size={15} />}
-            </button>
-          )}
 
           {/* Cart */}
           <button

@@ -27,29 +27,6 @@
   --font-body:    var(--font-cormorant, 'Cormorant Garamond', Georgia, serif);
 }
 
-/* ── Gold theme (inverted: gold base, near-black accent/text) ── */
-html.light {
-  --bg:          #C2A050;
-  --bg-2:        #B89340;
-  --bg-3:        #CBAA5C;
-  --surface:     #B7923D;
-  --surface-2:   #AC8836;
-  --surface-3:   #9F7D2F;
-  --gold:        #171208;
-  --gold-dim:    rgba(23,18,8,0.55);
-  --white:       #241C0C;
-  --muted:       #55461F;
-  --muted-hi:    #6E5B2A;
-  --muted-lo:    #3B3016;
-  --muted-xlo:   #26200E;
-  --border:      rgba(23,18,8,0.14);
-  --border-2:    rgba(23,18,8,0.24);
-  /* Header stays a dark bar in this theme (not gold) so the gold logo
-     never sits directly on a same-hue background. */
-  --navbar-bg:   rgba(10,8,4,0.94);
-  --navbar-border: rgba(201,168,76,0.2);
-}
-
 /* ── Base ───────────────────────────────────── */
 @layer base {
   html { scroll-behavior: smooth; }
@@ -264,66 +241,21 @@ a, button, input, select, textarea {
   }
 }
 
-/* ── Theme-aware gradient overlays ──────────── */
+/* ── Gradient overlays (dark scrim over photos) ─ */
 .g-hero-r {
   background: linear-gradient(to right, rgba(10,10,10,0.92) 45%, rgba(10,10,10,0.35) 100%);
-}
-html.light .g-hero-r {
-  background: linear-gradient(to right, rgba(238,221,175,0.92) 45%, rgba(238,221,175,0.3) 100%);
 }
 .g-hero-b {
   background: linear-gradient(to top, rgba(10,10,10,0.75) 0%, transparent 50%);
 }
-html.light .g-hero-b {
-  background: linear-gradient(to top, rgba(238,221,175,0.85) 0%, transparent 52%);
-}
 .g-event-r {
   background: linear-gradient(to right, rgba(8,8,8,0.88) 35%, rgba(8,8,8,0.2) 100%);
-}
-html.light .g-event-r {
-  background: linear-gradient(to right, rgba(232,212,158,0.92) 35%, rgba(232,212,158,0.18) 100%);
 }
 .g-event-b {
   background: linear-gradient(to top, rgba(8,8,8,0.95) 0%, transparent 55%);
 }
-html.light .g-event-b {
-  background: linear-gradient(to top, rgba(232,212,158,0.95) 0%, transparent 55%);
-}
 .g-menu-cat {
   background: linear-gradient(180deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.82) 100%);
 }
-html.light .g-menu-cat {
-  background: linear-gradient(180deg, rgba(238,221,175,0.2) 0%, rgba(238,221,175,0.9) 100%);
-}
 
-/* ── Gold theme scrollbar ──────────────────────── */
-html.light ::-webkit-scrollbar-thumb { background: #3B3016; }
-
-/* ── Site logo — dark outline in the gold theme so the gold logo
-     never blends into a same-hue background (page bg, scrims, etc). ── */
 .site-logo { filter: drop-shadow(0 0 8px rgba(201,168,76,0.25)); }
-html.light .site-logo {
-  filter:
-    drop-shadow(0 0 1px rgba(10,8,4,0.95))
-    drop-shadow(0 0 2px rgba(10,8,4,0.8))
-    drop-shadow(0 2px 6px rgba(10,8,4,0.6))
-    drop-shadow(0 0 18px rgba(10,8,4,0.35));
-}
-
-/* ── Theme toggle button ─────────────────────── */
-.theme-toggle {
-  background: transparent;
-  border: 1px solid var(--border-2);
-  color: var(--muted-hi);
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: color 0.25s, border-color 0.25s;
-}
-.theme-toggle:hover {
-  color: var(--gold);
-  border-color: var(--gold);
-}
