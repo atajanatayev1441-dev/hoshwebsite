@@ -48,8 +48,18 @@ export default function HomePage() {
   }, [events.length])
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    if (window.matchMedia('(pointer: coarse)').matches) return // skip on mobile
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const coarse  = window.matchMedia('(pointer: coarse)').matches // mobile/touch
+
+    // Stat counters convey real info (zones/items/years), not just decoration —
+    // populate them immediately when the scroll-triggered animation below is
+    // skipped, instead of leaving them stuck at their initial "0".
+    const countEls = document.querySelectorAll<HTMLElement>('[data-count]')
+    if (reduced || coarse) {
+      countEls.forEach(el => { el.textContent = el.dataset.count || '0' })
+    }
+
+    if (reduced || coarse) return
     let cleanup: (() => void) | undefined
     ;(async () => {
       const { default: gsap } = await import('gsap')
@@ -62,7 +72,7 @@ export default function HomePage() {
           scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' },
         })
       })
-      document.querySelectorAll<HTMLElement>('[data-count]').forEach(el => {
+      countEls.forEach(el => {
         const target = parseInt(el.dataset.count || '0')
         const obj = { n: 0 }
         ScrollTrigger.create({

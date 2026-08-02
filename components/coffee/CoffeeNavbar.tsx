@@ -4,8 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useLang } from '@/components/providers/LangProvider'
 import { useCart } from '@/components/providers/CartProvider'
-import { useClientAuth } from '@/components/providers/ClientAuthProvider'
-import { X, Menu, ShoppingBag, User } from 'lucide-react'
+import { X, Menu, ShoppingBag } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const SAGE     = '#6b7d68'
@@ -16,7 +15,6 @@ const BG       = '#f0ede6'
 export function CoffeeNavbar() {
   const { lang, setLang } = useLang()
   const { count, setCartOpen } = useCart()
-  const { client, loading: authLoading } = useClientAuth()
   const ru = lang === 'ru'
   const [open, setOpen]       = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -129,30 +127,6 @@ export function CoffeeNavbar() {
             )}
           </button>
 
-          {/* Auth */}
-          {!authLoading && (
-            client ? (
-              <Link
-                href="/profile"
-                style={{ display: 'flex', alignItems: 'center', gap: '5px', fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: SAGE, textDecoration: 'none', transition: 'opacity 0.2s' }}
-                onMouseEnter={e => (e.currentTarget.style.opacity = '0.7')}
-                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-              >
-                <User size={13} />
-                <span className="hidden sm:inline">{client.name.split(' ')[0]}</span>
-              </Link>
-            ) : (
-              <Link
-                href="/auth/login"
-                style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: MUTED, textDecoration: 'none', transition: 'color 0.22s' }}
-                onMouseEnter={e => (e.currentTarget.style.color = SAGE)}
-                onMouseLeave={e => (e.currentTarget.style.color = MUTED)}
-              >
-                Войти
-              </Link>
-            )
-          )}
-
           {/* Mobile burger */}
           <button
             onClick={() => setOpen(!open)}
@@ -244,24 +218,6 @@ export function CoffeeNavbar() {
               >
                 {ru ? 'TK' : 'RU'}
               </button>
-              {!authLoading && !client && (
-                <Link
-                  href="/auth/login"
-                  onClick={() => setOpen(false)}
-                  style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: SAGE, textDecoration: 'none' }}
-                >
-                  Войти
-                </Link>
-              )}
-              {!authLoading && client && (
-                <Link
-                  href="/profile"
-                  onClick={() => setOpen(false)}
-                  style={{ fontFamily: 'var(--font-body)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: SAGE, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}
-                >
-                  <User size={13} /> {client.name.split(' ')[0]}
-                </Link>
-              )}
             </div>
           </motion.div>
         )}

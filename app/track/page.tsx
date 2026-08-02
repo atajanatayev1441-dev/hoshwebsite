@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { Search, Clock, CheckCircle, XCircle, Package, ChefHat, ArrowLeft, User } from 'lucide-react'
-import { useClientAuth } from '@/components/providers/ClientAuthProvider'
+import { Search, Clock, CheckCircle, XCircle, Package, ChefHat, ArrowLeft } from 'lucide-react'
 
 interface OrderItem {
   id: number
@@ -89,23 +88,10 @@ function OrderCard({ order, index }: { order: Order; index: number }) {
 }
 
 export default function TrackPage() {
-  const { client, loading: authLoading } = useClientAuth()
   const [phone,   setPhone]   = useState('')
   const [orders,  setOrders]  = useState<Order[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [error,   setError]   = useState('')
-
-  // Auto-fetch orders for logged-in clients
-  useEffect(() => {
-    if (!client) return
-    setLoading(true)
-    setError('')
-    fetch('/api/client/orders', { credentials: 'include' })
-      .then(r => r.json())
-      .then(data => setOrders(Array.isArray(data) ? data : []))
-      .catch(() => { setError('Ошибка загрузки заказов.') })
-      .finally(() => setLoading(false))
-  }, [client])
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -147,48 +133,36 @@ export default function TrackPage() {
           </h1>
         </motion.div>
 
-        {/* Authenticated view */}
-        {!authLoading && client ? (
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={{ marginBottom: '40px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 18px', background: 'rgba(107,125,104,0.08)', border: '1px solid rgba(107,125,104,0.2)', marginBottom: '28px' }}>
-              <User size={16} style={{ color: '#6b7d68', flexShrink: 0 }} />
-              <span style={{ fontSize: '14px', color: '#1c1c1c' }}>
-                Вы вошли как <strong>{client.name}</strong> · {client.phone}
-              </span>
-            </div>
-          </motion.div>
-        ) : !authLoading ? (
-          /* Phone search form for guests */
-          <motion.form initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            onSubmit={handleSearch}
-            style={{ display: 'flex', gap: '0', marginBottom: '40px', border: '1px solid rgba(0,0,0,0.12)', background: '#fff', overflow: 'hidden' }}
+        {/* Phone search form */}
+        <motion.form initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          onSubmit={handleSearch}
+          style={{ display: 'flex', gap: '0', marginBottom: '40px', border: '1px solid rgba(0,0,0,0.12)', background: '#fff', overflow: 'hidden' }}
+        >
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Введите номер телефона"
+            required
+            style={{
+              flex: 1, padding: '16px 20px', border: 'none', outline: 'none',
+              fontFamily: 'var(--font-body)', fontSize: '15px', background: 'transparent', color: '#1c1c1c',
+            }}
+          />
+          <button type="submit" disabled={loading}
+            style={{
+              padding: '16px 24px', background: '#6b7d68', border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
+              color: '#fff', display: 'flex', alignItems: 'center', gap: '8px', opacity: loading ? 0.7 : 1,
+              fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase',
+              transition: 'background 0.2s', flexShrink: 0,
+            }}
+            onMouseEnter={(e) => { if (!loading) (e.currentTarget as HTMLElement).style.background = '#5a6b57' }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = '#6b7d68' }}
           >
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="Введите номер телефона"
-              required
-              style={{
-                flex: 1, padding: '16px 20px', border: 'none', outline: 'none',
-                fontFamily: 'var(--font-body)', fontSize: '15px', background: 'transparent', color: '#1c1c1c',
-              }}
-            />
-            <button type="submit" disabled={loading}
-              style={{
-                padding: '16px 24px', background: '#6b7d68', border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
-                color: '#fff', display: 'flex', alignItems: 'center', gap: '8px', opacity: loading ? 0.7 : 1,
-                fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase',
-                transition: 'background 0.2s', flexShrink: 0,
-              }}
-              onMouseEnter={(e) => { if (!loading) (e.currentTarget as HTMLElement).style.background = '#5a6b57' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = '#6b7d68' }}
-            >
-              <Search size={15} />
-              {loading ? 'Поиск...' : 'Найти'}
-            </button>
-          </motion.form>
-        ) : null}
+            <Search size={15} />
+            {loading ? 'Поиск...' : 'Найти'}
+          </button>
+        </motion.form>
 
         {error && (
           <p style={{ color: '#b91c1c', fontSize: '14px', textAlign: 'center', marginBottom: '24px' }}>{error}</p>
@@ -210,7 +184,7 @@ export default function TrackPage() {
                 <div style={{ textAlign: 'center', padding: '48px 0', color: '#8a857e' }}>
                   <p style={{ fontSize: '15px' }}>Заказы не найдены</p>
                   <p style={{ fontSize: '13px', marginTop: '8px' }}>
-                    {client ? 'У вас ещё нет заказов' : 'Проверьте номер телефона'}
+                    Проверьте номер телефона
                   </p>
                 </div>
               ) : (

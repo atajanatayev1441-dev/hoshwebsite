@@ -5,7 +5,6 @@ import './globals.css'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { LangProvider } from '@/components/providers/LangProvider'
 import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider'
-import { ClientAuthProvider } from '@/components/providers/ClientAuthProvider'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin', 'cyrillic'],
@@ -27,10 +26,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ThemeProvider>
           <LangProvider>
-            <ClientAuthProvider>
-              <SmoothScrollProvider />
-              {children}
-            </ClientAuthProvider>
+            <SmoothScrollProvider />
+            {children}
           </LangProvider>
         </ThemeProvider>
         <Toaster

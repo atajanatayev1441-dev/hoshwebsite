@@ -6,14 +6,12 @@ import { X, Minus, Plus, ShoppingBag, Phone, User, CheckCircle } from 'lucide-re
 import { toast } from 'sonner'
 import { useCart } from '@/components/providers/CartProvider'
 import { useLang } from '@/components/providers/LangProvider'
-import { useClientAuth } from '@/components/providers/ClientAuthProvider'
 import { translations } from '@/lib/i18n'
 import { isOrderingOpen, orderingClosedMessage } from '@/lib/businessHours'
 
 export function CartDrawer() {
   const { items, updateQty, clearCart, total, cartOpen, setCartOpen } = useCart()
   const { lang } = useLang()
-  const { client } = useClientAuth()
   const tr = translations[lang]
   const ru = lang === 'ru'
 
@@ -22,12 +20,6 @@ export function CartDrawer() {
   const [loading, setLoading] = useState(false)
   const [orderId, setOrderId] = useState<number | null>(null)
   const [kitchenOpen, setKitchenOpen] = useState(true)
-
-  useEffect(() => {
-    if (client?.phone) {
-      setPhone(client.phone)
-    }
-  }, [client?.phone])
 
   useEffect(() => {
     if (cartOpen) setKitchenOpen(isOrderingOpen())
@@ -185,12 +177,11 @@ export function CartDrawer() {
                       <Phone className="absolute left-3 top-3.5 w-4 h-4 text-[#3e3830]" />
                       <input
                         type="tel" value={phone}
-                        onChange={(e) => { if (!client) setPhone(e.target.value) }}
-                        readOnly={!!client}
+                        onChange={(e) => setPhone(e.target.value)}
                         disabled={!kitchenOpen}
                         placeholder={tr.phonePlaceholder}
                         className="w-full pl-9 pr-4 py-3 bg-transparent border-b border-[#2a2720] focus:border-gold-500 focus:outline-none text-[#f0ece3] text-sm font-body placeholder:text-[#3e3830] transition-colors disabled:opacity-40"
-                        style={{ colorScheme: 'dark', fontSize: '16px', background: client ? 'rgba(255,255,255,0.04)' : 'transparent', cursor: client ? 'default' : 'text' }}
+                        style={{ colorScheme: 'dark', fontSize: '16px' }}
                       />
                     </div>
                     <button
