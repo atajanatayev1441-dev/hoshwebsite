@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Minus, Plus, ShoppingBag, Phone, User, CheckCircle } from 'lucide-react'
+import { X, Minus, Plus, ShoppingBag, Phone, User, CheckCircle, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useCart } from '@/components/providers/CartProvider'
 import { useLang } from '@/components/providers/LangProvider'
@@ -84,9 +84,20 @@ export function CartDrawer() {
                 <ShoppingBag className="w-5 h-5 text-gold-500" />
                 <h2 className="font-display text-lg font-light text-[#f0ece3]">{tr.cart}</h2>
               </div>
-              <button onClick={handleClose} className="w-8 h-8 flex items-center justify-center text-[#5c5852] hover:text-[#f0ece3] transition-colors">
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-1">
+                {!orderId && items.length > 0 && (
+                  <button
+                    onClick={clearCart}
+                    title={tr.clearCart}
+                    className="w-8 h-8 flex items-center justify-center text-[#5c5852] hover:text-red-400 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+                <button onClick={handleClose} className="w-8 h-8 flex items-center justify-center text-[#5c5852] hover:text-[#f0ece3] transition-colors">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Success state */}
