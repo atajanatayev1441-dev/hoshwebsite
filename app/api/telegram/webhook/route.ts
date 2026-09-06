@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import {
-  sendTelegram, sendTelegramTo, sendWithKeyboard, sendKeyboardTo,
+  sendTelegramTo, sendKeyboardTo,
   editTelegramMessage, editAllMessages, answerCallback,
   getWorkerLabel, SUPER_ADMIN_ID, type SentMessage,
 } from '@/lib/telegram'
@@ -52,15 +52,15 @@ function withClicker(tracked: unknown, clicker: SentMessage): SentMessage[] {
 
 /* ── Handlers ── */
 
-async function handleUpcoming() {
+async function handleUpcoming(chatId: number) {
   const today = new Date().toISOString().split('T')[0]
   const bookings = await prisma.booking.findMany({
     where: { date: { gte: today }, status: { not: 'cancelled' } },
     orderBy: [{ date: 'asc' }, { time: 'asc' }],
     take: 15,
   })
-  if (!bookings.length) { await sendTelegram('📅 Нет предстоящих бронирований'); return }
-  await sendTelegram(`📅 <b>Ближайшие брони (${bookings.length})</b>`)
+  if (!bookings.length) { await sendTelegramTo(chatId, '📅 Нет предстоящих бронирований'); return }
+  await sendTelegramTo(chatId, `📅 <b>Ближайшие брони (${bookings.length})</b>`)
   for (const b of bookings) {
     const booking = b as Booking
     const buttons: { text: string; callback_data: string }[][] = []
@@ -73,21 +73,21 @@ async function handleUpcoming() {
     if (booking.status !== 'cancelled') {
       buttons.push([{ text: '❌ Отменить', callback_data: `cancel_${booking.id}` }])
     }
-    await sendTelegram(fmtBooking(booking), buttons.length ? buttons : undefined)
+    await sendTelegramTo(chatId, fmtBooking(booking), buttons.length ? buttons : undefined)
   }
 }
 
-async function handleHistory() {
+async function handleHistory(chatId: number) {
   const bookings = await prisma.booking.findMany({
     orderBy: { createdAt: 'desc' },
     take: 10,
   })
-  if (!bookings.length) { await sendTelegram('📋 История пуста'); return }
+  if (!bookings.length) { await sendTelegramTo(chatId, '📋 История пуста'); return }
   const lines = bookings.map(b => fmtBooking(b as Booking)).join('\n\n')
-  await sendTelegram(`📋 <b>Последние 10 броней</b>\n\n${lines}`)
+  await sendTelegramTo(chatId, `📋 <b>Последние 10 броней</b>\n\n${lines}`)
 }
 
-async function handleStats() {
+async function handleStats(chatId: number) {
   const today = new Date().toISOString().split('T')[0]
   const { start, end } = todayBounds()
 
@@ -100,7 +100,7 @@ async function handleStats() {
     prisma.order.aggregate({ where: { createdAt: { gte: start, lte: end }, status: { not: 'cancelled' } }, _sum: { totalAmount: true } }),
   ])
 
-  await sendTelegram(
+  await sendTelegramTo(chatId,
     `📊 <b>Статистика на сегодня</b>\n\n` +
     `🪑 <b>Бронирования</b>\n` +
     `  Всего: ${bAll}\n` +
@@ -113,7 +113,7 @@ async function handleStats() {
   )
 }
 
-async function handleOrdersToday() {
+async function handleOrdersToday(chatId: number) {
   const { start, end } = todayBounds()
   const orders = await prisma.order.findMany({
     where: { createdAt: { gte: start, lte: end } },
@@ -121,12 +121,12 @@ async function handleOrdersToday() {
     orderBy: { createdAt: 'desc' },
     take: 20,
   })
-  if (!orders.length) { await sendTelegram('🛒 Заказов сегодня нет'); return }
-  await sendTelegram(`🛒 <b>Заказы сегодня (${orders.length})</b>`)
+  if (!orders.length) { await sendTelegramTo(chatId, '🛒 Заказов сегодня нет'); return }
+  await sendTelegramTo(chatId, `🛒 <b>Заказы сегодня (${orders.length})</b>`)
   for (const o of orders) {
     const status = o.status === 'confirmed' ? '✅' : o.status === 'cancelled' ? '❌' : o.status === 'ready' ? '🟢' : '⏳'
     const lines  = o.items.map(i => `  • ${i.menuItem?.name_ru ?? '?'} × ${i.quantity}`).join('\n')
-    await sendTelegram(
+    await sendTelegramTo(chatId,
       `${status} <b>Заказ №${o.id}</b>\n` +
       `📞 ${o.clientPhone} · 👤 ${o.tableNumber}\n` +
       `${lines}\n💰 ${o.totalAmount} м.`
@@ -134,17 +134,17 @@ async function handleOrdersToday() {
   }
 }
 
-async function handleActiveOrders() {
+async function handleActiveOrders(chatId: number) {
   const orders = await prisma.order.findMany({
     where: { status: { in: ['confirmed', 'preparing'] } },
     include: { items: { include: { menuItem: true } } },
     orderBy: { createdAt: 'asc' },
   })
-  if (!orders.length) { await sendTelegram('📦 Нет активных заказов'); return }
-  await sendTelegram(`📦 <b>Активные заказы (${orders.length})</b>`)
+  if (!orders.length) { await sendTelegramTo(chatId, '📦 Нет активных заказов'); return }
+  await sendTelegramTo(chatId, `📦 <b>Активные заказы (${orders.length})</b>`)
   for (const o of orders) {
     const lines = o.items.map(i => `  • ${i.menuItem?.name_ru ?? '?'} × ${i.quantity}`).join('\n')
-    await sendTelegram(
+    await sendTelegramTo(chatId,
       `✅ <b>Заказ №${o.id}</b>\n` +
       `📞 ${o.clientPhone} · 👤 ${o.tableNumber}\n` +
       `${lines}\n💰 ${o.totalAmount} м.`,
@@ -153,9 +153,9 @@ async function handleActiveOrders() {
   }
 }
 
-async function handleSearch(query: string) {
+async function handleSearch(chatId: number, query: string) {
   const q = query.trim()
-  if (!q) { await sendTelegram('Введите имя или номер телефона после /поиск'); return }
+  if (!q) { await sendTelegramTo(chatId, 'Введите имя или номер телефона после /поиск'); return }
   const bookings = await prisma.booking.findMany({
     where: {
       OR: [
@@ -167,11 +167,11 @@ async function handleSearch(query: string) {
     take: 10,
   })
   if (!bookings.length) {
-    await sendTelegram(`🔍 Ничего не найдено по запросу "<b>${q}</b>"`)
+    await sendTelegramTo(chatId, `🔍 Ничего не найдено по запросу "<b>${q}</b>"`)
     return
   }
   const lines = bookings.map(b => fmtBooking(b as Booking)).join('\n\n')
-  await sendTelegram(`🔍 <b>Результаты (${bookings.length})</b>\n\n${lines}`)
+  await sendTelegramTo(chatId, `🔍 <b>Результаты (${bookings.length})</b>\n\n${lines}`)
 }
 
 /* ── Super-admin: staff management ── */
@@ -354,15 +354,15 @@ export async function POST(req: NextRequest) {
       awaitingWorkerInput.delete(chatId)
       await sendKeyboardTo(chatId, '👋 <b>HOŞ Admin Bot</b>\n\nКнопки появились внизу 👇', isSuperAdmin)
     }
-    else if (text === '📅 Ближайшие брони')  await handleUpcoming()
-    else if (text === '📋 История')          await handleHistory()
-    else if (text === '📊 Статистика')       await handleStats()
-    else if (text === '🛒 Заказы сегодня')   await handleOrdersToday()
-    else if (text === '📦 Активные заказы')  await handleActiveOrders()
-    else if (text === '🔍 Поиск')            await sendTelegram('🔍 Введите: <code>/поиск Иван</code> или <code>/поиск +99371...</code>')
-    else if (text.startsWith('/поиск '))     await handleSearch(text.slice(7))
-    else if (text.startsWith('/search '))    await handleSearch(text.slice(8))
-    else if (text.startsWith('/п '))         await handleSearch(text.slice(3))
+    else if (text === '📅 Ближайшие брони')  await handleUpcoming(chatId)
+    else if (text === '📋 История')          await handleHistory(chatId)
+    else if (text === '📊 Статистика')       await handleStats(chatId)
+    else if (text === '🛒 Заказы сегодня')   await handleOrdersToday(chatId)
+    else if (text === '📦 Активные заказы')  await handleActiveOrders(chatId)
+    else if (text === '🔍 Поиск')            await sendTelegramTo(chatId, '🔍 Введите: <code>/поиск Иван</code> или <code>/поиск +99371...</code>')
+    else if (text.startsWith('/поиск '))     await handleSearch(chatId, text.slice(7))
+    else if (text.startsWith('/search '))    await handleSearch(chatId, text.slice(8))
+    else if (text.startsWith('/п '))         await handleSearch(chatId, text.slice(3))
 
     /* Super-admin only: staff management */
     else if (text === '➕ Добавить работника' || text === '/addworker') {
@@ -401,7 +401,7 @@ export async function POST(req: NextRequest) {
         )
       }
     }
-    else if (!text.startsWith('/')) await handleSearch(text)
+    else if (!text.startsWith('/')) await handleSearch(chatId, text)
   }
 
   return NextResponse.json({ ok: true })

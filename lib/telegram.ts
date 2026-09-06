@@ -118,12 +118,6 @@ const ADMIN_KEYBOARD_ROWS = [
   [{ text: '🗑 Сбросить всех' }],
 ]
 
-export async function sendWithKeyboard(text: string): Promise<void> {
-  if (!BOT_TOKEN) return
-  const chatIds = await getChatIds()
-  await Promise.all(chatIds.map((chatId) => sendKeyboardTo(chatId, text, chatId === SUPER_ADMIN_ID)))
-}
-
 // Sends the persistent reply keyboard to exactly one chat, with the admin
 // rows (add worker / list / reset) included only for the super admin.
 export async function sendKeyboardTo(
