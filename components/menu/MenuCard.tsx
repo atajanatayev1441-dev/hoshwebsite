@@ -18,7 +18,7 @@ interface Props {
 }
 
 export function MenuCard({ item }: Props) {
-  const { addItem, setCartOpen } = useCart()
+  const { addItem } = useCart()
   const { lang } = useLang()
   const tr = translations[lang]
   const ru = lang === 'ru'
@@ -30,7 +30,6 @@ export function MenuCard({ item }: Props) {
   function handleAdd() {
     if (!item.available) return
     addItem({ id: item.id, name_ru: item.name_ru, name_tk: item.name_tk, price: item.price })
-    setCartOpen(true)
   }
 
   const addButton = (
