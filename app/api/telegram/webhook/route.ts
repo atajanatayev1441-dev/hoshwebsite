@@ -29,6 +29,14 @@ function todayBounds() {
   return { start, end }
 }
 
+async function fetchOrderItemLines(orderId: number): Promise<string> {
+  const items = await prisma.orderItem.findMany({
+    where: { orderId },
+    include: { menuItem: true },
+  })
+  return items.map(i => `  • ${i.menuItem?.name_ru ?? '?'} × ${i.quantity}`).join('\n')
+}
+
 function asSentMessages(v: unknown): SentMessage[] {
   return Array.isArray(v) ? (v as SentMessage[]) : []
 }
@@ -265,9 +273,12 @@ export async function POST(req: NextRequest) {
       const orderId = parseInt(data.split('_')[1])
       const order    = await prisma.order.update({ where: { id: orderId }, data: { status: 'ready' } })
       const actorLabel = await getWorkerLabel(actorId)
+      const itemLines = await fetchOrderItemLines(order.id)
       const text =
         `📤 <b>Заказ №${order.id} ОТПРАВЛЕН</b>\n\n` +
-        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n💰 ${order.totalAmount} м.\n\n` +
+        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n\n` +
+        `${itemLines}\n\n` +
+        `💰 ${order.totalAmount} м.\n\n` +
         `👨‍💼 Отправил: <b>${actorLabel}</b>`
       await editAllMessages(withClicker(order.telegramMessages, { chatId, messageId }), text)
     }
@@ -278,12 +289,15 @@ export async function POST(req: NextRequest) {
       const newStatus = action === 'ok' ? 'confirmed' : 'cancelled'
       const order     = await prisma.order.update({ where: { id: parseInt(rawId) }, data: { status: newStatus } })
       const actorLabel = await getWorkerLabel(actorId)
+      const itemLines = await fetchOrderItemLines(order.id)
       const icon  = newStatus === 'confirmed' ? '✅' : '❌'
       const label = newStatus === 'confirmed' ? 'ПРИНЯТ' : 'ОТКЛОНЁН'
       const actionVerb = newStatus === 'confirmed' ? 'Принял' : 'Отклонил'
       const text =
         `${icon} <b>Заказ №${order.id} ${label}</b>\n\n` +
-        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n💰 ${order.totalAmount} м.\n\n` +
+        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n\n` +
+        `${itemLines}\n\n` +
+        `💰 ${order.totalAmount} м.\n\n` +
         `👨‍💼 ${actionVerb}: <b>${actorLabel}</b>`
       const buttons = newStatus === 'confirmed' ? [[{ text: '📤 Отправлено', callback_data: `ordersent_${order.id}` }]] : undefined
       await editAllMessages(withClicker(order.telegramMessages, { chatId, messageId }), text, buttons)
