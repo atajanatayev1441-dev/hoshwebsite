@@ -37,16 +37,20 @@ model MenuItem {
 }
 
 model Order {
-  id          Int         @id @default(autoincrement())
-  tableNumber String
-  clientPhone String
-  clientLang  String      @default("ru")
-  status      String      @default("pending")
-  totalAmount Float
-  venue       String      @default("lounge")
-  items       OrderItem[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id               Int         @id @default(autoincrement())
+  tableNumber      String
+  clientPhone      String
+  clientLang       String      @default("ru")
+  status           String      @default("pending")
+  totalAmount      Float
+  venue            String      @default("lounge")
+  items            OrderItem[]
+  // Telegram chat/message ids the "new order" broadcast was sent to — lets
+  // the webhook update every worker's copy when one of them accepts/rejects
+  // it, instead of only the copy in the chat that was clicked.
+  telegramMessages Json?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 }
 
 model OrderItem {
@@ -61,20 +65,32 @@ model OrderItem {
 }
 
 model Booking {
+  id               Int      @id @default(autoincrement())
+  zone             String
+  date             String
+  time             String
+  guestCount       Int
+  name             String
+  phone            String
+  clientLang       String   @default("ru")
+  note             String?
+  status           String   @default("pending")
+  arrived          Boolean?
+  venue            String   @default("lounge")
+  telegramMessages Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+// Telegram staff registry, managed from inside the bot by the super admin
+// (hardcoded id, see lib/telegram.ts) — replaces the old static
+// TELEGRAM_CHAT_ID/_2/_3 env vars as the source of truth for who gets
+// order/booking notifications.
+model TelegramWorker {
   id         Int      @id @default(autoincrement())
-  zone       String
-  date       String
-  time       String
-  guestCount Int
-  name       String
-  phone      String
-  clientLang String   @default("ru")
-  note       String?
-  status     String   @default("pending")
-  arrived    Boolean?
-  venue      String   @default("lounge")
+  telegramId String   @unique
+  label      String
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
 }
 
 model Promotion {

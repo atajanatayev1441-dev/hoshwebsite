@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { triggerPusher, PUSHER_CHANNELS, PUSHER_EVENTS } from '@/lib/pusher'
-import { sendTelegram } from '@/lib/telegram'
+import { broadcastActionable } from '@/lib/telegram'
 import { rateLimit, clientIp } from '@/lib/rateLimit'
 
 export async function GET(req: NextRequest) {
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
 
   const venueLabel = (venue ?? 'lounge') === 'coffee' ? 'HOŞ Coffee' : 'HOŞ Lounge'
   const zoneLabel = booking.zone === 'vip' ? 'VIP зона' : 'Основной зал'
-  await sendTelegram(
+  const sentMessages = await broadcastActionable(
     `🪑 <b>Новое бронирование</b> — ${venueLabel}\n\n` +
     `👤 ${booking.name || '—'}\n` +
     `📞 ${booking.phone}\n` +
@@ -68,6 +68,9 @@ export async function POST(req: NextRequest) {
       { text: '❌ Отклонить',   callback_data: `book_no_${booking.id}` },
     ]]
   )
+  if (sentMessages.length) {
+    await prisma.booking.update({ where: { id: booking.id }, data: { telegramMessages: sentMessages } })
+  }
 
   return NextResponse.json(booking, { status: 201 })
 }

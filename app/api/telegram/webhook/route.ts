@@ -1,12 +1,16 @@
 export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { sendTelegram, sendWithKeyboard, editTelegramMessage, answerCallback } from '@/lib/telegram'
+import {
+  sendTelegram, sendTelegramTo, sendWithKeyboard, sendKeyboardTo,
+  editTelegramMessage, editAllMessages, answerCallback,
+  getWorkerLabel, SUPER_ADMIN_ID, type SentMessage,
+} from '@/lib/telegram'
 
 type Booking = {
   id: number; name: string; phone: string; date: string; time: string
   zone: string; guestCount: number; status: string; note: string | null
-  venue: string; arrived: boolean | null
+  venue: string; arrived: boolean | null; telegramMessages: unknown
 }
 
 function fmtBooking(b: Booking) {
@@ -23,6 +27,19 @@ function todayBounds() {
   const start = new Date(); start.setHours(0, 0, 0, 0)
   const end   = new Date(); end.setHours(23, 59, 59, 999)
   return { start, end }
+}
+
+function asSentMessages(v: unknown): SentMessage[] {
+  return Array.isArray(v) ? (v as SentMessage[]) : []
+}
+
+// Merges the previously-tracked broadcast copies with the one that was
+// actually clicked, so a legacy row with no tracked messages (or a failed
+// broadcast) still gets its own message updated instead of silently no-op'ing.
+function withClicker(tracked: unknown, clicker: SentMessage): SentMessage[] {
+  const list = asSentMessages(tracked)
+  const already = list.some((m) => m.chatId === clicker.chatId && m.messageId === clicker.messageId)
+  return already ? list : [...list, clicker]
 }
 
 /* ── Handlers ── */
@@ -149,6 +166,39 @@ async function handleSearch(query: string) {
   await sendTelegram(`🔍 <b>Результаты (${bookings.length})</b>\n\n${lines}`)
 }
 
+/* ── Super-admin: staff management ── */
+
+// In-memory only — the "add worker" flow is a single owner typing one
+// follow-up message; losing this on a redeploy just means retyping the
+// command, no data at risk.
+const awaitingWorkerInput = new Set<number>()
+
+async function handleListWorkers(chatId: number) {
+  const workers = await prisma.telegramWorker.findMany({ orderBy: { createdAt: 'asc' } })
+  const lines = [
+    `👑 ${SUPER_ADMIN_ID} — ${'Супер Админ'} (нельзя удалить)`,
+    ...workers.map(w => `👤 ${w.telegramId} — ${w.label}`),
+  ]
+  await sendTelegramTo(chatId, `👥 <b>Работники (${workers.length + 1})</b>\n\n${lines.join('\n')}`)
+}
+
+async function handleAddWorkerText(chatId: number, text: string) {
+  const parts = text.trim().split(/\s+/)
+  const id = parts[0]
+  const label = parts.slice(1).join(' ')
+  if (!/^\d+$/.test(id) || !label) {
+    await sendTelegramTo(chatId, '⚠️ Формат: <code>ID Имя Роль</code>\nНапример: <code>123456789 Ахмед Кассир</code>\nПопробуйте ещё раз или отправьте /addworker заново.')
+    return
+  }
+  await prisma.telegramWorker.upsert({
+    where: { telegramId: id },
+    update: { label },
+    create: { telegramId: id, label },
+  })
+  await sendTelegramTo(chatId, `✅ Работник добавлен: <b>${label}</b> (${id})`)
+  await sendTelegramTo(id, `👋 Вас добавили в бот HOŞ Admin как <b>${label}</b>. Нажмите /start, чтобы увидеть кнопки.`)
+}
+
 /* ── Main handler ── */
 
 export async function POST(req: NextRequest) {
@@ -169,6 +219,24 @@ export async function POST(req: NextRequest) {
     const { id: callbackId, data, message } = cq
     const chatId: number    = message?.chat?.id
     const messageId: number = message?.message_id
+    const actorId: string   = String(cq.from?.id ?? chatId)
+
+    /* Сбросить всех работников — подтверждение */
+    if (data === 'resetworkers_confirm' || data === 'resetworkers_cancel') {
+      if (actorId !== SUPER_ADMIN_ID) {
+        await answerCallback(callbackId, 'Только для супер админа')
+        return NextResponse.json({ ok: true })
+      }
+      await answerCallback(callbackId)
+      if (data === 'resetworkers_confirm') {
+        const { count } = await prisma.telegramWorker.deleteMany({})
+        await editTelegramMessage(chatId, messageId, `🗑 Сброшено работников: ${count}. Остался только супер админ.`)
+      } else {
+        await editTelegramMessage(chatId, messageId, 'Отменено.')
+      }
+      return NextResponse.json({ ok: true })
+    }
+
     await answerCallback(callbackId)
 
     /* Подтвердить / Отклонить бронь */
@@ -176,27 +244,32 @@ export async function POST(req: NextRequest) {
       const [, action, rawId] = data.split('_')
       const newStatus  = action === 'ok' ? 'confirmed' : 'cancelled'
       const booking    = await prisma.booking.update({ where: { id: parseInt(rawId) }, data: { status: newStatus } })
+      const actorLabel = await getWorkerLabel(actorId)
       const icon       = newStatus === 'confirmed' ? '✅' : '❌'
       const label      = newStatus === 'confirmed' ? 'ПОДТВЕРЖДЕНО' : 'ОТКЛОНЕНО'
+      const actionVerb = newStatus === 'confirmed' ? 'Подтвердил' : 'Отклонил'
       const zoneLabel  = booking.zone === 'vip' ? 'VIP зона' : 'Основной зал'
       const venueLabel = booking.venue === 'coffee' ? 'HOŞ Coffee' : 'HOŞ Lounge'
-      await editTelegramMessage(chatId, messageId,
+      const text =
         `${icon} <b>Бронирование ${label}</b> — ${venueLabel}\n\n` +
         `👤 ${booking.name || '—'}\n📞 ${booking.phone}\n` +
         `📅 ${booking.date} в ${booking.time}\n` +
         `🏛 ${zoneLabel} · ${booking.guestCount} гост.` +
-        (booking.note ? `\n💬 ${booking.note}` : '')
-      )
+        (booking.note ? `\n💬 ${booking.note}` : '') +
+        `\n\n👨‍💼 ${actionVerb}: <b>${actorLabel}</b>`
+      await editAllMessages(withClicker(booking.telegramMessages, { chatId, messageId }), text)
     }
 
     /* Отметить заказ отправленным */
     if (data?.startsWith('ordersent_')) {
       const orderId = parseInt(data.split('_')[1])
       const order    = await prisma.order.update({ where: { id: orderId }, data: { status: 'ready' } })
-      await editTelegramMessage(chatId, messageId,
+      const actorLabel = await getWorkerLabel(actorId)
+      const text =
         `📤 <b>Заказ №${order.id} ОТПРАВЛЕН</b>\n\n` +
-        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n💰 ${order.totalAmount} м.`
-      )
+        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n💰 ${order.totalAmount} м.\n\n` +
+        `👨‍💼 Отправил: <b>${actorLabel}</b>`
+      await editAllMessages(withClicker(order.telegramMessages, { chatId, messageId }), text)
     }
 
     /* Принять / Отклонить заказ */
@@ -204,13 +277,16 @@ export async function POST(req: NextRequest) {
       const [, action, rawId] = data.split('_')
       const newStatus = action === 'ok' ? 'confirmed' : 'cancelled'
       const order     = await prisma.order.update({ where: { id: parseInt(rawId) }, data: { status: newStatus } })
+      const actorLabel = await getWorkerLabel(actorId)
       const icon  = newStatus === 'confirmed' ? '✅' : '❌'
       const label = newStatus === 'confirmed' ? 'ПРИНЯТ' : 'ОТКЛОНЁН'
-      await editTelegramMessage(chatId, messageId,
+      const actionVerb = newStatus === 'confirmed' ? 'Принял' : 'Отклонил'
+      const text =
         `${icon} <b>Заказ №${order.id} ${label}</b>\n\n` +
-        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n💰 ${order.totalAmount} м.`,
-        newStatus === 'confirmed' ? [[{ text: '📤 Отправлено', callback_data: `ordersent_${order.id}` }]] : undefined
-      )
+        `📞 ${order.clientPhone}\n👤 ${order.tableNumber}\n💰 ${order.totalAmount} м.\n\n` +
+        `👨‍💼 ${actionVerb}: <b>${actorLabel}</b>`
+      const buttons = newStatus === 'confirmed' ? [[{ text: '📤 Отправлено', callback_data: `ordersent_${order.id}` }]] : undefined
+      await editAllMessages(withClicker(order.telegramMessages, { chatId, messageId }), text, buttons)
     }
 
     /* Пришли / Не пришли */
@@ -248,8 +324,22 @@ export async function POST(req: NextRequest) {
   const msg = body.message
   if (msg) {
     const text: string = (msg.text || '').trim()
+    const chatId: number = msg.chat?.id
+    const fromId: string = String(msg.from?.id ?? chatId)
+    const isSuperAdmin = fromId === SUPER_ADMIN_ID
 
-    if (text === '/start')              await sendWithKeyboard('👋 <b>HOŞ Admin Bot</b>\n\nКнопки появились внизу 👇')
+    // Multi-step "add worker" flow: super admin sent the button, we're now
+    // waiting for their next message to be "ID Имя Роль".
+    if (isSuperAdmin && awaitingWorkerInput.has(chatId)) {
+      awaitingWorkerInput.delete(chatId)
+      await handleAddWorkerText(chatId, text)
+      return NextResponse.json({ ok: true })
+    }
+
+    if (text === '/start') {
+      awaitingWorkerInput.delete(chatId)
+      await sendKeyboardTo(chatId, '👋 <b>HOŞ Admin Bot</b>\n\nКнопки появились внизу 👇', isSuperAdmin)
+    }
     else if (text === '📅 Ближайшие брони')  await handleUpcoming()
     else if (text === '📋 История')          await handleHistory()
     else if (text === '📊 Статистика')       await handleStats()
@@ -259,7 +349,45 @@ export async function POST(req: NextRequest) {
     else if (text.startsWith('/поиск '))     await handleSearch(text.slice(7))
     else if (text.startsWith('/search '))    await handleSearch(text.slice(8))
     else if (text.startsWith('/п '))         await handleSearch(text.slice(3))
-    else if (!text.startsWith('/'))          await handleSearch(text)
+
+    /* Super-admin only: staff management */
+    else if (text === '➕ Добавить работника' || text === '/addworker') {
+      if (!isSuperAdmin) { /* not their button — ignore */ }
+      else {
+        awaitingWorkerInput.add(chatId)
+        await sendTelegramTo(chatId, '✍️ Отправьте одним сообщением: <code>ID Имя Роль</code>\nНапример: <code>123456789 Ахмед Кассир</code>')
+      }
+    }
+    else if (text.startsWith('/addworker ')) {
+      if (isSuperAdmin) await handleAddWorkerText(chatId, text.slice(11))
+    }
+    else if (text === '👥 Работники' || text === '/workers') {
+      if (isSuperAdmin) await handleListWorkers(chatId)
+    }
+    else if (text.startsWith('/removeworker ')) {
+      if (isSuperAdmin) {
+        const id = text.slice(14).trim()
+        if (id === SUPER_ADMIN_ID) {
+          await sendTelegramTo(chatId, '⚠️ Супер админа удалить нельзя.')
+        } else {
+          const { count } = await prisma.telegramWorker.deleteMany({ where: { telegramId: id } })
+          await sendTelegramTo(chatId, count ? `🗑 Работник ${id} удалён.` : `Работник ${id} не найден.`)
+        }
+      }
+    }
+    else if (text === '🗑 Сбросить всех' || text === '/resetworkers') {
+      if (isSuperAdmin) {
+        const count = await prisma.telegramWorker.count()
+        await sendTelegramTo(chatId,
+          `⚠️ Удалить всех работников (${count}), кроме супер админа? Их нужно будет добавить заново.`,
+          [[
+            { text: '✅ Да, сбросить', callback_data: 'resetworkers_confirm' },
+            { text: '❌ Отмена',       callback_data: 'resetworkers_cancel' },
+          ]]
+        )
+      }
+    }
+    else if (!text.startsWith('/')) await handleSearch(text)
   }
 
   return NextResponse.json({ ok: true })

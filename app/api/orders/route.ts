@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { triggerPusher, PUSHER_CHANNELS, PUSHER_EVENTS } from '@/lib/pusher'
-import { sendTelegram } from '@/lib/telegram'
+import { broadcastActionable } from '@/lib/telegram'
 import { rateLimit, clientIp } from '@/lib/rateLimit'
 import { isOrderingOpen, orderingClosedMessage } from '@/lib/businessHours'
 
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
   const itemLines = order.items
     .map(i => `  • ${i.menuItem?.name_ru ?? '?'} × ${i.quantity}`)
     .join('\n')
-  await sendTelegram(
+  const sentMessages = await broadcastActionable(
     `🛒 <b>Новый заказ №${order.id}</b>\n\n` +
     `📞 ${order.clientPhone}\n` +
     `👤 ${order.tableNumber}\n\n` +
@@ -75,6 +75,9 @@ export async function POST(req: NextRequest) {
       { text: '❌ Отклонить', callback_data: `order_no_${order.id}` },
     ]]
   )
+  if (sentMessages.length) {
+    await prisma.order.update({ where: { id: order.id }, data: { telegramMessages: sentMessages } })
+  }
 
   return NextResponse.json(order, { status: 201 })
 }
