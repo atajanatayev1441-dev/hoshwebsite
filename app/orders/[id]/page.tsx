@@ -2,42 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Clock, CheckCircle, ChefHat, Bell, XCircle } from 'lucide-react'
+import { Clock, CheckCircle, ChefHat, Bell, XCircle, Home, UtensilsCrossed } from 'lucide-react'
 import { useLang } from '@/components/providers/LangProvider'
 import { translations } from '@/lib/i18n'
 import Link from 'next/link'
 
 const statusConfig = {
-  pending: {
-    icon: Clock,
-    color: 'text-amber-500',
-    bg: 'bg-amber-50 dark:bg-amber-900/20',
-    border: 'border-amber-200 dark:border-amber-800',
-  },
-  confirmed: {
-    icon: CheckCircle,
-    color: 'text-blue-500',
-    bg: 'bg-blue-50 dark:bg-blue-900/20',
-    border: 'border-blue-200 dark:border-blue-800',
-  },
-  preparing: {
-    icon: ChefHat,
-    color: 'text-orange-500',
-    bg: 'bg-orange-50 dark:bg-orange-900/20',
-    border: 'border-orange-200 dark:border-orange-800',
-  },
-  ready: {
-    icon: Bell,
-    color: 'text-green-500',
-    bg: 'bg-green-50 dark:bg-green-900/20',
-    border: 'border-green-200 dark:border-green-800',
-  },
-  cancelled: {
-    icon: XCircle,
-    color: 'text-red-500',
-    bg: 'bg-red-50 dark:bg-red-900/20',
-    border: 'border-red-200 dark:border-red-800',
-  },
+  pending:   { icon: Clock,       color: '#fbbf24', bg: 'rgba(251,191,36,0.12)' },
+  confirmed: { icon: CheckCircle, color: '#60a5fa', bg: 'rgba(59,130,246,0.12)' },
+  preparing: { icon: ChefHat,     color: '#fb923c', bg: 'rgba(249,115,22,0.12)' },
+  ready:     { icon: Bell,        color: '#4ade80', bg: 'rgba(34,197,94,0.12)' },
+  cancelled: { icon: XCircle,     color: '#f87171', bg: 'rgba(239,68,68,0.12)' },
 }
 
 interface OrderData {
@@ -56,6 +31,7 @@ interface OrderData {
 export default function OrderStatusPage({ params }: { params: { id: string } }) {
   const { lang } = useLang()
   const tr = translations[lang]
+  const ru = lang === 'ru'
   const [order, setOrder] = useState<OrderData | null>(null)
   const [error, setError] = useState(false)
 
@@ -76,12 +52,30 @@ export default function OrderStatusPage({ params }: { params: { id: string } }) 
     return () => clearInterval(interval)
   }, [params.id])
 
+  const fmt = (n: number) => new Intl.NumberFormat('ru-RU').format(n) + ' ' + tr.currency
+
+  const actions = (
+    <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
+      <Link href="/" className="btn-outline">
+        <Home className="w-4 h-4" />
+        {ru ? 'На главную' : 'Baş sahypa'}
+      </Link>
+      <Link href="/menu" className="btn-gold">
+        <UtensilsCrossed className="w-4 h-4" />
+        {ru ? 'Смотреть меню' : 'Menýuny gör'}
+      </Link>
+    </div>
+  )
+
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center">
-          <p className="text-sage-500 mb-4">{lang === 'ru' ? 'Заказ не найден' : 'Sargyt tapylmady'}</p>
-          <Link href="/menu" className="btn-primary">{tr.menu}</Link>
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-16">
+        <div className="text-center" style={{ maxWidth: '420px' }}>
+          <XCircle className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--muted)' }} />
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: '15px', color: 'var(--muted-hi)' }}>
+            {ru ? 'Заказ не найден' : 'Sargyt tapylmady'}
+          </p>
+          {actions}
         </div>
       </div>
     )
@@ -89,8 +83,11 @@ export default function OrderStatusPage({ params }: { params: { id: string } }) 
 
   if (!order) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-sage-400 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
+        <div
+          className="w-8 h-8 rounded-full animate-spin"
+          style={{ border: '2px solid var(--gold)', borderTopColor: 'transparent' }}
+        />
       </div>
     )
   }
@@ -102,41 +99,48 @@ export default function OrderStatusPage({ params }: { params: { id: string } }) 
   const currentStep = steps.indexOf(order.status)
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-cream-100 dark:bg-sage-950">
-      <div className="w-full max-w-md">
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-12 sm:py-16">
+      <div className="w-full" style={{ maxWidth: '460px' }}>
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className={`card p-8 border-2 ${cfg.border} ${cfg.bg}`}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border-2)',
+            padding: 'clamp(28px, 6vw, 44px)',
+          }}
         >
-          <div className="text-center mb-6">
+          <div className="text-center mb-7">
             <motion.div
-              animate={{ scale: order.status === 'ready' ? [1, 1.1, 1] : 1 }}
+              animate={{ scale: order.status === 'ready' ? [1, 1.08, 1] : 1 }}
               transition={{ duration: 0.6, repeat: order.status === 'ready' ? Infinity : 0, repeatDelay: 2 }}
-              className="w-16 h-16 mx-auto mb-4 flex items-center justify-center"
+              className="w-16 h-16 mx-auto mb-5 flex items-center justify-center rounded-full"
+              style={{ background: cfg.bg }}
             >
-              <StatusIcon className={`w-16 h-16 ${cfg.color}`} />
+              <StatusIcon className="w-7 h-7" style={{ color: cfg.color }} />
             </motion.div>
-            <h1 className="font-playfair text-2xl font-semibold text-sage-800 dark:text-cream-100 mb-1">
+            <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(24px, 5vw, 30px)', fontWeight: 300, color: 'var(--white)', marginBottom: '4px' }}>
               {tr.orderStatus}
             </h1>
-            <p className="text-sage-500 dark:text-sage-400">
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: 'var(--muted)', letterSpacing: '0.05em' }}>
               {tr.orderNumber}{order.id}
             </p>
           </div>
 
           {/* Progress steps */}
           {order.status !== 'cancelled' && (
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-center mb-7">
               {steps.map((step, i) => (
                 <div key={step} className="flex items-center">
-                  <div className={`w-3 h-3 rounded-full transition-colors ${
-                    i <= currentStep ? 'bg-sage-500' : 'bg-sage-200 dark:bg-sage-700'
-                  }`} />
+                  <div
+                    className="w-2.5 h-2.5 rounded-full transition-colors"
+                    style={{ background: i <= currentStep ? 'var(--gold)' : 'var(--border-2)' }}
+                  />
                   {i < steps.length - 1 && (
-                    <div className={`h-0.5 w-8 mx-1 transition-colors ${
-                      i < currentStep ? 'bg-sage-500' : 'bg-sage-200 dark:bg-sage-700'
-                    }`} />
+                    <div
+                      className="h-px w-10 sm:w-12 mx-1 transition-colors"
+                      style={{ background: i < currentStep ? 'var(--gold)' : 'var(--border-2)' }}
+                    />
                   )}
                 </div>
               ))}
@@ -145,51 +149,56 @@ export default function OrderStatusPage({ params }: { params: { id: string } }) 
 
           {/* Status label */}
           <div className="text-center mb-6">
-            <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${
-              order.status === 'pending' ? 'badge-pending' :
-              order.status === 'confirmed' ? 'badge-confirmed' :
-              order.status === 'preparing' ? 'badge-preparing' :
-              order.status === 'ready' ? 'badge-ready' :
-              'badge-cancelled'
-            }`}>
+            <span
+              className="inline-block px-4 py-1.5 rounded-full"
+              style={{
+                fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500,
+                letterSpacing: '0.1em', textTransform: 'uppercase',
+                color: cfg.color, background: cfg.bg, border: `1px solid ${cfg.color}33`,
+              }}
+            >
               {tr[`order${order.status.charAt(0).toUpperCase() + order.status.slice(1)}` as keyof typeof tr] ?? order.status}
             </span>
           </div>
 
           {/* Courier notice */}
           {order.status === 'ready' && (
-            <p className="text-center text-sm text-sage-600 dark:text-sage-300 mb-6">
-              {lang === 'ru' ? 'Ваш заказ отправлен, ждите звонка курьера' : 'Sargydyňyz iberildi, kurýeriň jaňyna garaşyň'}
+            <p
+              className="text-center px-4 py-3 mb-6"
+              style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: '#e0c88a', background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.25)' }}
+            >
+              {ru ? 'Ваш заказ отправлен, ждите звонка курьера' : 'Sargydyňyz iberildi, kurýeriň jaňyna garaşyň'}
             </p>
           )}
 
           {/* Items */}
-          <div className="space-y-2 mb-4">
+          <div className="space-y-2 mb-4" style={{ borderTop: '1px solid var(--border)', paddingTop: '18px' }}>
             {order.items.map((item, i) => (
-              <div key={i} className="flex justify-between text-sm">
-                <span className="text-sage-700 dark:text-sage-200">
+              <div key={i} className="flex justify-between" style={{ fontFamily: 'var(--font-body)', fontSize: '14px' }}>
+                <span style={{ color: 'var(--muted-hi)' }}>
                   {lang === 'ru' ? item.menuItem.name_ru : item.menuItem.name_tk}
-                  <span className="text-sage-400 ml-1">× {item.quantity}</span>
+                  <span style={{ color: 'var(--muted-lo)' }}> × {item.quantity}</span>
                 </span>
-                <span className="text-sage-500">
+                <span style={{ color: 'var(--muted)' }}>
                   {new Intl.NumberFormat('ru-RU').format(item.price * item.quantity)}
                 </span>
               </div>
             ))}
-            <div className="flex justify-between font-semibold border-t border-cream-200 dark:border-sage-700 pt-2 mt-2">
-              <span className="text-sage-800 dark:text-cream-100">{tr.total}</span>
-              <span className="text-sage-600 dark:text-sage-300">
-                {new Intl.NumberFormat('ru-RU').format(order.totalAmount)} {tr.currency}
-              </span>
+            <div
+              className="flex justify-between pt-3 mt-2"
+              style={{ borderTop: '1px solid var(--border)', fontFamily: 'var(--font-body)', fontSize: '14px', fontWeight: 500 }}
+            >
+              <span style={{ color: 'var(--white)' }}>{tr.total}</span>
+              <span style={{ color: 'var(--gold)' }}>{fmt(order.totalAmount)}</span>
             </div>
           </div>
 
-          <div className="text-center mt-6">
-            <p className="text-xs text-sage-400">
-              {lang === 'ru' ? 'Страница обновляется автоматически' : 'Sahypa awtomatiki täzelenýär'}
-            </p>
-          </div>
+          <p className="text-center mt-6" style={{ fontFamily: 'var(--font-body)', fontSize: '11px', color: 'var(--muted-xlo)' }}>
+            {ru ? 'Страница обновляется автоматически' : 'Sahypa awtomatiki täzelenýär'}
+          </p>
         </motion.div>
+
+        {actions}
       </div>
     </div>
   )

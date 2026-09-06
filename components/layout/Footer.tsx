@@ -1,15 +1,18 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLang } from '@/components/providers/LangProvider'
 import { translations } from '@/lib/i18n'
-import { MapPin, Phone, Clock, Instagram } from 'lucide-react'
+import { MapPin, Phone, Clock, Instagram, MessageSquareText } from 'lucide-react'
+import { ReviewModal } from '@/components/shared/ReviewModal'
 
 export function Footer() {
   const { lang } = useLang()
   const tr = translations[lang]
   const ru = lang === 'ru'
+  const [reviewOpen, setReviewOpen] = useState(false)
 
   return (
     <footer style={{ background: 'var(--bg)', borderTop: '1px solid var(--border)' }}>
@@ -77,6 +80,17 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <button
+                  onClick={() => setReviewOpen(true)}
+                  className="flex items-center gap-2"
+                  style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--muted)', letterSpacing: '0.05em', transition: 'color 0.2s', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
+                  <MessageSquareText style={{ width: '13px', height: '13px', flexShrink: 0 }} />
+                  {ru ? 'Оставить отзыв' : 'Pikir goýuň'}
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -123,6 +137,8 @@ export function Footer() {
           </p>
         </div>
       </div>
+
+      <ReviewModal open={reviewOpen} onClose={() => setReviewOpen(false)} />
     </footer>
   )
 }
