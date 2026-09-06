@@ -63,6 +63,11 @@ export function CartDrawer() {
     if (orderId) { setOrderId(null); setCustomerName(''); setPhone('') }
   }
 
+  const handleClear = () => {
+    clearCart()
+    setCartOpen(false)
+  }
+
   return (
     <AnimatePresence>
       {cartOpen && (
@@ -87,7 +92,7 @@ export function CartDrawer() {
               <div className="flex items-center gap-1">
                 {!orderId && items.length > 0 && (
                   <button
-                    onClick={clearCart}
+                    onClick={handleClear}
                     title={tr.clearCart}
                     className="w-8 h-8 flex items-center justify-center text-[#5c5852] hover:text-red-400 transition-colors"
                   >
@@ -120,7 +125,10 @@ export function CartDrawer() {
                   {items.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-48 text-[#3e3830]">
                       <ShoppingBag className="w-10 h-10 mb-3 opacity-30" />
-                      <p className="text-sm font-body">{tr.emptyCart}</p>
+                      <p className="text-sm font-body mb-4">{tr.emptyCart}</p>
+                      <button onClick={handleClose} className="text-xs font-body underline text-gold-500 hover:text-gold-400 transition-colors">
+                        {ru ? 'Продолжить покупки' : 'Söwdany dowam et'}
+                      </button>
                     </div>
                   ) : (
                     items.map((item) => (
