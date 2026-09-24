@@ -17,9 +17,24 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(items)
 }
 
+const CREATABLE_FIELDS = [
+  'categoryId',
+  'name_ru',
+  'name_tk',
+  'description_ru',
+  'description_tk',
+  'price',
+  'imageUrl',
+  'available',
+  'featured',
+] as const
+
 export async function POST(req: NextRequest) {
 
   const body = await req.json()
-  const item = await prisma.menuItem.create({ data: body })
+  const data = Object.fromEntries(
+    CREATABLE_FIELDS.filter((key) => key in body).map((key) => [key, body[key]])
+  ) as { categoryId: number; name_ru: string; name_tk: string; price: number }
+  const item = await prisma.menuItem.create({ data })
   return NextResponse.json(item, { status: 201 })
 }
